@@ -1,0 +1,47 @@
+<?php
+
+use App\Http\Controllers\HomeController;
+use App\Http\Controllers\User\AppointmentController;
+use App\Http\Controllers\User\DashboardController;
+use App\Http\Controllers\User\InquiryController;
+use App\Http\Controllers\User\PatientController;
+use App\Http\Controllers\User\PaymentController;
+use App\Http\Controllers\User\ServiceController;
+use App\Http\Controllers\User\SettingsController;
+use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
+
+/*
+|--------------------------------------------------------------------------
+| Web Routes
+|--------------------------------------------------------------------------
+|
+| Here is where you can register web routes for your application. These
+| routes are loaded by the RouteServiceProvider within a group which
+| contains the "web" middleware group. Now create something great!
+|
+*/
+
+Route::get('/', [HomeController::class, 'index']);
+
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
+
+Route::middleware(['auth', 'verified'])->group(function() {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::apiResource('/appointments', AppointmentController::class);
+
+    Route::put('/services/restore/{service}', [ServiceController::class, 'restore'])->withTrashed();
+    Route::apiResource('/services', ServiceController::class);
+
+    Route::apiResource('/patients', PatientController::class);
+    Route::apiResource('/inquiries', InquiryController::class);
+    Route::apiResource('/payments', PaymentController::class);
+    Route::apiResource('/settings', SettingsController::class);
+});
+
+
+require __DIR__.'/auth.php';
