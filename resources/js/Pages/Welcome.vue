@@ -1,27 +1,70 @@
 <script setup>
-  import { Head, useForm } from '@inertiajs/inertia-vue3';
+  import { Head, useForm, usePage } from '@inertiajs/inertia-vue3';
   import Button from '@/Components/Button/Button.vue';
   import FloatingInput from '@/Components/FloatingInput/FloatingInput.vue';
   import FloatingSelect from '@/Components/FloatingInput/FloatingSelect.vue';
   import FormInput from '@/Components/FloatingInput/FormInput.vue';
-  import Combobox from '@/Components/Combobox/Combobox.vue';
-  import { ref, computed } from 'vue';
+  import { ref, computed, watch, toRef } from 'vue';
   import Checkbox from '@/Components/Checkbox.vue';
   import { formatCurrency } from '@/Composables/Utilities';
   import { MapIcon, CalendarIcon } from '@heroicons/vue/solid';
+  import { useToast } from 'vue-toastification';
+
+  const toast = useToast();
+  import vSelect from 'vue-select';
+
+  const authenticatedUser = computed(() => {
+    return usePage().props.value.auth.user;
+  });
 
   const form = useForm({
-    first_name: '',
-    last_name: '',
-    birth_date: '',
-    appointment_date: '',
+    schedule: '',
     selected_services: [],
+    subtotal: 0,
   });
+
+  const selectedService = toRef(form, 'selected_services');
+
+  const setSubtotalValue = () => {
+    form.subtotal = 0;
+    form.selected_services.map((service) => {
+      form.subtotal += parseFloat(service.price);
+    });
+  };
+
+  watch(selectedService, setSubtotalValue);
 
   const props = defineProps({
     errors: Object,
     services: Object,
   });
+
+  const isOptionSelected = (id) => {
+    let isSelected = false;
+    form.selected_services.map((service) => {
+      if (service.id == id) {
+        isSelected = true;
+      }
+    });
+
+    return isSelected;
+  };
+
+  const createAppointment = () => {
+    console.log(authenticatedUser.value);
+    if (authenticatedUser.value) {
+      form.post('/appointments', {
+        preserveState: true,
+        onSuccess: () => {
+          toast.success('Appointment created successfully!')
+          form.reset();
+        },
+      });
+    } else {
+      toast.error('Please login to your account first')
+      window.location.href = '/login';
+    }
+  };
 </script>
 
 <template>
@@ -46,7 +89,8 @@
         </li>
       </ul>
       <div>
-        <Button :href="route('register')" size="sm" color="success">Sign-Up</Button>
+        <Button v-if="!authenticatedUser" is-link :href="route('login')" size="sm" color="success">Sign In</Button>
+        <Button v-else is-link :href="route('dashboard')" size="sm" color="success">Account</Button>
       </div>
     </nav>
     <div id="home" class="relative flex w-full h-screen z-10 items-center top-0">
@@ -73,7 +117,7 @@
   </div>
 
   <div id="services" class="relative pt-20 pb-20 bg-blue-50 mt-20 mb-20">
-    <div class="container mx-auto flex flex-col md:flex-row px-6 sm:px-8 md:px-2">
+    <div class="container mx-auto flex gap-x-4 flex-col md:flex-row px-6 sm:px-8 md:px-2">
       <div class="w-full md:w-1/2">
         <img src="/images/services.png" alt="Close Up" class="w-96 z-[-1] sm:brightness-80 mx-auto" />
       </div>
@@ -127,36 +171,44 @@
           <p class="mt-4 w-3/4">Fill-up the form to check the availability of your desired date for your appointment. If it is available we will then reserve it just for you.</p>
           <p>{{ form.first_name }}</p>
         </div>
-        <CalendarIcon class="absolute h-96 top-0 z-[-1] text-gray-200" />
+        <CalendarIcon class="absolute h-96 top-0 z-[-1] text-gray-100" />
       </div>
       <div class="w-full md:w-1/2">
         <div class="bg-white drop-shadow-md px-10 py-4">
-          <p class="text-red-500">All fields are required**</p>
+          <p class="text-xl font-medium">Appointment Form</p>
+          <p class="text-sm mt-1 mb-2">
+            Please create an account if you do not have one. It will be used for the monitoring of your appointment status. Creating an account is free and will always be.
+          </p>
           <form class="flex flex-col">
-            <form-input for="appointment" :error="errors.appointment_date" label="Select Date" class="mt-3">
-              <floating-input type="date" id="appointment" v-model="form.appointment_date" />
+            <form-input for="appointment" :error="errors.schedule" label="Date and Time" class="mt-3">
+              <floating-input type="datetime-local" id="appointment" v-model="form.schedule" />
             </form-input>
-            <form-input for="firstname" :error="errors.first_name" label="First Name" class="mt-2">
-              <floating-input id="firstname" v-model="form.first_name" />
-            </form-input>
-            <form-input for="lastname" :error="errors.last_name" label="Last Name" class="mt-2">
-              <floating-input id="lastname" v-model="form.last_name" />
-            </form-input>
-            <form-input for="birthdate" :error="errors.last_name" label="Date of Birth" class="mt-2">
-              <floating-input type="date" id="birthdate" v-model="form.birth_date" />
-            </form-input>
-            <p class="mb-2 mt-2 font-medium">Services Offered</p>
-            <!-- <Checkbox v-model:checked="form.selected_services" for="123" value="123" label="Sample Checkbox" /> -->
+            <p class="mt-2 font-medium">Select Service</p>
             <div class="flex flex-wrap">
-              <combobox />
-              <!-- <div v-for="(service, i) in services" :key="i" class="w-1/2">
-                <Checkbox v-model:checked="form.selected_services" :for="service.id" :value="service.id" :label="service.service" />
-                <p class="text-sm ml-5">{{ formatCurrency(service.price) }}</p>
-              </div> -->
+              <v-select class="w-full [&>*]:z-20 style-chooser" v-model="form.selected_services" :options="services" label="service" multiple>
+                <template v-slot:option="option" class="z-30">
+                  <!-- <span :class="option.icon"></span> -->
+                  <div class="flex justify-between items-center z-30">
+                    <div class="flex flex-col">
+                      <p class="text-xl font-medium">
+                        {{ option.service }}
+                      </p>
+                      <p class="text-sm">{{ formatCurrency(option.price) }}</p>
+                    </div>
+                    <div v-if="isOptionSelected(option.id)">
+                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="green" stroke-width="2">
+                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                  </div>
+                </template>
+              </v-select>
+              <p v-if="errors.selected_services" class="mt-1 text-sm text-red-500">{{ errors.selected_services }}</p>
             </div>
-            <a :href="route('login')" class="text-sm mt-6">Already have an <span class="underline decoration-wavy hover:text-blue-500">account?</span></a>
+            <p class="mt-2">Subtotal: {{ formatCurrency(form.subtotal) }}</p>
+            <a v-if="!authenticatedUser" :href="route('login')" class="text-sm mt-6">Already have an <span class="underline decoration-wavy hover:text-blue-500">account?</span></a>
             <div class="justify-end flex mb-4 mt-6">
-              <Button text size="sm">Make an Appointment</Button>
+              <Button type="button" @click.prevent="createAppointment" text size="sm">Make an Appointment</Button>
             </div>
           </form>
         </div>
@@ -166,35 +218,35 @@
 
   <div id="about" class="relative pt-12 pb-15 mb-20">
     <div class="container gap-x-6 mx-auto flex flex-col md:flex-row px-6 items-center sm:px-8 md:px-2">
+      <div class="w-full md:w-1/2">
+        <iframe
+          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3853.0602543030805!2d120.67080431437381!3d15.044783170071193!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3396f71be8895741%3A0x28fb6d6849ab6d25!2sManabat%20Dental%20Clinic!5e0!3m2!1sen!2sph!4v1658401388093!5m2!1sen!2sph"
+          style="border: 0"
+          allowfullscreen=""
+          loading="lazy"
+          height="320"
+          class="z-[-1] w-full"
+          referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+      </div>
       <div class="w-full md:w-1/2 relative">
-        <div class="mx-auto z-20">
+        <div class="mx-auto z-20 sm:text-right">
           <p class="text-blue-500 font-medium">Our Location</p>
           <p class="text-5xl font-medium mt-2">
             Manabat-Flores <br />
             Dental Clinic
           </p>
-          <p class="mt-4 w-3/4">We are currently located at 2000 MacArthur Hwy, San Fernando, 2000 Pampanga. You can visit our clinic for a walk-in reservation</p>
+          <p class="mt-4">We are currently located at 2000 MacArthur Hwy, San Fernando, 2000 Pampanga. You can visit our clinic for a walk-in reservation</p>
           <p>{{ form.first_name }}</p>
         </div>
-        <MapIcon class="absolute -top-20 w-96 -left-8 z-[-1] text-gray-200" />
-      </div>
-      <div class="w-full md:w-1/2">
-        <iframe
-          src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3853.0602543030805!2d120.67080431437381!3d15.044783170071193!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3396f71be8895741%3A0x28fb6d6849ab6d25!2sManabat%20Dental%20Clinic!5e0!3m2!1sen!2sph!4v1658401388093!5m2!1sen!2sph"
-          width="600"
-          height="450"
-          style="border: 0"
-          allowfullscreen=""
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-        ></iframe>
+        <MapIcon class="absolute -top-20 w-96 -right-8 z-[-1] text-gray-100" />
       </div>
     </div>
   </div>
 
   <div id="contact" class="relative w-full bg-blue-500 p-12 mt-36">
     <div class="container gap-x-6 mx-auto flex flex-col md:flex-row px-6 sm:px-8 md:px-2">
-      <div class="w-full md:w-1/2 text-white">
+      <div class="w-full md:w-1/2 text-white text-right">
         <p class="font-medium text-xl">GET IN TOUCH</p>
 
         <p class="mt-3">Address: 2000 MacArthur Hwy, San Fernando, 2000 Pampanga, Philippines</p>
@@ -222,3 +274,22 @@
     </div>
   </div>
 </template>
+
+<style>
+  .style-chooser .vs__search::placeholder,
+  .style-chooser .vs__dropdown-toggle,
+  .style-chooser .vs__dropdown-menu {
+    background: #ffffff;
+    border: 1px solid gray;
+    color: #394066;
+    text-transform: lowercase;
+    font-variant: small-caps;
+    padding: 0.4rem;
+    border-radius: 8px;
+  }
+
+  .style-chooser .vs__clear,
+  .style-chooser .vs__open-indicator {
+    fill: #313131;
+  }
+</style>

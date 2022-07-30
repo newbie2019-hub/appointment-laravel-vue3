@@ -18,7 +18,9 @@ class PatientController extends Controller
                 ->orWhereLike('last_name', $request->search)
                 ->orWhereLike('email', $request->search)
             )->paginate(10);
-        return Inertia::render('Patients', compact(['patients']));
+
+        $trashedPatientsCount = User::notAdmin()->onlyTrashed()->count();
+        return Inertia::render('Patients', compact(['patients', 'trashedPatientsCount']));
     }
 
 

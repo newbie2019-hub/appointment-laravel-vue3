@@ -22,8 +22,12 @@
     },
     disabled: {
       type: Boolean,
-      default: false
-    }
+      default: false,
+    },
+    isLink: {
+      type: Boolean,
+      default: false,
+    },
   });
 
   const setButtonProperty = () => {
@@ -85,7 +89,23 @@
 </script>
 
 <template>
-  <a href="#" :type="type" :disabled="disabled" class="duration-200 items-center ease-in-out font-medium inline-flex rounded uppercase focus:ring-2 ring-offset-2 text-white ml-2 tracking-wider disabled:cursor-not-allowed" :class="cssClass">
+  <button
+    v-if="!isLink"
+    :type="type"
+    :disabled="disabled"
+    class="duration-200 items-center ease-in-out font-medium inline-flex rounded uppercase focus:ring-2 ring-offset-2 text-white ml-2 tracking-wider disabled:cursor-not-allowed"
+    :class="cssClass"
+  >
+    <slot />
+  </button>
+  <a
+    href="#"
+    v-else
+    :type="type"
+    :disabled="disabled"
+    class="duration-200 items-center ease-in-out font-medium inline-flex rounded uppercase focus:ring-2 ring-offset-2 text-white ml-2 tracking-wider disabled:cursor-not-allowed"
+    :class="cssClass"
+  >
     <slot />
   </a>
 </template>

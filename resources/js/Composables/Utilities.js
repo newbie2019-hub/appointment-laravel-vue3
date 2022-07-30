@@ -9,3 +9,7 @@ export function formatCurrency(data) {
   return formatter.format(data)
 
 }
+
+export function formatNumeric(val) {
+    return val < 10 ? '0' + val : val
+}

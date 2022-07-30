@@ -13,7 +13,7 @@ class AppointmentRequest extends FormRequest
      */
     public function authorize()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -22,9 +22,19 @@ class AppointmentRequest extends FormRequest
      * @return array<string, mixed>
      */
     public function rules()
+    {  
+        return [
+            'schedule' => 'required',
+            'selected_services' => 'required',
+            'subtotal' => 'required',
+            'user_id' => 'nullable|exists:users,id',
+        ];
+    }
+
+    public function messages()
     {
         return [
-            //
+            'selected_services.required' => 'Please select at least 1 service'
         ];
     }
 }

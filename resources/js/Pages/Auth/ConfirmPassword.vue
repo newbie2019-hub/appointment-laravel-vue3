@@ -1,5 +1,5 @@
 <script setup>
-import BreezeButton from '@/Components/Button.vue';
+import BreezeButton from '@/Components/Button/Button.vue';
 import BreezeGuestLayout from '@/Layouts/Guest.vue';
 import BreezeInput from '@/Components/Input.vue';
 import BreezeLabel from '@/Components/Label.vue';
@@ -34,7 +34,7 @@ const submit = () => {
             </div>
 
             <div class="flex justify-end mt-4">
-                <BreezeButton class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                <BreezeButton size="sm" class="ml-4" :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
                     Confirm
                 </BreezeButton>
             </div>

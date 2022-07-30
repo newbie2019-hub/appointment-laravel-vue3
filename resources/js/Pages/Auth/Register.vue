@@ -124,7 +124,7 @@
         </div>
 
         <div id="pagination" class="w-full gap-x-4 mt-2">
-          <Link :href="route('login')" class="underline text-sm text-gray-600 hover:text-gray-900 relative"> Already registered? </Link>
+          <Link :href="route('login')" class="text-sm text-gray-600 hover:text-blue-500 relative"> Already have <span class="text-blue-500">account?</span> </Link>
           <p class="mt-3">Step {{ registrationSteps.currentStep }} of {{ registrationSteps.totalSteps }}</p>
         </div>
         <div class="flex w-full justify-end">

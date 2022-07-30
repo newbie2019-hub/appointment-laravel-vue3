@@ -10,7 +10,7 @@
   import { debounce } from 'lodash';
   import { ref, watch, watchEffect } from 'vue';
   import { Inertia } from '@inertiajs/inertia';
-  import { formatCurrency } from '@/Composables/Utilities';
+  import { formatCurrency, formatNumeric } from '@/Composables/Utilities';
   import { useToast } from 'vue-toastification';
 
   const toast = useToast();
@@ -21,6 +21,7 @@
     services: Object,
     errors: Object,
     filters: Object,
+    trashedServicesCount: Number
   });
 
   let search = ref(props.filters.search);
@@ -96,6 +97,8 @@
   const searchServices = debounce(() => {
     Inertia.get('/services', { search: search.value, trashed: trashed.value }, { preserveState: true });
   }, 300);
+
+
 </script>
 
 <template>
@@ -105,7 +108,7 @@
     <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8 grid grid-cols-2 lg:grid-cols-3 gap-x-3">
       <div class="bg-red-500 flex-1 p-4 text-white rounded-md">
         <div class="flex justify-between">
-          <div class="text-9xl flex items-center">12</div>
+          <div class="text-9xl flex items-center">{{ formatNumeric(trashedServicesCount) }}</div>
           <div class="flex flex-col items-end gap-y-8">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -117,7 +120,7 @@
       </div>
       <div class="bg-green-600 flex-1 p-4 text-white rounded-md">
         <div class="flex justify-between">
-          <div class="text-9xl flex items-center">12</div>
+          <div class="text-9xl flex items-center">{{ formatNumeric(services.data.length)}}</div>
           <div class="flex flex-col items-end gap-y-8">
             <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
               <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />

@@ -26,8 +26,8 @@
     form.post(route('login'), {
       onFinish: () => form.reset('password'),
       onError: () => {
-        toast.error('Something went wrong!')
-      }
+        toast.error('Something went wrong!');
+      },
     });
   };
 </script>
@@ -58,18 +58,19 @@
         <p class="text-sm text-red-500">{{ errors.password }}</p>
       </div>
 
-      <div class="block mt-3">
+      <div class="mt-2 flex justify-between items-center">
         <label class="flex items-center">
           <BreezeCheckbox name="remember" v-model:checked="form.remember" />
           <span class="ml-2 text-sm text-gray-600">Remember me</span>
         </label>
+        <Link v-if="canResetPassword" :href="route('password.request')" class="hover:underline text-sm text-blue-400 hover:text-blue-700"> Forgot your password? </Link>
       </div>
 
       <div class="mt-4">
-        <Link v-if="canResetPassword" :href="route('password.request')" class="mt-4 hover:underline text-sm text-blue-400 hover:text-blue-700"> Forgot your password? </Link>
+        <Link :href="route('register')" class=" text-sm text-gray-600 hover:text-blue-500 relative"> Don't have an <span class="text-blue-500">account? </span></Link>
       </div>
-      <div class="flex items-center justify-end mt-4">
-        <button type="submit" class="text-blue-500 hover:text-blue-700 hover:bg-blue-100 px-4 py-2 duration-200 ease-in-out rounded-lg text-sm">Login</button>
+      <div class="flex items-center justify-end mt-4 mb-4">
+        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 duration-200 ease-in-out rounded-lg text-sm">Login Account</button>
       </div>
     </form>
   </BreezeGuestLayout>
