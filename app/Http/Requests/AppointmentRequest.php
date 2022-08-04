@@ -27,7 +27,7 @@ class AppointmentRequest extends FormRequest
             'schedule' => 'required',
             'selected_services' => 'required',
             'subtotal' => 'required',
-            'user_id' => 'nullable|exists:users,id',
+            'user_id' => 'sometimes|exists:users,id',
             'message' => 'required|max:255'
         ];
     }

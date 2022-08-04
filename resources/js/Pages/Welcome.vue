@@ -10,16 +10,19 @@
   import { formatCurrency } from '@/Composables/Utilities';
   import { MapIcon, CalendarIcon } from '@heroicons/vue/solid';
   import { useToast } from 'vue-toastification';
-  import vSelect from 'vue-select';
-  import moment from 'moment'
+  import VueMultiselect from 'vue-multiselect';
+
+  import moment from 'moment';
 
   const toast = useToast();
 
   const authenticatedUser = computed(() => {
     return usePage().props.value.auth.user;
-  })
+  });
 
-  const errorMessage = computed(() => { return usePage().props.value.errors.error ?? 'Something went wrong' })
+  const errorMessage = computed(() => {
+    return usePage().props.value.errors.error ?? 'Something went wrong';
+  });
 
   const form = useForm({
     schedule: '',
@@ -63,7 +66,7 @@
           preserveState: true,
           onError: (err) => {
             // console.log(errorMessage.value)
-            toast.error(`${errorMessage.value}`)
+            toast.error(`${errorMessage.value}`);
           },
           onSuccess: () => {
             toast.success('Appointment created successfully!');
@@ -79,6 +82,8 @@
 
 <template>
   <Head title="Welcome" />
+  <!-- COLORS -->
+  <div class="bg-green-500 bg-green-600 bg-red-500 bg-red-600 hidden"></div>
   <div class="container px-6 sm:px-8 md:px-2 mx-auto">
     <nav class="flex justify-between container pt-8 fixed z-20">
       <div>
@@ -198,24 +203,15 @@
             </form-input>
             <p class="mt-2 font-medium">Select Service</p>
             <div class="flex flex-wrap">
-              <v-select class="w-full [&>*]:z-30 style-chooser" v-model="form.selected_services" :options="services" label="service" multiple>
-                <template v-slot:option="option" class="z-30">
-                  <!-- <span :class="option.icon"></span> -->
-                  <div class="flex justify-between items-center z-30">
-                    <div class="flex flex-col">
-                      <p class="text-xl font-medium">
-                        {{ option.service }}
-                      </p>
-                      <p class="text-sm">{{ formatCurrency(option.price) }}</p>
-                    </div>
-                    <div v-if="isOptionSelected(option.id)">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="green" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </div>
+              <VueMultiselect v-model="form.selected_services" :options="services" :multiple="true" selectLabel="Select" deselectLabel="Deselect" label="service" track-by="id">
+                <template #option="props">
+                  <div class="option__desc flex flex-col">
+                    <span class="option__title">{{ props.option.service }}</span>
+                    <span class="text-sm">{{ formatCurrency(props.option.price) }}</span>
                   </div>
                 </template>
-              </v-select>
+              </VueMultiselect>
+
               <p v-if="errors.selected_services" class="mt-1 text-sm text-red-500">{{ errors.selected_services }}</p>
             </div>
             <p class="mt-2">Subtotal: {{ formatCurrency(form.subtotal) }}</p>
@@ -259,7 +255,7 @@
 
   <div id="contact" class="relative w-full bg-blue-500 p-12 mt-36">
     <div class="container gap-x-6 mx-auto flex flex-col md:flex-row px-6 sm:px-8 md:px-2">
-      <div class="w-full md:w-1/2 text-white ">
+      <div class="w-full md:w-1/2 text-white">
         <p class="font-medium text-xl">GET IN TOUCH</p>
 
         <p class="mt-3">Address: 2000 MacArthur Hwy, San Fernando, 2000 Pampanga, Philippines</p>

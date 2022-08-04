@@ -9,7 +9,7 @@ import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import Toast from "vue-toastification";
 
 import "vue-toastification/dist/index.css";
-import 'vue-select/dist/vue-select.css';
+import 'vue-multiselect/dist/vue-multiselect.css';
 
 const appName = window.document.getElementsByTagName('title')[0]?.innerText || 'Appointment System';
 

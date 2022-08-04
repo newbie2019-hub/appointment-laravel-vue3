@@ -35,6 +35,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::put('/appointments/restore/{appointment}', [AppointmentController::class, 'restore'])->withTrashed();
     Route::put('/appointments/approve/{appointment}', [AppointmentController::class, 'approve']);
     Route::apiResource('/appointments', AppointmentController::class);
+    Route::get('/search-patients', [AppointmentController::class, 'search']);
 
     Route::put('/services/restore/{service}', [ServiceController::class, 'restore'])->withTrashed();
     Route::apiResource('/services', ServiceController::class);

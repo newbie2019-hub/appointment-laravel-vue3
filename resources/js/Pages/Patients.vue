@@ -134,7 +134,19 @@
                     <tbody class="divide-y divide-gray-300 bg-white">
                       <tr v-for="(patient, i) in patients.data" :key="i" :class="{ 'bg-red-100': patient.deleted_at }">
                         <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ patient.id }}</td>
-                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ patient.full_name }}</td>
+                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 flex items-center gap-x-2">
+                          <div class="rounded-full bg-blue-400 w-8 h-8 border-gray-100 flex items-center justify-center">
+                            <svg v-if="!patient.image" xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 text-white" viewBox="0 0 20 20" fill="currentColor">
+                              <path
+                                fill-rule="evenodd"
+                                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
+                                clip-rule="evenodd"
+                              />
+                            </svg>
+                            <img :src="`images/profile/${patient.image}`" class="object-fit rounded-full h-full" alt="" />
+                          </div>
+                          {{ patient.full_name }}
+                        </td>
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900">{{ stringLimit(patient.address) }}</td>
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900">{{ patient.contact_number }}</td>
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900 capitalize">{{ patient.gender }}</td>

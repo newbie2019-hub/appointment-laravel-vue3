@@ -7,6 +7,7 @@ use App\Http\Requests\AppointmentRequest;
 use App\Models\Appointment;
 use App\Models\AppointmentService;
 use App\Models\Service;
+use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -25,7 +26,7 @@ class AppointmentController extends Controller
         $trashedAppointmentsCount = Appointment::onlyTrashed()->count();
         $services = Service::get();
         $todaysAppointment = Appointment::whereDate('schedule', now())->count();
-        
+        $users = $this->search($request);
         /*  
         *  Filter with Query String 
         *  is needed to preserve 
@@ -33,12 +34,12 @@ class AppointmentController extends Controller
         *  data 
         */
         $filters = $request->only(['search', 'trashed']);
-        return Inertia::render('Appointments', compact('services', 'appointments', 'filters', 'trashedAppointmentsCount', 'todaysAppointment'));
+        return Inertia::render('Appointments', compact('users', 'services', 'appointments', 'filters', 'trashedAppointmentsCount', 'todaysAppointment'));
     }
  
     public function store(AppointmentRequest $request)
     {
-        if(auth()->user()->is_admin == 1){
+        if(auth()->user()->is_admin == 1 && ($request->user_id == null || $request->user_id == '')){
             return back()->withErrors(['error' => 'Current signed-in account is admin']);
         }
 
@@ -56,6 +57,16 @@ class AppointmentController extends Controller
             return back()->withErrors(['error' => 'Selected schedule is unavailable.']);
         }
        
+    }
+
+    
+    public function search($request)
+    {
+        return User::notAdmin()->when($request->search, fn($query, $search)
+            => $query->whereLike('first_name', $search)
+            ->orWhereLike('last_name', $request->search)
+            ->orWhereLike('email', $request->search)
+        )->limit(10)->get(['id','first_name','last_name','email']);
     }
 
     public function storeSelectedServices($data, $appointment)

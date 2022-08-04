@@ -1,7 +1,7 @@
 <script setup>
   import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
   import Button from '@/Components/Button/Button.vue';
-  import { Head, useForm } from '@inertiajs/inertia-vue3';
+  import { Head, useForm, usePage } from '@inertiajs/inertia-vue3';
   import FloatingInput from '@/Components/FloatingInput/FloatingInput.vue';
   import FormInput from '@/Components/FloatingInput/FormInput.vue';
   import FloatingSelect from '@/Components/FloatingInput/FloatingSelect.vue';
@@ -15,13 +15,14 @@
   import { formatCurrency, formatNumeric, stringLimit } from '@/Composables/Utilities';
   import { useToast } from 'vue-toastification';
   import Calendar from '@/Components/Calendar.vue';
-  import vSelect from 'vue-select';
+  import VueMultiselect from 'vue-multiselect';
 
+  const errorMessage = computed(() => { return usePage().props.value.errors.error ?? 'Something went wrong' })
   const toast = useToast();
 
-  const form = useForm({ id: null, service: null, price: null, subtotal: 0, selected_services: [] });
+  const form = useForm({ id: null, service: null, price: null, subtotal: 0, selected_services: [], user_id: null, message: '', schedule: '', });
   const selectedAppointment = ref({ id: null, message: null, schedule: null, patient: { first_name: null, last_name: null } });
-  
+
   const isAppointmentModalShown = ref(false);
   const isDeleteModalShown = ref(false);
   const isRestoreModalShown = ref(false);
@@ -42,6 +43,7 @@
   };
 
   const toggleCreateModal = () => {
+    form.reset()
     isCreateModalShown.value = !isCreateModalShown.value;
   };
 
@@ -66,8 +68,12 @@
   };
 
   const approveAppointment = () => {
-    Inertia.put(`/appointments/approve/${selectedAppointment.value.id}`, {
+    form.put(`/appointments/approve/${selectedAppointment.value.id}`, {
       preserveState: true,
+      
+      onError: () => {
+        toast.error('Something went wrong')
+      },
       onSuccess: () => {
         toast.success('Appointment has been approved successfully!');
         toggleAppointmentModal();
@@ -75,7 +81,19 @@
     });
   };
 
-  const saveAppointment = () => {};
+  const saveAppointment = () => {
+    form.transform((data) => ({...data, user_id: data.user_id.id}))
+    .post('/appointments', {
+      preserveState: true,
+      onError: (err) => {
+        toast.error(`${errorMessage.value}`);
+      },
+      onSuccess: () => {
+        toast.success('Appointment created successfully!');
+        form.reset();
+      },
+    });
+  };
 
   const props = defineProps({
     appointments: Object,
@@ -84,6 +102,7 @@
     trashedAppointmentsCount: Number,
     todaysAppointment: Number,
     services: Object,
+    users: Object,
   });
 
   const setSubtotalValue = () => {
@@ -101,6 +120,18 @@
   const searchAppointment = debounce(() => {
     Inertia.get('/appointments', { search: search.value, trashed: trashed.value }, { preserveState: true });
   }, 300);
+
+  const searchPatient = debounce((val) => {
+    Inertia.get(
+      '/appointments',
+      { search: val },
+      {
+        preserveState: true,
+        only: ['users'],
+      },
+    );
+  }, 300);
+
 </script>
 
 <template>
@@ -219,7 +250,7 @@
                       <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ stringLimit(appointment.message) }}</td>
                       <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ formatCurrency(appointment.subtotal) }}</td>
                       <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                        <Chip :label="appointment.appointment_status" color="green" />
+                        <Chip :label="appointment.appointment_status" :color="appointment.appointment_status == 'Approved' ? 'green' : 'red'" />
                       </td>
                       <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.created_at }}</td>
                       <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.deleted_at }}</td>
@@ -327,26 +358,18 @@
             <floating-text-area id="message" v-model="form.message" />
           </form-input>
           <p class="mt-2 text-sm">Select Service</p>
-          <div class="flex flex-wrap">
-            <v-select class="w-full [&>*]:z-30 style-chooser" v-model="form.selected_services" :options="services" label="service" multiple>
-              <template v-slot:option="option" class="z-30">
-                <div class="flex justify-between items-center z-30">
-                  <div class="flex flex-col">
-                    <p class="text-xl font-medium">
-                      {{ option.service }}
-                    </p>
-                    <p class="text-sm">{{ formatCurrency(option.price) }}</p>
-                  </div>
-                  <div v-if="isOptionSelected(option.id)">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="green" stroke-width="2">
-                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                    </svg>
-                  </div>
-                </div>
-              </template>
-            </v-select>
-            <p v-if="errors.selected_services" class="mt-1 text-sm text-red-500">{{ errors.selected_services }}</p>
-          </div>
+          <VueMultiselect v-model="form.selected_services" :options="services" :multiple="true" selectLabel="Select" deselectLabel="Deselect" label="service" track-by="id">
+            <template #option="props">
+              <div class="option__desc flex flex-col">
+                <span class="option__title">{{ props.option.service }}</span>
+                <span class="text-sm">{{ formatCurrency(props.option.price) }}</span>
+              </div>
+            </template>
+          </VueMultiselect>
+          <p v-if="errors.selected_services" class="mt-1 text-sm text-red-500">{{ errors.selected_services }}</p>
+          <p class="mt-2 text-sm">Select Patient</p>
+          <VueMultiselect v-model="form.user_id" @search-change="searchPatient" :options="users" :multiple="false" selectLabel="Select" deselectLabel="Deselect" label="full_name" track-by="id"> </VueMultiselect>
+          <p v-if="errors.user_id" class="mt-1 text-sm text-red-500">{{ errors.user_id }}</p>
           <p class="mt-2">Subtotal: {{ formatCurrency(form.subtotal) }}</p>
         </form>
       </template>
