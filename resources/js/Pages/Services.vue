@@ -12,7 +12,6 @@
   import { Inertia } from '@inertiajs/inertia';
   import { formatCurrency, formatNumeric } from '@/Composables/Utilities';
   import { useToast } from 'vue-toastification';
-
   const toast = useToast();
 
   const form = useForm({ id: null, service: null, price: null });
@@ -21,7 +20,7 @@
     services: Object,
     errors: Object,
     filters: Object,
-    trashedServicesCount: Number
+    trashedServicesCount: Number,
   });
 
   let search = ref(props.filters.search);
@@ -97,42 +96,47 @@
   const searchServices = debounce(() => {
     Inertia.get('/services', { search: search.value, trashed: trashed.value }, { preserveState: true });
   }, 300);
-
-
 </script>
 
 <template>
   <Head title="Offered Services" />
 
   <BreezeAuthenticatedLayout>
-    <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8 grid grid-cols-2 lg:grid-cols-3 gap-x-3">
-      <div class="bg-red-500 flex-1 p-4 text-white rounded-md">
-        <div class="flex justify-between">
-          <div class="text-9xl flex items-center">{{ formatNumeric(trashedServicesCount) }}</div>
-          <div class="flex flex-col items-end gap-y-8">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-            <p class="uppercase font-medium tracking-wider leading-5">Trashed <br />Services</p>
-          </div>
-        </div>
-        <span class="sr-only">Trashed Services</span>
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="sm:px-6 lg:px-8 mt-6 mx-auto">
+        <p class="font-medium text-xl">Services Summary</p>
+        <p>Here is an overview of your services.</p>
       </div>
-      <div class="bg-green-600 flex-1 p-4 text-white rounded-md">
-        <div class="flex justify-between">
-          <div class="text-9xl flex items-center">{{ formatNumeric(services.data.length)}}</div>
-          <div class="flex flex-col items-end gap-y-8">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-            <p class="uppercase font-medium tracking-wider leading-5 text-right">Total <br />Services</p>
+      <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-wrap gap-y-4 gap-x-4">
+        <div class="bg-red-500 flex-1 p-4 text-white rounded-md md:max-w-md">
+          <div class="flex justify-between">
+            <div class="text-9xl flex items-center">{{ formatNumeric(trashedServicesCount) }}</div>
+            <div class="flex flex-col items-end gap-y-8">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              <p class="uppercase font-medium tracking-wider leading-5">Trashed <br />Services</p>
+            </div>
           </div>
+          <span class="sr-only">Trashed Services</span>
         </div>
-        <span class="sr-only">Total Services</span>
+        <div class="bg-green-600 flex-1 p-4 text-white rounded-md md:max-w-md">
+          <div class="flex justify-between">
+            <div class="text-9xl flex items-center">{{ formatNumeric(services.data.length) }}</div>
+            <div class="flex flex-col items-end gap-y-8">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              <p class="uppercase font-medium tracking-wider leading-5 text-right">Total <br />Services</p>
+            </div>
+          </div>
+          <span class="sr-only">Total Services</span>
+        </div>
       </div>
     </div>
+
     <div class="py-10">
-      <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto px-6 lg:px-8">
         <div class="overflow-x-auto shadow-sm sm:rounded-lg">
           <div class="">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-white border-gray-200 rounded-lg pb-6">
@@ -215,9 +219,15 @@
                         >
                       </td>
                     </tr>
+                    <tr v-if="services.data.length == 0">
+                      <td colspan="6">
+                        <div class="mx-auto text-center py-4 font-medium text-gray-600">No data available ..</div>
+                      </td>
+                    </tr>
                   </tbody>
                 </table>
               </div>
+              <p class="text-sm mt-2 text-gray-500">Showing {{ services.from ?? 0 }} to {{ services.to ?? 0 }} out of {{ services.total ?? 0 }} services.</p>
               <pagination :links="services.links" right />
             </div>
           </div>

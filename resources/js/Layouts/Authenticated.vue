@@ -10,13 +10,20 @@
   import { Link } from '@inertiajs/inertia-vue3';
 
   const showingNavigationDropdown = ref(false);
+
+  let isVisible = ref(false);
+
+  const toggleSidebar = () => {
+    isVisible.value = !isVisible.value;
+    console.log(`Value from parent: ${isVisible.value}`)
+  };
 </script>
 
 <template>
   <div>
-    <div class="min-h-screen ">
-      <Sidebar />
-      <Navbar />
+    <div class="min-h-screen">
+      <Sidebar :is-visible="isVisible" @close="toggleSidebar"/>
+      <Navbar @toggleSidebar="toggleSidebar" />
       <main>
         <div class="md:pl-64">
           <slot />

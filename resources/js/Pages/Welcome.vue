@@ -4,23 +4,28 @@
   import FloatingInput from '@/Components/FloatingInput/FloatingInput.vue';
   import FloatingSelect from '@/Components/FloatingInput/FloatingSelect.vue';
   import FormInput from '@/Components/FloatingInput/FormInput.vue';
+  import FloatingTextArea from '@/Components/FloatingInput/FloatingTextArea.vue';
   import { ref, computed, watch, toRef } from 'vue';
   import Checkbox from '@/Components/Checkbox.vue';
   import { formatCurrency } from '@/Composables/Utilities';
   import { MapIcon, CalendarIcon } from '@heroicons/vue/solid';
   import { useToast } from 'vue-toastification';
+  import moment from 'moment'
 
   const toast = useToast();
   import vSelect from 'vue-select';
 
   const authenticatedUser = computed(() => {
     return usePage().props.value.auth.user;
-  });
+  })
+
+  const errorMessage = computed(() => { return usePage().props.value.errors.error ?? 'Something went wrong' })
 
   const form = useForm({
     schedule: '',
     selected_services: [],
     subtotal: 0,
+    message: '',
   });
 
   const selectedService = toRef(form, 'selected_services');
@@ -51,17 +56,22 @@
   };
 
   const createAppointment = () => {
-    console.log(authenticatedUser.value);
     if (authenticatedUser.value) {
-      form.post('/appointments', {
-        preserveState: true,
-        onSuccess: () => {
-          toast.success('Appointment created successfully!')
-          form.reset();
-        },
-      });
+      form
+        .transform((data) => ({ ...data, schedule: moment(data.schedule).format('YYYY-MM-DD HH:mm') }))
+        .post('/appointments', {
+          preserveState: true,
+          onError: (err) => {
+            // console.log(errorMessage.value)
+            toast.error(`${errorMessage.value}`)
+          },
+          onSuccess: () => {
+            toast.success('Appointment created successfully!');
+            form.reset();
+          },
+        });
     } else {
-      toast.error('Please login to your account first')
+      toast.error('Please login to your account first');
       window.location.href = '/login';
     }
   };
@@ -112,7 +122,7 @@
         <p class="ml-4">Email: emailaddress@gmail.com</p>
         <p class="ml-4">Number: +63 921 654 8967</p>
       </div>
-      <img src="/images/hero.jpg" alt="Close Up" class="hidden sm:block absolute sm:right-14 md:right-32 top-0 h-screen z-[-1] sm:brightness-80" />
+      <!-- <img src="/images/hero.jpg" alt="Close Up" class="hidden sm:block absolute sm:right-14 md:right-32 top-0 h-screen z-[-1] sm:brightness-80" /> -->
     </div>
   </div>
 
@@ -183,9 +193,12 @@
             <form-input for="appointment" :error="errors.schedule" label="Date and Time" class="mt-3">
               <floating-input type="datetime-local" id="appointment" v-model="form.schedule" />
             </form-input>
+            <form-input for="message" :error="errors.message" label="Message" class="mt-3">
+              <floating-text-area id="message" v-model="form.message" />
+            </form-input>
             <p class="mt-2 font-medium">Select Service</p>
             <div class="flex flex-wrap">
-              <v-select class="w-full [&>*]:z-20 style-chooser" v-model="form.selected_services" :options="services" label="service" multiple>
+              <v-select class="w-full [&>*]:z-30 style-chooser" v-model="form.selected_services" :options="services" label="service" multiple>
                 <template v-slot:option="option" class="z-30">
                   <!-- <span :class="option.icon"></span> -->
                   <div class="flex justify-between items-center z-30">
@@ -246,7 +259,7 @@
 
   <div id="contact" class="relative w-full bg-blue-500 p-12 mt-36">
     <div class="container gap-x-6 mx-auto flex flex-col md:flex-row px-6 sm:px-8 md:px-2">
-      <div class="w-full md:w-1/2 text-white text-right">
+      <div class="w-full md:w-1/2 text-white ">
         <p class="font-medium text-xl">GET IN TOUCH</p>
 
         <p class="mt-3">Address: 2000 MacArthur Hwy, San Fernando, 2000 Pampanga, Philippines</p>

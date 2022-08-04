@@ -15,10 +15,12 @@ return new class extends Migration
     {
         Schema::create('appointments', function (Blueprint $table) {
             $table->id();
-            $table->string('schedule');
+            $table->datetime('schedule');
             $table->foreignId('user_id')->nullable()->constrained();
             $table->string('subtotal');
-            $table->string('status')->default('Payment Pending');
+            $table->string('payment_status')->default('Pending');
+            $table->string('appointment_status')->default('Pending Approval');
+            $table->string('message');
             $table->softDeletes();
             $table->timestamps();
         });

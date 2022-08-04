@@ -12,8 +12,14 @@ class Appointment extends Model
     use HasFactory, SoftDeletes;
     protected $guarded = [];
 
-    public function patient(){
+    public function patient()
+    {
         return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
+    public function services()
+    {
+        return $this->hasMany(AppointmentService::class, 'appointment_id', 'id')->withTrashed();
     }
 
     protected function serializeDate(DateTimeInterface $date)

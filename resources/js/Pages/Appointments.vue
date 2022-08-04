@@ -5,23 +5,72 @@
   import FloatingInput from '@/Components/FloatingInput/FloatingInput.vue';
   import FormInput from '@/Components/FloatingInput/FormInput.vue';
   import FloatingSelect from '@/Components/FloatingInput/FloatingSelect.vue';
+  import Chip from '@/Components/Chip.vue';
   import Pagination from '@/Shared/Pagination.vue';
   import Modal from '@/Components/Modal/Modal.vue';
   import { debounce } from 'lodash';
-  import { ref, watch, watchEffect } from 'vue';
+  import { ref, watch, watchEffect, computed } from 'vue';
   import { Inertia } from '@inertiajs/inertia';
-  import { formatCurrency, formatNumeric } from '@/Composables/Utilities';
+  import { formatCurrency, formatNumeric, stringLimit } from '@/Composables/Utilities';
   import { useToast } from 'vue-toastification';
+  import Calendar from '@/Components/Calendar.vue';
 
   const toast = useToast();
 
   const form = useForm({ id: null, service: null, price: null });
+  const selectedAppointment = ref({ id: null, message: null, schedule: null, patient: { first_name: null, last_name: null } });
+  const isAppointmentModalShown = ref(false);
+  const isDeleteModalShown = ref(false);
+  const isRestoreModalShown = ref(false);
+
+  const toggleAppointmentModal = () => {
+    isAppointmentModalShown.value = !isAppointmentModalShown.value;
+  };
+
+  const toggleDeleteModal = () => {
+    isDeleteModalShown.value = !isDeleteModalShown.value;
+  };
+
+  const toggleRestoreModal = () => {
+    isRestoreModalShown.value = !isRestoreModalShown.value;
+  };
+
+  const deleteAppointment = () => {
+    Inertia.delete(`/appointments/${selectedAppointment.value.id}`, {
+      preserveState: true,
+      onSuccess: () => {
+        toast.success('Appointment has been moved to trash successfully!');
+        toggleDeleteModal();
+      },
+    });
+  };
+
+  const restoreAppointment = () => {
+    form.put(`/appointments/restore/${selectedAppointment.value.id}`, {
+      preserveState: true,
+      onSuccess: () => {
+        toast.success('Appointment has been restored successfully!');
+        toggleRestoreModal();
+      },
+    });
+  };
+
+  const approveAppointment = () => {
+    Inertia.put(`/appointments/approve/${selectedAppointment.value.id}`, {
+      preserveState: true,
+      onSuccess: () => {
+        toast.success('Appointment has been approved successfully!');
+        toggleAppointmentModal();
+      },
+    });
+  };
 
   const props = defineProps({
     appointments: Object,
     errors: Object,
     filters: Object,
-    trashedAppointmentsCount: Number
+    trashedAppointmentsCount: Number,
+    todaysAppointment: Number,
   });
 
   let search = ref(props.filters.search);
@@ -30,42 +79,71 @@
   const searchAppointment = debounce(() => {
     Inertia.get('/appointments', { search: search.value, trashed: trashed.value }, { preserveState: true });
   }, 300);
-
-
 </script>
 
 <template>
   <Head title="Patient Appointments" />
 
   <BreezeAuthenticatedLayout>
-    <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8 grid grid-cols-2 lg:grid-cols-3 gap-x-3">
-      <div class="bg-red-500 flex-1 p-4 text-white rounded-md">
-        <div class="flex justify-between">
-          <div class="text-9xl flex items-center">{{ formatNumeric(trashedAppointmentsCount) }}</div>
-          <div class="flex flex-col items-end gap-y-8">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-            </svg>
-            <p class="uppercase font-medium tracking-wider leading-5">Trashed <br />Appointments</p>
-          </div>
-        </div>
-        <span class="sr-only">Trashed Appointments</span>
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="sm:px-6 lg:px-8 mt-6 mx-auto">
+        <p class="font-medium text-xl">Appointment Summary</p>
+        <p>Here is an overview of your appointments.</p>
       </div>
-      <div class="bg-green-600 flex-1 p-4 text-white rounded-md">
-        <div class="flex justify-between">
-          <div class="text-9xl flex items-center">{{ formatNumeric(appointments.data.length)}}</div>
-          <div class="flex flex-col items-end gap-y-8">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
-            </svg>
-            <p class="uppercase font-medium tracking-wider leading-5 text-right">Total <br />Appointments</p>
+      <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-wrap gap-x-4 md:flex-row gap-y-4">
+        <div class="bg-red-500 flex-1 p-4 text-white rounded-md">
+          <div class="flex justify-between">
+            <div class="text-9xl flex items-center">{{ formatNumeric(trashedAppointmentsCount) }}</div>
+            <div class="flex flex-col items-end gap-y-8">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+              </svg>
+              <p class="uppercase font-medium tracking-wider leading-5 text-right">Trashed <br />Appointments</p>
+            </div>
           </div>
+          <span class="sr-only">Trashed Appointments</span>
         </div>
-        <span class="sr-only">Total Appointments</span>
+        <div class="bg-green-600 flex-1 p-4 text-white rounded-md">
+          <div class="flex justify-between">
+            <div class="text-9xl flex items-center">{{ formatNumeric(appointments.data.length) }}</div>
+            <div class="flex flex-col items-end gap-y-8">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
+              </svg>
+              <p class="uppercase font-medium tracking-wider leading-5 text-right">Total <br />Appointments</p>
+            </div>
+          </div>
+          <span class="sr-only">Total Appointments</span>
+        </div>
+        <div class="bg-blue-600 flex-1 p-4 text-white rounded-md">
+          <div class="flex justify-between">
+            <div class="text-9xl flex items-center">{{ formatNumeric(todaysAppointment) }}</div>
+            <div class="flex flex-col items-end gap-y-8">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+              <p class="uppercase font-medium tracking-wider leading-5 text-right">Today's <br />Appointments</p>
+            </div>
+          </div>
+          <span class="sr-only">Today's Appointments</span>
+        </div>
       </div>
     </div>
+
+    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="sm:px-6 lg:px-8 mt-6 mx-auto">
+        <p class="font-medium text-xl">Appointment Calendar</p>
+        <p>Here is an overview of your appointments.</p>
+      </div>
+      <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8 md:flex gap-x-4">
+        <div class="flex-1 w-full">
+          <Calendar :data="appointments.data" />
+        </div>
+      </div>
+    </div>
+
     <div class="py-10">
-      <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+      <div class="max-w-7xl mx-auto px-6 lg:px-8">
         <div class="overflow-x-auto shadow-sm sm:rounded-lg">
           <div class="">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-white border-gray-200 rounded-lg pb-6">
@@ -80,14 +158,7 @@
                   </floating-select>
                 </form-input>
                 <div class="flex gap-x-2">
-                  <Button
-                    @click.prevent="
-                      isCreating = true;
-                    "
-                    size="sm"
-                    color="success"
-                    >Add Appointment</Button
-                  >
+                  <Button @click.prevent="isCreating = true" size="sm" color="success">Add Appointment</Button>
                   <form-input label="Search Appointment" for="search">
                     <floating-input v-model="search" id="search" @keyup="searchAppointment" />
                   </form-input>
@@ -101,7 +172,9 @@
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Patient</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Email</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Schedule</th>
+                      <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Message</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Sub Total</th>
+                      <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Status</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Created On</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Deleted On</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 sm:pl-6 text-left">Actions</th>
@@ -113,16 +186,56 @@
                       <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.patient.full_name }}</td>
                       <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.patient.email }}</td>
                       <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.schedule }}</td>
+                      <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ stringLimit(appointment.message) }}</td>
                       <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ formatCurrency(appointment.subtotal) }}</td>
+                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                        <Chip :label="appointment.appointment_status" color="green" />
+                      </td>
                       <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.created_at }}</td>
                       <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.deleted_at }}</td>
                       <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-sm sm:pr-6">
-                       
+                        <Button
+                          text
+                          size="sm"
+                          @click="
+                            toggleAppointmentModal();
+                            selectedAppointment = appointment;
+                          "
+                          >Details</Button
+                        >
+                        <Button text size="sm" color="success">Update</Button>
+                        <Button
+                          v-if="appointment.deleted_at"
+                          @click.prevent="
+                            toggleRestoreModal();
+                            selectedAppointment = appointment;
+                          "
+                          text
+                          size="sm"
+                          >Restore</Button
+                        >
+                        <Button
+                          v-else
+                          @click.prevent="
+                            toggleDeleteModal();
+                            selectedAppointment = appointment;
+                          "
+                          text
+                          size="sm"
+                          color="error"
+                          >Trash</Button
+                        >
+                      </td>
+                    </tr>
+                    <tr v-if="appointments.data.length == 0">
+                      <td colspan="9">
+                        <div class="mx-auto text-center py-4 font-medium text-gray-600">No data available ..</div>
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
+              <p class="text-sm mt-2 text-gray-500">Showing {{ appointments.from }} to {{ appointments.to }} out of {{ appointments.total }} appointments.</p>
               <pagination :links="appointments.links" right />
             </div>
           </div>
@@ -130,5 +243,62 @@
       </div>
     </div>
 
+    <Modal v-if="isAppointmentModalShown" @close="toggleAppointmentModal">
+      <template v-slot:title>
+        <p class="font-bold text-xl">Appointment Information</p>
+        <p class="text-sm text-gray-600">Here are the informations for this appointment</p>
+      </template>
+      <template v-slot:body>
+        <p class="mb-2 mt-3">Patient Information</p>
+        <p class="text-sm">Full Name: {{ selectedAppointment.patient.full_name }}</p>
+        <p class="text-sm">Email: {{ selectedAppointment.patient.email }}</p>
+        <p class="text-sm">Gender: {{ selectedAppointment.patient.gender }}</p>
+        <p class="mb-2 mt-4">Appointment Information</p>
+        <p class="text-sm">Schedule: {{ selectedAppointment.schedule }}</p>
+        <p class="text-sm">Message: {{ selectedAppointment.message }}</p>
+        <p class="text-sm">Created: {{ selectedAppointment.created_at }}</p>
+        <p class="mb-2 mt-4">Services Selected</p>
+        <p class="text-sm" v-for="services in selectedAppointment.services" :key="services.id">{{ services.service.service }} - {{ formatCurrency(services.service.price) }}</p>
+      </template>
+      <template v-slot:footer>
+        <Button @click.prevent="toggleAppointmentModal" text size="sm" color="gray">Close</Button>
+        <Button
+          v-if="selectedAppointment.appointment_status == 'Pending Approval' && selectedAppointment.appointment_status != 'Cancelled'"
+          @click.prevent="approveAppointment"
+          text
+          size="sm"
+          color="success"
+          >Approve</Button
+        >
+      </template>
+    </Modal>
+
+    <Modal v-if="isDeleteModalShown" @close="toggleDeleteModal">
+      <template v-slot:title>
+        <p class="font-bold text-xl">Confirm Delete</p>
+      </template>
+      <template v-slot:body>
+        <p class="text-sm text-gray-600">
+          Are you sure you want to move this appointment to trash? <span class="text-sm text-red-500"><br />Note: This data can still be restored.</span>
+        </p>
+      </template>
+      <template v-slot:footer>
+        <Button @click.prevent="toggleDeleteModal" text size="sm" color="gray">Close</Button>
+        <Button @click.prevent="deleteAppointment" text size="sm" color="error">Confirm</Button>
+      </template>
+    </Modal>
+
+    <Modal v-if="isRestoreModalShown" @close="toggleRestoreModal">
+      <template v-slot:title>
+        <p class="font-bold text-xl">Confirm Restore</p>
+      </template>
+      <template v-slot:body>
+        <p class="text-sm text-gray-600">Are you sure you want to restore this scheduled appointment? This might cause conflicts to some of the schedules.</p>
+      </template>
+      <template v-slot:footer>
+        <Button @click.prevent="toggleRestoreModal" text size="sm" color="gray">Close</Button>
+        <Button @click.prevent="restoreAppointment" text size="sm" color="success">Restore</Button>
+      </template>
+    </Modal>
   </BreezeAuthenticatedLayout>
 </template>

@@ -57,16 +57,16 @@
   const coloredButton = () => {
     switch (props.color) {
       case 'warning':
-        cssClass = 'bg-orange-500 hover:bg-orange-400 ring-orange-500';
+        cssClass = 'bg-orange-500 hover:bg-orange-400 ring-orange-500 disabled:bg-orange-300 disabled:hover:bg-orange-300';
         break;
       case 'success':
-        cssClass = 'bg-green-500 hover:bg-green-400 ring-green-500';
+        cssClass = 'bg-green-600 hover:bg-green-500 ring-green-500 disabled:bg-green-300 disabled:hover:bg-green-300';
         break;
       case 'error':
-        cssClass = 'bg-red-500 hover:bg-red-400 ring-red-500';
+        cssClass = 'bg-red-500 hover:bg-red-400 ring-red-500 disabled:bg-red-300 disabled:hover:bg-red-300';
         break;
       default:
-        cssClass = 'bg-blue-600 hover:bg-blue-500 ring-blue-500';
+        cssClass = 'bg-blue-600 hover:bg-blue-500 ring-blue-500 disabled:bg-blue-300 disabled:hover:bg-blue-300';
     }
   };
 

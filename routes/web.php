@@ -25,22 +25,27 @@ use Inertia\Inertia;
 
 Route::get('/', [HomeController::class, 'index']);
 
-Route::get('/dashboard', function () {
-    return Inertia::render('Dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// Route::get('/dashboard', function () {
+//     return Inertia::render('Dashboard');
+// })->middleware(['auth', 'verified'])->name('dashboard');
 
 Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+    Route::put('/appointments/restore/{appointment}', [AppointmentController::class, 'restore'])->withTrashed();
+    Route::put('/appointments/approve/{appointment}', [AppointmentController::class, 'approve']);
     Route::apiResource('/appointments', AppointmentController::class);
 
     Route::put('/services/restore/{service}', [ServiceController::class, 'restore'])->withTrashed();
     Route::apiResource('/services', ServiceController::class);
 
     Route::apiResource('/patients', PatientController::class);
-    Route::apiResource('/inquiries', InquiryController::class);
+    Route::apiResource('/inquiries', InquiryController::class)->only(['index', 'store', 'destroy']);
     Route::apiResource('/payments', PaymentController::class);
-    Route::apiResource('/settings', SettingsController::class);
+    
+    Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::post('/settings/update', [SettingsController::class, 'update'])->name('settings.update');
+    Route::post('/settings/update-password', [SettingsController::class, 'updatePassword'])->name('settings.update-password');
 });
 
 

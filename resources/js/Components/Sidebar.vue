@@ -1,18 +1,31 @@
 <script setup>
   import { onMounted } from 'vue';
   import { Link } from '@inertiajs/inertia-vue3';
-  onMounted(() => {
-    console.log();
+
+  const emit = defineEmits(['close'])
+
+  const props = defineProps({
+    isVisible: {
+      type: Boolean,
+      value: false,
+    },
   });
 
   const isCurrentRoute = (data) => {
     return route().current(data) ? 'text-blue-500 [&>span]:font-bold [&>svg]:text-blue-500' : '';
   };
+
+  const closeSidebar = () => {
+    emit('close')
+  }
 </script>
 
 <template>
-  <aside class="w-64 fixed left-0 top-0 h-screen" aria-label="Sidebar">
-    <div class="overflow-y-auto py-4 px-3 bg-gray-50 rounded dark:bg-gray-800 h-full">
+  <teleport to="body">
+    <div @click.prevent="closeSidebar" v-show="isVisible" class="w-full h-screen bg-gray-700/50 z-30 fixed inset-0 md:hidden"></div>
+  </teleport>
+  <aside :class="{ 'hidden': !isVisible }" class="w-64 fixed left-0 top-0 h-screen md:block z-40 border-r" aria-label="Sidebar">
+    <div class="overflow-y-auto py-4 px-3 bg-gray-50 dark:bg-gray-800 h-full">
       <img src="/images/logo.svg" alt="" class="mx-auto mt-4 mb-10" />
       <p class="text-gray-700 font-medium">Main Menu</p>
       <ul class="space-y-2 mt-4 px-3">
@@ -158,9 +171,9 @@
       </ul>
       <div class="absolute bottom-7 left-0 mx-auto flex items-center justify-center w-full">
         <Link :href="route('logout')" method="POST" as="button" class="flex gap-x-1 hover:bg-red-100 px-4 py-2 rounded-md duration-200 ease-in-out">
-          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500 " fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg
-          >
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+          </svg>
           Logout
         </Link>
       </div>

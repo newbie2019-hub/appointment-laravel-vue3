@@ -12,15 +12,18 @@ class PatientController extends Controller
 
     public function index(Request $request)
     {
-        $patients = User::notAdmin()->withTrashed()
-            ->when($request->search, fn($query) 
+        $patients = User::notAdmin()->when($request->search, fn($query) 
                 => $query->whereLike('first_name', $request->search)
                 ->orWhereLike('last_name', $request->search)
                 ->orWhereLike('email', $request->search)
-            )->paginate(10);
+            )->when($request->trashed, fn($query, $filter) 
+                => $filter === "only" ? $query->onlyTrashed() : $query->withTrashed()
+            )->paginate(10)->withQueryString();
 
+        $filters = $request->only(['search', 'trashed']);
         $trashedPatientsCount = User::notAdmin()->onlyTrashed()->count();
-        return Inertia::render('Patients', compact(['patients', 'trashedPatientsCount']));
+
+        return Inertia::render('Patients', compact(['patients', 'trashedPatientsCount', 'filters']));
     }
 
 

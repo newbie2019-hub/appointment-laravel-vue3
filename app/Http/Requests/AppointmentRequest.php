@@ -28,13 +28,15 @@ class AppointmentRequest extends FormRequest
             'selected_services' => 'required',
             'subtotal' => 'required',
             'user_id' => 'nullable|exists:users,id',
+            'message' => 'required|max:255'
         ];
     }
 
     public function messages()
     {
         return [
-            'selected_services.required' => 'Please select at least 1 service'
+            'selected_services.required' => 'Please select at least 1 service',
+            'message.required' => 'Please describe your dental appointment',
         ];
     }
 }
