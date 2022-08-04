@@ -5,23 +5,29 @@
   import FloatingInput from '@/Components/FloatingInput/FloatingInput.vue';
   import FormInput from '@/Components/FloatingInput/FormInput.vue';
   import FloatingSelect from '@/Components/FloatingInput/FloatingSelect.vue';
+  import FloatingTextArea from '@/Components/FloatingInput/FloatingTextArea.vue';
   import Chip from '@/Components/Chip.vue';
   import Pagination from '@/Shared/Pagination.vue';
   import Modal from '@/Components/Modal/Modal.vue';
   import { debounce } from 'lodash';
-  import { ref, watch, watchEffect, computed } from 'vue';
+  import { ref, watch, watchEffect, computed, toRef } from 'vue';
   import { Inertia } from '@inertiajs/inertia';
   import { formatCurrency, formatNumeric, stringLimit } from '@/Composables/Utilities';
   import { useToast } from 'vue-toastification';
   import Calendar from '@/Components/Calendar.vue';
+  import vSelect from 'vue-select';
 
   const toast = useToast();
 
-  const form = useForm({ id: null, service: null, price: null });
+  const form = useForm({ id: null, service: null, price: null, subtotal: 0, selected_services: [] });
   const selectedAppointment = ref({ id: null, message: null, schedule: null, patient: { first_name: null, last_name: null } });
+  
   const isAppointmentModalShown = ref(false);
   const isDeleteModalShown = ref(false);
   const isRestoreModalShown = ref(false);
+  const isCreateModalShown = ref(false);
+
+  const selectedService = toRef(form, 'selected_services');
 
   const toggleAppointmentModal = () => {
     isAppointmentModalShown.value = !isAppointmentModalShown.value;
@@ -33,6 +39,10 @@
 
   const toggleRestoreModal = () => {
     isRestoreModalShown.value = !isRestoreModalShown.value;
+  };
+
+  const toggleCreateModal = () => {
+    isCreateModalShown.value = !isCreateModalShown.value;
   };
 
   const deleteAppointment = () => {
@@ -65,13 +75,25 @@
     });
   };
 
+  const saveAppointment = () => {};
+
   const props = defineProps({
     appointments: Object,
     errors: Object,
     filters: Object,
     trashedAppointmentsCount: Number,
     todaysAppointment: Number,
+    services: Object,
   });
+
+  const setSubtotalValue = () => {
+    form.subtotal = 0;
+    form.selected_services.map((service) => {
+      form.subtotal += parseFloat(service.price);
+    });
+  };
+
+  watch(selectedService, setSubtotalValue);
 
   let search = ref(props.filters.search);
   let trashed = ref(props.filters.trashed);
@@ -158,7 +180,15 @@
                   </floating-select>
                 </form-input>
                 <div class="flex gap-x-2">
-                  <Button @click.prevent="isCreating = true" size="sm" color="success">Add Appointment</Button>
+                  <Button
+                    @click.prevent="
+                      isCreating = true;
+                      toggleCreateModal();
+                    "
+                    size="sm"
+                    color="success"
+                    >Add Appointment</Button
+                  >
                   <form-input label="Search Appointment" for="search">
                     <floating-input v-model="search" id="search" @keyup="searchAppointment" />
                   </form-input>
@@ -235,7 +265,7 @@
                   </tbody>
                 </table>
               </div>
-              <p class="text-sm mt-2 text-gray-500">Showing {{ appointments.from }} to {{ appointments.to }} out of {{ appointments.total }} appointments.</p>
+              <p class="text-sm mt-2 text-gray-500">Showing {{ appointments.from ?? 0 }} to {{ appointments.to ?? 0 }} out of {{ appointments.total ?? 0 }} appointments.</p>
               <pagination :links="appointments.links" right />
             </div>
           </div>
@@ -262,12 +292,7 @@
       </template>
       <template v-slot:footer>
         <Button @click.prevent="toggleAppointmentModal" text size="sm" color="gray">Close</Button>
-        <Button
-          v-if="selectedAppointment.appointment_status == 'Pending Approval' && selectedAppointment.appointment_status != 'Cancelled'"
-          @click.prevent="approveAppointment"
-          text
-          size="sm"
-          color="success"
+        <Button v-if="selectedAppointment.appointment_status == 'Pending' && selectedAppointment.appointment_status != 'Cancelled'" @click.prevent="approveAppointment" text size="sm" color="success"
           >Approve</Button
         >
       </template>
@@ -285,6 +310,49 @@
       <template v-slot:footer>
         <Button @click.prevent="toggleDeleteModal" text size="sm" color="gray">Close</Button>
         <Button @click.prevent="deleteAppointment" text size="sm" color="error">Confirm</Button>
+      </template>
+    </Modal>
+
+    <Modal v-if="isCreateModalShown" @close="toggleCreateModal">
+      <template v-slot:title>
+        <p class="font-bold text-xl">New Appointment</p>
+        <p>Please fill-in all fields.</p>
+      </template>
+      <template v-slot:body>
+        <form class="flex flex-col">
+          <form-input for="appointment" :error="errors.schedule" label="Date and Time" class="mt-3">
+            <floating-input type="datetime-local" id="appointment" v-model="form.schedule" />
+          </form-input>
+          <form-input for="message" :error="errors.message" label="Message" class="mt-2">
+            <floating-text-area id="message" v-model="form.message" />
+          </form-input>
+          <p class="mt-2 text-sm">Select Service</p>
+          <div class="flex flex-wrap">
+            <v-select class="w-full [&>*]:z-30 style-chooser" v-model="form.selected_services" :options="services" label="service" multiple>
+              <template v-slot:option="option" class="z-30">
+                <div class="flex justify-between items-center z-30">
+                  <div class="flex flex-col">
+                    <p class="text-xl font-medium">
+                      {{ option.service }}
+                    </p>
+                    <p class="text-sm">{{ formatCurrency(option.price) }}</p>
+                  </div>
+                  <div v-if="isOptionSelected(option.id)">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="green" stroke-width="2">
+                      <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+                  </div>
+                </div>
+              </template>
+            </v-select>
+            <p v-if="errors.selected_services" class="mt-1 text-sm text-red-500">{{ errors.selected_services }}</p>
+          </div>
+          <p class="mt-2">Subtotal: {{ formatCurrency(form.subtotal) }}</p>
+        </form>
+      </template>
+      <template v-slot:footer>
+        <Button @click.prevent="toggleCreateModal" text size="sm" color="gray">Close</Button>
+        <Button @click.prevent="saveAppointment" text size="sm" color="success">Save Appointment</Button>
       </template>
     </Modal>
 

@@ -10,10 +10,10 @@
   import { formatCurrency } from '@/Composables/Utilities';
   import { MapIcon, CalendarIcon } from '@heroicons/vue/solid';
   import { useToast } from 'vue-toastification';
+  import vSelect from 'vue-select';
   import moment from 'moment'
 
   const toast = useToast();
-  import vSelect from 'vue-select';
 
   const authenticatedUser = computed(() => {
     return usePage().props.value.auth.user;

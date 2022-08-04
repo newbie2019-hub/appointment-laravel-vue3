@@ -19,7 +19,7 @@ return new class extends Migration
             $table->foreignId('user_id')->nullable()->constrained();
             $table->string('subtotal');
             $table->string('payment_status')->default('Pending');
-            $table->string('appointment_status')->default('Pending Approval');
+            $table->string('appointment_status')->default('Pending');
             $table->string('message');
             $table->softDeletes();
             $table->timestamps();

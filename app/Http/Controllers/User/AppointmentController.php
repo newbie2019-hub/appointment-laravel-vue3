@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\AppointmentRequest;
 use App\Models\Appointment;
 use App\Models\AppointmentService;
+use App\Models\Service;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -22,7 +23,7 @@ class AppointmentController extends Controller
         )->paginate(10)->withQueryString();
 
         $trashedAppointmentsCount = Appointment::onlyTrashed()->count();
-
+        $services = Service::get();
         $todaysAppointment = Appointment::whereDate('schedule', now())->count();
         
         /*  
@@ -32,7 +33,7 @@ class AppointmentController extends Controller
         *  data 
         */
         $filters = $request->only(['search', 'trashed']);
-        return Inertia::render('Appointments', compact('appointments', 'filters', 'trashedAppointmentsCount', 'todaysAppointment'));
+        return Inertia::render('Appointments', compact('services', 'appointments', 'filters', 'trashedAppointmentsCount', 'todaysAppointment'));
     }
  
     public function store(AppointmentRequest $request)
