@@ -33,6 +33,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::put('/appointments/restore/{appointment}', [AppointmentController::class, 'restore'])->withTrashed();
+    Route::put('/appointments/finished/{appointment}', [AppointmentController::class, 'finished']);
     Route::put('/appointments/approve/{appointment}', [AppointmentController::class, 'approve']);
     Route::apiResource('/appointments', AppointmentController::class);
     Route::get('/search-patients', [AppointmentController::class, 'search']);
@@ -41,6 +42,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::apiResource('/services', ServiceController::class);
 
     Route::apiResource('/patients', PatientController::class);
+
     Route::apiResource('/inquiries', InquiryController::class)->only(['index', 'store', 'destroy']);
     Route::apiResource('/payments', PaymentController::class);
     

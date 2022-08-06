@@ -117,7 +117,7 @@
                       </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 bg-white">
-                      <tr v-for="(inquiry, i) in inquiries.data" :key="i">
+                      <tr v-for="(inquiry, i) in inquiries.data" :key="i" class="hover:bg-gray-200">
                         <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ inquiry.id }}</td>
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900">{{ inquiry.email }}</td>
                         <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ inquiry.full_name }}</td>

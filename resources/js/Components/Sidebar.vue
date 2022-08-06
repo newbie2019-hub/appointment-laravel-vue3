@@ -1,9 +1,11 @@
 <script setup>
-  import { onMounted } from 'vue';
-  import { Link } from '@inertiajs/inertia-vue3';
+  import { onMounted, computed } from 'vue';
+  import { Link, usePage } from '@inertiajs/inertia-vue3';
 
-  const emit = defineEmits(['close'])
-
+  const emit = defineEmits(['close']);
+  const authenticatedUser = computed(() => {
+    return usePage().props.value.auth.user;
+  });
   const props = defineProps({
     isVisible: {
       type: Boolean,
@@ -16,8 +18,8 @@
   };
 
   const closeSidebar = () => {
-    emit('close')
-  }
+    emit('close');
+  };
 </script>
 
 <template>
@@ -73,6 +75,7 @@
         </li>
         <li>
           <Link
+            v-if="authenticatedUser.is_admin"
             :href="route('services.index')"
             :class="isCurrentRoute('services.index')"
             class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -91,6 +94,7 @@
         </li>
         <li>
           <Link
+            v-if="authenticatedUser.is_admin"
             :href="route('patients.index')"
             :class="isCurrentRoute('patients.index')"
             class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -110,6 +114,7 @@
         </li>
         <li>
           <Link
+            v-if="authenticatedUser.is_admin"
             :href="route('inquiries.index')"
             :class="isCurrentRoute('inquiries.index')"
             class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -131,6 +136,7 @@
         </li>
         <li>
           <Link
+            v-if="authenticatedUser.is_admin"
             :href="route('payments.index')"
             :class="isCurrentRoute('payments.index')"
             class="flex items-center p-2 text-base font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-100 dark:hover:bg-gray-700"

@@ -29,8 +29,10 @@
 
   const isRestoreModalShown = ref(false);
   const isDeleteModalShown = ref(false);
+  const isViewModalShown = ref(false);
+  const isUpdateModalShown = ref(false);
 
-  const selectedUser = useForm({});
+  let selectedUser = useForm({id: null, first_name: null, middle_name: null, last_name: null, gender: null, address: null, birthday: null});
 
   const toggleRestoreModal = () => {
     isRestoreModalShown.value = !isRestoreModalShown.value;
@@ -38,6 +40,21 @@
 
   const toggleDeleteModal = () => {
     isDeleteModalShown.value = !isDeleteModalShown.value;
+  };
+
+  const toggleViewModal = () => {
+    isViewModalShown.value = !isViewModalShown.value;
+  };
+
+  const toggleUpdateModal = (data = null) => {
+    selectedUser.id = data?.id
+    selectedUser.first_name = data?.first_name
+    selectedUser.middle_name = data?.middle_name
+    selectedUser.last_name = data?.last_name
+    selectedUser.gender = data?.gender
+    selectedUser.address = data?.address
+    selectedUser.birthday = data?.birthday
+    isUpdateModalShown.value = !isUpdateModalShown.value;
   };
 
   const deletePatient = () => {
@@ -48,6 +65,19 @@
       },
       onSuccess: () => {
         toast.success(message.value);
+      },
+      onError: () => {
+        toast.error('Something went wrong!');
+      },
+    });
+  };
+
+  const updatePatient = () => {
+    selectedUser.transform((data) => ({...data})).put(`patients/${selectedUser.id}`, {
+      preserveState: true,
+      onSuccess: () => {
+        toast.success(`${message.value}`);
+        toggleUpdateModal()
       },
       onError: () => {
         toast.error('Something went wrong!');
@@ -132,7 +162,7 @@
                       </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-300 bg-white">
-                      <tr v-for="(patient, i) in patients.data" :key="i" :class="{ 'bg-red-100': patient.deleted_at }">
+                      <tr v-for="(patient, i) in patients.data" :key="i" :class="{ 'bg-red-100': patient.deleted_at }" class="hover:bg-gray-200">
                         <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ patient.id }}</td>
                         <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 flex items-center gap-x-2">
                           <div class="rounded-full bg-blue-400 w-8 h-8 border-gray-100 flex items-center justify-center">
@@ -154,8 +184,25 @@
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900">{{ patient.created_at }}</td>
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900">{{ patient.deleted_at }}</td>
                         <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-sm sm:pr-6">
-                          <Button @click.prevent="" text size="sm" color="">View</Button>
-                          <Button @click.prevent="" text size="sm" color="">Update</Button>
+                          <Button
+                            @click.prevent="
+                              toggleViewModal();
+                              selectedUser.value = { ...patient };
+                            "
+                            text
+                            size="sm"
+                            color=""
+                            >View</Button
+                          >
+                          <Button
+                            @click.prevent="
+                              toggleUpdateModal(patient);
+                            "
+                            text
+                            size="sm"
+                            color=""
+                            >Update</Button
+                          >
                           <Button
                             v-if="!patient.deleted_at"
                             @click.prevent="
@@ -170,7 +217,7 @@
                           <Button
                             v-else
                             @click.prevent="
-                              toggleDeleteModal();
+                              toggleRestoreModal();
                               selectedUser.value = { ...patient };
                             "
                             text
@@ -197,6 +244,42 @@
       </div>
     </div>
 
+    <Modal v-if="isViewModalShown" @close="toggleViewModal">
+      <template v-slot:title>
+        <p class="font-bold text-xl">Patient Information</p>
+        <p class="text-sm">Here are the informations of the patient</p>
+      </template>
+      <template v-slot:body>
+        <div class="rounded-full bg-blue-400 w-16 h-16 border-gray-100 flex items-center justify-center mx-auto mt-4">
+          <svg v-if="!selectedUser.value.image" xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              fill-rule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
+              clip-rule="evenodd"
+            />
+          </svg>
+          <img :src="`images/profile/${selectedUser.value.image}`" class="object-fit rounded-full h-full" alt="" />
+        </div>
+        <div class="text-center">
+          <p class="mt-2 font-medium">{{ selectedUser.value.full_name }}</p>
+          <p class="text-sm">{{ selectedUser.value.email }}</p>
+        </div>
+        <div class="flex mt-4 gap-x-2">
+          <div class="w-1/2">
+            <p class="text-sm font-medium">Address: {{ selectedUser.value.address }}</p>
+            <p class="text-sm font-medium">Birthday: {{ selectedUser.value.birthday }}</p>
+          </div>
+          <div class="w-1/2">
+            <p class="text-sm font-medium">Gender: {{ selectedUser.value.gender }}</p>
+            <p class="text-sm font-medium">Contact: {{ selectedUser.value.contact_number }}</p>
+          </div>
+        </div>
+      </template>
+      <template v-slot:footer>
+        <Button @click.prevent="toggleViewModal" text size="sm" color="gray">Close</Button>
+      </template>
+    </Modal>
+
     <Modal v-if="isDeleteModalShown" @close="toggleDeleteModal">
       <template v-slot:title>
         <p class="font-bold text-xl">Confirm Delete</p>
@@ -209,6 +292,56 @@
       <template v-slot:footer>
         <Button @click.prevent="toggleDeleteModal" text size="sm" color="gray">Close</Button>
         <Button @click.prevent="deletePatient" text size="sm" color="error">Confirm</Button>
+      </template>
+    </Modal>
+
+    <Modal v-if="isUpdateModalShown" @close="toggleUpdateModal">
+      <template v-slot:title>
+        <p class="font-bold text-xl">Update User</p>
+        <p class="text-sm">All input fields are required.</p>
+      </template>
+      <template v-slot:body>
+        <div class="w-full">
+          <form-input for="firstname" :error="errors.first_name" label="First Name" class="mt-3">
+            <floating-input type="text" id="firstname" v-model="selectedUser.first_name" autofocus autocomplete="name" />
+          </form-input>
+        </div>
+        <div class="flex gap-x-2">
+          <div class="w-1/2">
+            <form-input for="middlename" :error="errors.middle_name" label="Middle Name " class="mt-3">
+              <floating-input type="text" id="middlename" v-model="selectedUser.middle_name" autofocus autocomplete="name" />
+            </form-input>
+          </div>
+          <div class="w-1/2">
+            <form-input for="lastname" :error="errors.last_name" label="Last Name" class="mt-3">
+              <floating-input type="text" id="lastname" v-model="selectedUser.last_name" autofocus autocomplete="name" />
+            </form-input>
+          </div>
+        </div>
+        <div class="w-full">
+          <form-input for="address" :error="errors.address" label="Address" class="mt-3">
+            <floating-input type="text" id="address" v-model="selectedUser.address" autofocus autocomplete="address" />
+          </form-input>
+        </div>
+        <div class="flex w-full gap-x-2">
+          <div class="w-1/2">
+            <form-input for="gender" :error="errors.gender" label="Gender" class="mt-3">
+              <floating-select v-model="selectedUser.gender">
+                <option value="Male" class="font-medium">Male</option>
+                <option value="Female" class="font-medium">Female</option>
+              </floating-select>
+            </form-input>
+          </div>
+          <div class="w-1/2">
+            <form-input for="gender" :error="errors.gender" label="Date of Birth" class="mt-3">
+              <floating-input type="date" v-model="selectedUser.birthday" />
+            </form-input>
+          </div>
+        </div>
+      </template>
+      <template v-slot:footer>
+        <Button @click.prevent="toggleUpdateModal" text size="sm" color="gray">Close</Button>
+        <Button @click.prevent="updatePatient" text size="sm" color="success">Save Changes</Button>
       </template>
     </Modal>
 

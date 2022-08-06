@@ -23,7 +23,7 @@ class InquiryController extends Controller
             )->latest()->paginate(10);
 
         $todaysInquiry = Inquiry::whereDate('created_at', now())->count();
-        $totalInquiries = Inquiry::whereDate('created_at', now())->count();
+        $totalInquiries = Inquiry::count();
 
         return Inertia::render('Inquiries', compact('inquiries', 'todaysInquiry', 'totalInquiries'));
     }

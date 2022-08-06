@@ -14,6 +14,11 @@ class Service extends Model
 
     protected function serializeDate(DateTimeInterface $date)
     {
-        return $date->format('Y-m-d h:i A');
+        return $date->format('d-M-Y h:i A');
+    }
+
+    public function monthly_appointments()
+    {
+        return $this->hasMany(AppointmentService::class, 'service_id', 'id')->whereDate('created_at', '>=', now()->startOfMonth());
     }
 }

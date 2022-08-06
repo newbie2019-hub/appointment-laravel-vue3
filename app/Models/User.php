@@ -58,7 +58,8 @@ class User extends Authenticatable
 
     protected function serializeDate(DateTimeInterface $date)
     {
-        return $date->format('Y-m-d h:i A');
+        // return $date->format('Y-m-d h:i A');
+        return $date->format('d-M-Y h:i A');
     }
 
     protected function password(): Attribute

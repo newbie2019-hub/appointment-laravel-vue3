@@ -12,18 +12,23 @@
   import { debounce } from 'lodash';
   import { ref, watch, watchEffect, computed, toRef } from 'vue';
   import { Inertia } from '@inertiajs/inertia';
-  import { formatCurrency, formatNumeric, stringLimit } from '@/Composables/Utilities';
+  import { formatCurrency, formatNumeric, stringLimit, chipColor } from '@/Composables/Utilities';
   import { useToast } from 'vue-toastification';
   import Calendar from '@/Components/Calendar.vue';
   import VueMultiselect from 'vue-multiselect';
+  import moment from 'moment'
 
-  const errorMessage = computed(() => { return usePage().props.value.errors.error ?? 'Something went wrong' })
+  const errorMessage = computed(() => {
+    return usePage().props.value.errors.error ?? 'Something went wrong';
+  });
+
   const toast = useToast();
 
-  const form = useForm({ id: null, service: null, price: null, subtotal: 0, selected_services: [], user_id: null, message: '', schedule: '', });
+  let form = useForm({ id: null, service: null, price: null, subtotal: 0, selected_services: [], user_id: null, message: '', schedule: '' });
   const selectedAppointment = ref({ id: null, message: null, schedule: null, patient: { first_name: null, last_name: null } });
 
   const isAppointmentModalShown = ref(false);
+  const isCreating = ref(false);
   const isDeleteModalShown = ref(false);
   const isRestoreModalShown = ref(false);
   const isCreateModalShown = ref(false);
@@ -42,9 +47,23 @@
     isRestoreModalShown.value = !isRestoreModalShown.value;
   };
 
-  const toggleCreateModal = () => {
-    form.reset()
+  const toggleCreateModal = (data = null) => {
+    if(data != null) {
+      form.message = data.message
+      form.id = data.id
+      form.user_id = data.patient
+      form.selected_services = data.services?.map((service) => service.service)
+      form.schedule = moment(data.schedule).format('YYYY-MM-DDThh:mm')
+    }
     isCreateModalShown.value = !isCreateModalShown.value;
+  };
+
+  const initiateMethod = () => {
+    if (isCreating.value) {
+      saveAppointment();
+    } else {
+      updateAppointment();
+    }
   };
 
   const deleteAppointment = () => {
@@ -70,9 +89,8 @@
   const approveAppointment = () => {
     form.put(`/appointments/approve/${selectedAppointment.value.id}`, {
       preserveState: true,
-      
       onError: () => {
-        toast.error('Something went wrong')
+        toast.error('Something went wrong');
       },
       onSuccess: () => {
         toast.success('Appointment has been approved successfully!');
@@ -81,18 +99,49 @@
     });
   };
 
-  const saveAppointment = () => {
-    form.transform((data) => ({...data, user_id: data.user_id.id}))
-    .post('/appointments', {
+  const finishedAppointment = () => {
+    form.put(`/appointments/finished/${selectedAppointment.value.id}`, {
       preserveState: true,
-      onError: (err) => {
-        toast.error(`${errorMessage.value}`);
+      onError: () => {
+        toast.error('Something went wrong');
       },
       onSuccess: () => {
-        toast.success('Appointment created successfully!');
-        form.reset();
+        toast.success(`${usePage().props.value.flash.message}`);
+        toggleAppointmentModal();
       },
     });
+  };
+
+  const saveAppointment = () => {
+    form
+      .transform((data) => ({ ...data, user_id: data?.user_id?.id }))
+      .post('/appointments', {
+        preserveState: true,
+        onError: (err) => {
+          toast.error(`${errorMessage.value}`);
+        },
+        onSuccess: () => {
+          toast.success('Appointment created successfully!');
+          toggleCreateModal();
+          form.reset();
+        },
+      });
+  };
+
+  const updateAppointment = () => {
+    form
+      .transform((data) => ({ ...data, user_id: data?.user_id?.id }))
+      .put(`/appointments/${form.id}`, {
+        preserveState: true,
+        onError: (err) => {
+          toast.error(`${errorMessage.value}`);
+        },
+        onSuccess: () => {
+          toast.success('Appointment update successfully!');
+          toggleCreateModal();
+          form.reset();
+        },
+      });
   };
 
   const props = defineProps({
@@ -107,7 +156,7 @@
 
   const setSubtotalValue = () => {
     form.subtotal = 0;
-    form.selected_services.map((service) => {
+    form.selected_services?.map((service) => {
       form.subtotal += parseFloat(service.price);
     });
   };
@@ -131,7 +180,6 @@
       },
     );
   }, 300);
-
 </script>
 
 <template>
@@ -230,27 +278,31 @@
                   <thead class="bg-gray-50">
                     <tr class="[&>*]:uppercase font-medium text-xs text-gray-500">
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6">ID</th>
+                      <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Status</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Patient</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Email</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Schedule</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Message</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Sub Total</th>
-                      <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Status</th>
+                      <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Payment</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Created On</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Deleted On</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 sm:pl-6 text-left">Actions</th>
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-gray-200 bg-white">
-                    <tr v-for="(appointment, i) in appointments.data" :key="i" :class="{ 'bg-red-100': appointment.deleted_at }">
+                    <tr v-for="(appointment, i) in appointments.data" :key="i" class="hover:bg-gray-200" :class="{ 'bg-red-100': appointment.deleted_at }">
                       <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.id }}</td>
+                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                        <Chip :label="appointment.appointment_status" :color="chipColor(appointment.appointment_status)" />
+                      </td>
                       <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.patient.full_name }}</td>
                       <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.patient.email }}</td>
                       <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.schedule }}</td>
                       <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ stringLimit(appointment.message) }}</td>
                       <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ formatCurrency(appointment.subtotal) }}</td>
                       <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                        <Chip :label="appointment.appointment_status" :color="appointment.appointment_status == 'Approved' ? 'green' : 'red'" />
+                        <Chip :label="appointment.payment_status" :color="chipColor(appointment.payment_status)" />
                       </td>
                       <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.created_at }}</td>
                       <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.deleted_at }}</td>
@@ -264,19 +316,20 @@
                           "
                           >Details</Button
                         >
-                        <Button text size="sm" color="success">Update</Button>
                         <Button
-                          v-if="appointment.deleted_at"
-                          @click.prevent="
-                            toggleRestoreModal();
-                            selectedAppointment = appointment;
+                          v-if="!appointment.deleted_at && (appointment.appointment_status != 'Approved' && appointment.appointment_status != 'Finished' || $page.props.auth.user.is_admin)"
+                          @click="
+                            isCreating = false;
+                            toggleCreateModal(appointment);
                           "
                           text
                           size="sm"
-                          >Restore</Button
+                          color="success"
+                          >Update</Button
                         >
+                        <Button v-if="!appointment.deleted_at" text size="sm" color="">Payment</Button>
                         <Button
-                          v-else
+                          v-if="!appointment.deleted_at"
                           @click.prevent="
                             toggleDeleteModal();
                             selectedAppointment = appointment;
@@ -289,7 +342,7 @@
                       </td>
                     </tr>
                     <tr v-if="appointments.data.length == 0">
-                      <td colspan="9">
+                      <td colspan="11">
                         <div class="mx-auto text-center py-4 font-medium text-gray-600">No data available ..</div>
                       </td>
                     </tr>
@@ -323,7 +376,24 @@
       </template>
       <template v-slot:footer>
         <Button @click.prevent="toggleAppointmentModal" text size="sm" color="gray">Close</Button>
-        <Button v-if="selectedAppointment.appointment_status == 'Pending' && selectedAppointment.appointment_status != 'Cancelled'" @click.prevent="approveAppointment" text size="sm" color="success"
+        <Button
+          v-if="
+            selectedAppointment.deleted_at == null && selectedAppointment.appointment_status == 'Approved' && selectedAppointment.appointment_status != 'Cancelled' && $page.props.auth.user.is_admin
+          "
+          @click.prevent="finishedAppointment"
+          text
+          size="sm"
+          color="success"
+          >Mark as Finished</Button
+        >
+        <Button
+          v-if="
+            selectedAppointment.deleted_at == null && selectedAppointment.appointment_status == 'Pending' && selectedAppointment.appointment_status != 'Cancelled' && $page.props.auth.user.is_admin
+          "
+          @click.prevent="approveAppointment"
+          text
+          size="sm"
+          color="success"
           >Approve</Button
         >
       </template>
@@ -334,9 +404,7 @@
         <p class="font-bold text-xl">Confirm Delete</p>
       </template>
       <template v-slot:body>
-        <p class="text-sm text-gray-600">
-          Are you sure you want to move this appointment to trash? <span class="text-sm text-red-500"><br />Note: This data can still be restored.</span>
-        </p>
+        <p class="text-sm text-gray-600">Are you sure you want to move this appointment to trash? Once moved to trash the appointment status will be marked as cancelled and cannot be restored.</p>
       </template>
       <template v-slot:footer>
         <Button @click.prevent="toggleDeleteModal" text size="sm" color="gray">Close</Button>
@@ -346,7 +414,7 @@
 
     <Modal v-if="isCreateModalShown" @close="toggleCreateModal">
       <template v-slot:title>
-        <p class="font-bold text-xl">New Appointment</p>
+        <p class="font-bold text-xl">{{ isCreating ? 'New Appointment' : 'Update Appointment'}}</p>
         <p>Please fill-in all fields.</p>
       </template>
       <template v-slot:body>
@@ -358,7 +426,16 @@
             <floating-text-area id="message" v-model="form.message" />
           </form-input>
           <p class="mt-2 text-sm">Select Service</p>
-          <VueMultiselect v-model="form.selected_services" :options="services" :multiple="true" selectLabel="Select" deselectLabel="Deselect" label="service" track-by="id">
+          <VueMultiselect
+            v-model="form.selected_services"
+            :options="services"
+            :multiple="true"
+            class="border-2 border-gray-500 rounded-lg"
+            selectLabel="Select"
+            deselectLabel="Deselect"
+            label="service"
+            track-by="id"
+          >
             <template #option="props">
               <div class="option__desc flex flex-col">
                 <span class="option__title">{{ props.option.service }}</span>
@@ -367,15 +444,29 @@
             </template>
           </VueMultiselect>
           <p v-if="errors.selected_services" class="mt-1 text-sm text-red-500">{{ errors.selected_services }}</p>
-          <p class="mt-2 text-sm">Select Patient</p>
-          <VueMultiselect v-model="form.user_id" @search-change="searchPatient" :options="users" :multiple="false" selectLabel="Select" deselectLabel="Deselect" label="full_name" track-by="id"> </VueMultiselect>
-          <p v-if="errors.user_id" class="mt-1 text-sm text-red-500">{{ errors.user_id }}</p>
+          <div v-if="$page.props.auth.user.is_admin">
+            <p class="mt-2 text-sm">Select Patient</p>
+            <VueMultiselect
+              v-model="form.user_id"
+              @search-change="searchPatient"
+              :options="users"
+              :multiple="false"
+              class="border-2 border-gray-500 rounded-lg"
+              selectLabel="Select"
+              deselectLabel="Deselect"
+              label="full_name"
+              track-by="id"
+              :disabled="!isCreating"
+            >
+            </VueMultiselect>
+            <p v-if="errors.user_id" class="mt-1 text-sm text-red-500">{{ errors.user_id }}</p>
+          </div>
           <p class="mt-2">Subtotal: {{ formatCurrency(form.subtotal) }}</p>
         </form>
       </template>
       <template v-slot:footer>
         <Button @click.prevent="toggleCreateModal" text size="sm" color="gray">Close</Button>
-        <Button @click.prevent="saveAppointment" text size="sm" color="success">Save Appointment</Button>
+        <Button @click.prevent="initiateMethod" text size="sm" color="success">Save Appointment</Button>
       </template>
     </Modal>
 

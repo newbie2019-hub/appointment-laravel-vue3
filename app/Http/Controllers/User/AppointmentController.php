@@ -16,17 +16,32 @@ class AppointmentController extends Controller
 {
     public function index(Request $request)
     {
-        $appointments = Appointment::with(['patient:id,first_name,last_name,email,gender','services.service'])->when($request->search, fn($query, $search) =>
-            $query->whereRelation('patient', 'first_name', 'like', '%'.$search.'%')
-            ->orWhereRelation('patient', 'last_name', 'like', '%'.$search.'%')
-        )->when($request->trashed, fn($query, $filter) 
-            => $filter === "only" ? $query->onlyTrashed() : $query->withTrashed()
-        )->paginate(10)->withQueryString();
+        if(auth()->user()->is_admin) {
+            $appointments = Appointment::with(['patient:id,first_name,last_name,email,gender','services.service'])->when($request->search, fn($query, $search) =>
+                $query->whereRelation('patient', 'first_name', 'like', '%'.$search.'%')
+                ->orWhereRelation('patient', 'last_name', 'like', '%'.$search.'%')
+            )->when($request->trashed, fn($query, $filter) 
+                => $filter === "only" ? $query->onlyTrashed() : $query->withTrashed()
+            )->latest()->paginate(10)->withQueryString();
+    
+            $trashedAppointmentsCount = Appointment::onlyTrashed()->count();
+            $services = Service::get();
+            $todaysAppointment = Appointment::whereDate('schedule', now())->count();
+            $users = $this->search($request);
+        }
+        else {
+            $appointments = Appointment::where('user_id', auth()->id())->with(['patient:id,first_name,last_name,email,gender','services.service'])->when($request->search, fn($query, $search) =>
+                $query->whereRelation('patient', 'first_name', 'like', '%'.$search.'%')
+                ->orWhereRelation('patient', 'last_name', 'like', '%'.$search.'%')
+            )->when($request->trashed, fn($query, $filter) 
+                => $filter === "only" ? $query->onlyTrashed() : $query->withTrashed()
+            )->latest()->paginate(10)->withQueryString();
 
-        $trashedAppointmentsCount = Appointment::onlyTrashed()->count();
-        $services = Service::get();
-        $todaysAppointment = Appointment::whereDate('schedule', now())->count();
-        $users = $this->search($request);
+            $trashedAppointmentsCount = Appointment::onlyTrashed()->where('user_id', auth()->id())->count();
+            $services = Service::get();
+            $todaysAppointment = Appointment::whereDate('schedule', now())->where('user_id', auth()->id())->count();
+            $users = [];
+        }
         /*  
         *  Filter with Query String 
         *  is needed to preserve 
@@ -59,6 +74,18 @@ class AppointmentController extends Controller
        
     }
 
+    public function update(Appointment $appointment, AppointmentRequest $request)
+    {
+        if(auth()->user()->is_admin == 1 && ($request->user_id == null || $request->user_id == '')){
+            return back()->withErrors(['error' => 'Current signed-in account is admin']);
+        }
+
+        $appointment->update($request->safe()->except(['selected_services']));
+        $this->storeSelectedServices($request->validated(), $appointment->id);
+        return back()->with('success', 'Appointment has been created successfully!');
+
+    }
+
     
     public function search($request)
     {
@@ -71,7 +98,7 @@ class AppointmentController extends Controller
 
     public function storeSelectedServices($data, $appointment)
     {
-        // dd($data, $appointment);
+        AppointmentService::where('appointment_id', $appointment)->forceDelete();
         foreach($data['selected_services'] as $service){
             AppointmentService::create([
                 'service_id' => $service['id'],
@@ -99,6 +126,12 @@ class AppointmentController extends Controller
 
     public function destroy(Appointment $appointment)
     {
+        if($appointment->appointment_status != 'Approved' && $appointment->appointment_status != 'Finished'){
+            $appointment->update([
+                'appointment_status' => 'Cancelled'
+            ]);
+        }
+
         $appointment->delete();
         return back()->with('success', 'Appointment has been trashed successfully!');
     }
@@ -109,6 +142,14 @@ class AppointmentController extends Controller
             'appointment_status' => 'Approved'
         ]);
         return back()->with('success', 'Appointment has been approved successfully!');
+    }
+
+    public function finished(Appointment $appointment)
+    {
+        $appointment->update([
+            'appointment_status' => 'Finished'
+        ]);
+        return back()->with('success', 'Appointment has marked as finished!');
     }
 
     public function restore(Appointment $appointment)

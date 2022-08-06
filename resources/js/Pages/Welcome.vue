@@ -70,6 +70,7 @@
           },
           onSuccess: () => {
             toast.success('Appointment created successfully!');
+            
             form.reset();
           },
         });
@@ -83,7 +84,7 @@
 <template>
   <Head title="Welcome" />
   <!-- COLORS -->
-  <div class="bg-green-500 bg-green-600 bg-red-500 bg-red-600 hidden"></div>
+  <div class="bg-green-500 bg-green-600 bg-red-500 bg-red-600 hidden bg-gray-600 bg-gray-500"></div>
   <div class="container px-6 sm:px-8 md:px-2 mx-auto">
     <nav class="flex justify-between container pt-8 fixed z-20">
       <div>
@@ -196,14 +197,14 @@
           </p>
           <form class="flex flex-col">
             <form-input for="appointment" :error="errors.schedule" label="Date and Time" class="mt-3">
-              <floating-input type="datetime-local" id="appointment" v-model="form.schedule" />
+              <floating-input type="datetime-local" id="appointment" v-model="form.schedule" :min="moment().format('YYYY-MM-DDT00:00')" :max="moment().add(2, 'month').format('YYYY-MM-DDT00:00')" />
             </form-input>
             <form-input for="message" :error="errors.message" label="Message" class="mt-3">
               <floating-text-area id="message" v-model="form.message" />
             </form-input>
             <p class="mt-2 font-medium">Select Service</p>
             <div class="flex flex-wrap">
-              <VueMultiselect v-model="form.selected_services" :options="services" :multiple="true" selectLabel="Select" deselectLabel="Deselect" label="service" track-by="id">
+              <VueMultiselect v-model="form.selected_services" :options="services" :multiple="true" selectLabel="Select" class="border-2 border-gray-500 rounded-lg" deselectLabel="Deselect" label="service" track-by="id">
                 <template #option="props">
                   <div class="option__desc flex flex-col">
                     <span class="option__title">{{ props.option.service }}</span>
@@ -211,7 +212,6 @@
                   </div>
                 </template>
               </VueMultiselect>
-
               <p v-if="errors.selected_services" class="mt-1 text-sm text-red-500">{{ errors.selected_services }}</p>
             </div>
             <p class="mt-2">Subtotal: {{ formatCurrency(form.subtotal) }}</p>

@@ -13,6 +13,6 @@ class Inquiry extends Model
 
     protected function serializeDate(DateTimeInterface $date)
     {
-        return $date->format('Y-m-d h:i A');
+        return $date->format('d-M-Y h:i A');
     }
 }

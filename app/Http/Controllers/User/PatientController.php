@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PatientUpdateRequest;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -14,6 +15,7 @@ class PatientController extends Controller
     {
         $patients = User::notAdmin()->when($request->search, fn($query) 
                 => $query->whereLike('first_name', $request->search)
+                ->orWhereLike('middle_name', $request->search)
                 ->orWhereLike('last_name', $request->search)
                 ->orWhereLike('email', $request->search)
             )->when($request->trashed, fn($query, $filter) 
@@ -27,9 +29,10 @@ class PatientController extends Controller
     }
 
 
-    public function update(Request $request, $id)
+    public function update(User $user, PatientUpdateRequest $request)
     {
-        //
+        $user->update($request->validated());
+        return back()->with('message', 'Patient record has been updated successfully!!');
     }
 
     public function destroy(User $user)
