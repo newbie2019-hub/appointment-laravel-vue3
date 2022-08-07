@@ -3,6 +3,8 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Models\Appointment;
+use App\Models\Payment;
 use App\Models\User;
 use Error;
 use Illuminate\Http\Request;
@@ -29,7 +31,8 @@ class PaymentController extends Controller
      */
     public function store(Request $request)
     {
-        $user = User::findOrFail($request->patient['id']);
+        $user = User::where('id', $request->patient['id'])->first();
+
         try {
             $payment = $user->charge(
                 $request->subtotal * 100,
@@ -40,7 +43,21 @@ class PaymentController extends Controller
                 ]
             );
 
-            return $payment;
+            Payment::create([
+                'amount_tendered' => null,
+                'appointment_id' => $request->id,
+                'payment_type' => 'Stripe',
+                'change' => null,
+                'receipt_url' => $payment->charges->data[0]['receipt_url']
+            ]);
+
+            $appointment = Appointment::where('id', $request->id)->first();
+
+            $appointment->update([
+                'payment_status' => 'Paid'
+            ]);
+            
+            return back()->with('message', 'Payment transaction is successful!');
         } catch(\Exception $e) {
             return back()->withErrors(['message' => $e->getMessage()]);
         }

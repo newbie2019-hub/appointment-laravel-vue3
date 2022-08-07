@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('amount_tendered')->nullable();
             $table->foreignId('appointment_id')->constrained();
             $table->string('payment_type');
-            $table->string('change');
+            $table->string('receipt_url');
+            $table->string('change')->nullable();
             $table->timestamps();
         });
     }

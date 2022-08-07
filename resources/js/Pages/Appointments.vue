@@ -23,36 +23,43 @@
     return usePage().props.value.errors.error ?? 'Something went wrong';
   });
 
+  const successMessage = computed(() => {
+    return usePage().props.value.flash.message ?? 'Transaction successful';
+  });
+
   let cardElement, stripe;
 
   onMounted(async () => {
     stripe = await loadStripe(usePage().props.value.stripe.public_key);
     const elements = stripe.elements();
-    cardElement = elements.create('card');
+    cardElement = elements.create('card', { classes: { base: 'p-2 border-gray-500'}});
   });
 
-  const processPayment = async() => {
-    const { paymentMethod, error } = await stripe.createPaymentMethod(
-        'card', cardElement, {
-            billing_details: { 
-              name: selectedAppointment.value.patient.full_name,
-              email: selectedAppointment.value.patient.email,
-              address: {
-                line1: selectedAppointment.value.patient.address
-              } 
-            }
-        }
-    );
+  const processPayment = async () => {
+    const { paymentMethod, error } = await stripe.createPaymentMethod('card', cardElement, {
+      billing_details: {
+        name: selectedAppointment.value.patient.full_name,
+        email: selectedAppointment.value.patient.email,
+        address: {
+          line1: selectedAppointment.value.patient.address,
+        },
+      },
+    });
 
     if (error) {
-       console.log(error)
+      //  console.log(error.message)
+      toast.error(error.message);
     } else {
-       selectedAppointment.value.paymentMethodId = paymentMethod.id
-       Inertia.post(route('payment.store'), selectedAppointment.value, {
-         onError: () => {
-          toast.error('Something went wrong')
-         }
-       })
+      selectedAppointment.value.paymentMethodId = paymentMethod.id;
+      Inertia.post(route('payment.store'), selectedAppointment.value, {
+        onError: () => {
+          toast.error('Something went wrong');
+        },
+        onSuccess: () => {
+          toast.success(successMessage.value);
+          togglePaymentModal()
+        },
+      });
     }
   };
 
@@ -67,16 +74,16 @@
   const isRestoreModalShown = ref(false);
   const isCreateModalShown = ref(false);
   const isPaymentModalShown = ref(false);
-  const initializePaymentModal = ref(false)
+  const initializePaymentModal = ref(false);
 
   const selectedService = toRef(form, 'selected_services');
 
   const togglePaymentModal = () => {
-    initializePaymentModal.value = true
+    initializePaymentModal.value = true;
     isPaymentModalShown.value = !isPaymentModalShown.value;
     if (isPaymentModalShown.value) {
       setTimeout(() => {
-        initializePaymentModal.value = false
+        initializePaymentModal.value = false;
         cardElement.mount('#card-element');
       }, 1200);
     }
@@ -374,7 +381,17 @@
                           color="success"
                           >Update</Button
                         >
-                        <Button v-if="!appointment.deleted_at" @click.prevent="togglePaymentModal(); selectedAppointment = {...appointment}" text size="sm" color="">Payment</Button>
+                        <Button
+                          v-if="!appointment.deleted_at"
+                          @click.prevent="
+                            togglePaymentModal();
+                            selectedAppointment = { ...appointment };
+                          "
+                          text
+                          size="sm"
+                          color=""
+                          >Payment</Button
+                        >
                         <Button
                           v-if="!appointment.deleted_at"
                           @click.prevent="
@@ -462,13 +479,20 @@
     <Modal v-if="isPaymentModalShown" @close="togglePaymentModal">
       <template v-slot:title>
         <p class="font-bold text-xl">Payment Transaction</p>
-        <p class="text-gray-500">Please fill-in all the fields</p>
+        <p class="text-gray-500 text-sm mt-1">We do not store any credit card informations. All transactions are processed by Stripe.</p>
       </template>
       <template v-slot:body>
         <div v-if="initializePaymentModal">
           <p class="text-center mt-4 mb-1 font-medium text-gray-500">Loading Secure Payment ...</p>
         </div>
-        <div id="card-element" class="mt-2"></div>
+        <p class="mt-1 mb-2">Credit Card Information</p>
+        <div id="card-element" class=" [&>*]:border-gray-500 border-2 p-3 rounded-md mb-4"></div>
+        <form-input for="payment_fname" :error="errors.schedule" label="Full Name" class="mt-1 mb-3">
+          <floating-input disabled type="text" id="payment_fname" v-model="selectedAppointment.patient.full_name" aria-disabled/>
+        </form-input>
+        <form-input for="payment_fname" :error="errors.schedule" label="Address" class="mt-3 mb-3">
+          <floating-text-area type="text" id="payment_fname" v-model="selectedAppointment.patient.address" disabled aria-disabled/>
+        </form-input>
       </template>
       <template v-slot:footer>
         <Button @click.prevent="togglePaymentModal" text size="sm" color="gray">Close</Button>

@@ -20,9 +20,13 @@ export function stringLimit(val, limit = 15) {
 
 export function chipColor(val) {
   switch (val.toLowerCase()) {
+    case 'paid':
+      return 'green';
     case 'cancelled':
       return 'red';
     case 'approved':
+      return 'green';
+    case 'successful':
       return 'green';
     case 'success':
       return 'green';
