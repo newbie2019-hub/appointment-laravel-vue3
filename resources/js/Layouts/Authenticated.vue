@@ -15,7 +15,6 @@
 
   const toggleSidebar = () => {
     isVisible.value = !isVisible.value;
-    console.log(`Value from parent: ${isVisible.value}`)
   };
 </script>
 

@@ -9,18 +9,52 @@
   import Chip from '@/Components/Chip.vue';
   import Pagination from '@/Shared/Pagination.vue';
   import Modal from '@/Components/Modal/Modal.vue';
+  import { loadStripe } from '@stripe/stripe-js/pure';
   import { debounce } from 'lodash';
-  import { ref, watch, watchEffect, computed, toRef } from 'vue';
+  import { ref, watch, watchEffect, computed, toRef, onMounted } from 'vue';
   import { Inertia } from '@inertiajs/inertia';
   import { formatCurrency, formatNumeric, stringLimit, chipColor } from '@/Composables/Utilities';
   import { useToast } from 'vue-toastification';
   import Calendar from '@/Components/Calendar.vue';
   import VueMultiselect from 'vue-multiselect';
-  import moment from 'moment'
+  import moment from 'moment';
 
   const errorMessage = computed(() => {
     return usePage().props.value.errors.error ?? 'Something went wrong';
   });
+
+  let cardElement, stripe;
+
+  onMounted(async () => {
+    stripe = await loadStripe(usePage().props.value.stripe.public_key);
+    const elements = stripe.elements();
+    cardElement = elements.create('card');
+  });
+
+  const processPayment = async() => {
+    const { paymentMethod, error } = await stripe.createPaymentMethod(
+        'card', cardElement, {
+            billing_details: { 
+              name: selectedAppointment.value.patient.full_name,
+              email: selectedAppointment.value.patient.email,
+              address: {
+                line1: selectedAppointment.value.patient.address
+              } 
+            }
+        }
+    );
+
+    if (error) {
+       console.log(error)
+    } else {
+       selectedAppointment.value.paymentMethodId = paymentMethod.id
+       Inertia.post(route('payment.store'), selectedAppointment.value, {
+         onError: () => {
+          toast.error('Something went wrong')
+         }
+       })
+    }
+  };
 
   const toast = useToast();
 
@@ -32,8 +66,21 @@
   const isDeleteModalShown = ref(false);
   const isRestoreModalShown = ref(false);
   const isCreateModalShown = ref(false);
+  const isPaymentModalShown = ref(false);
+  const initializePaymentModal = ref(false)
 
   const selectedService = toRef(form, 'selected_services');
+
+  const togglePaymentModal = () => {
+    initializePaymentModal.value = true
+    isPaymentModalShown.value = !isPaymentModalShown.value;
+    if (isPaymentModalShown.value) {
+      setTimeout(() => {
+        initializePaymentModal.value = false
+        cardElement.mount('#card-element');
+      }, 1200);
+    }
+  };
 
   const toggleAppointmentModal = () => {
     isAppointmentModalShown.value = !isAppointmentModalShown.value;
@@ -48,12 +95,12 @@
   };
 
   const toggleCreateModal = (data = null) => {
-    if(data != null) {
-      form.message = data.message
-      form.id = data.id
-      form.user_id = data.patient
-      form.selected_services = data.services?.map((service) => service.service)
-      form.schedule = moment(data.schedule).format('YYYY-MM-DDThh:mm')
+    if (data != null) {
+      form.message = data.message;
+      form.id = data.id;
+      form.user_id = data.patient;
+      form.selected_services = data.services?.map((service) => service.service);
+      form.schedule = moment(data.schedule).format('YYYY-MM-DDThh:mm');
     }
     isCreateModalShown.value = !isCreateModalShown.value;
   };
@@ -317,7 +364,7 @@
                           >Details</Button
                         >
                         <Button
-                          v-if="!appointment.deleted_at && (appointment.appointment_status != 'Approved' && appointment.appointment_status != 'Finished' || $page.props.auth.user.is_admin)"
+                          v-if="!appointment.deleted_at && ((appointment.appointment_status != 'Approved' && appointment.appointment_status != 'Finished') || $page.props.auth.user.is_admin)"
                           @click="
                             isCreating = false;
                             toggleCreateModal(appointment);
@@ -327,7 +374,7 @@
                           color="success"
                           >Update</Button
                         >
-                        <Button v-if="!appointment.deleted_at" text size="sm" color="">Payment</Button>
+                        <Button v-if="!appointment.deleted_at" @click.prevent="togglePaymentModal(); selectedAppointment = {...appointment}" text size="sm" color="">Payment</Button>
                         <Button
                           v-if="!appointment.deleted_at"
                           @click.prevent="
@@ -412,9 +459,26 @@
       </template>
     </Modal>
 
+    <Modal v-if="isPaymentModalShown" @close="togglePaymentModal">
+      <template v-slot:title>
+        <p class="font-bold text-xl">Payment Transaction</p>
+        <p class="text-gray-500">Please fill-in all the fields</p>
+      </template>
+      <template v-slot:body>
+        <div v-if="initializePaymentModal">
+          <p class="text-center mt-4 mb-1 font-medium text-gray-500">Loading Secure Payment ...</p>
+        </div>
+        <div id="card-element" class="mt-2"></div>
+      </template>
+      <template v-slot:footer>
+        <Button @click.prevent="togglePaymentModal" text size="sm" color="gray">Close</Button>
+        <Button @click.prevent="processPayment" text size="sm" color="success">Proceed</Button>
+      </template>
+    </Modal>
+
     <Modal v-if="isCreateModalShown" @close="toggleCreateModal">
       <template v-slot:title>
-        <p class="font-bold text-xl">{{ isCreating ? 'New Appointment' : 'Update Appointment'}}</p>
+        <p class="font-bold text-xl">{{ isCreating ? 'New Appointment' : 'Update Appointment' }}</p>
         <p>Please fill-in all fields.</p>
       </template>
       <template v-slot:body>

@@ -45,6 +45,9 @@ class HandleInertiaRequests extends Middleware
             },
             'flash' => [
                 'message' => session('message')
+            ],
+            'stripe' => [
+                'public_key' => env('STRIPE_KEY')
             ]
         ]);
     }

@@ -21,6 +21,7 @@
     },
     "dependencies": {
         "@heroicons/vue": "^1.0.6",
+        "@stripe/stripe-js": "^1.35.0",
         "apexcharts": "^3.35.4",
         "moment": "^2.29.4",
         "v-calendar": "^3.0.0-alpha.8",

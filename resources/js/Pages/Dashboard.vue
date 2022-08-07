@@ -1,6 +1,6 @@
 <script setup>
   import BreezeAuthenticatedLayout from '@/Layouts/Authenticated.vue';
-  import { Head, usePage, useForm } from '@inertiajs/inertia-vue3';
+  import { Head, usePage, useForm, Link } from '@inertiajs/inertia-vue3';
   import { formatCurrency, formatNumeric, stringLimit, chipColor } from '@/Composables/Utilities';
   import FloatingSelect from '@/Components/FloatingInput/FloatingSelect.vue';
   import FloatingTextArea from '@/Components/FloatingInput/FloatingTextArea.vue';
@@ -39,9 +39,8 @@
   const labels = props.chartServices.map((service) => service.service);
   const series = props.chartServices.map((service) => service.monthly_appointments_count);
 
-  const areaChartLabel = props.appointmentsIncome.map((areaChartIncome) =>  areaChartIncome.date )
-  const areaChartSeries = [{name: 'Income', data: props.appointmentsIncome.map((areaChartIncome) => String(areaChartIncome.subtotal))}]
-
+  const areaChartLabel = props.appointmentsIncome.map((areaChartIncome) => areaChartIncome.date);
+  const areaChartSeries = [{ name: 'Income', data: props.appointmentsIncome.map((areaChartIncome) => String(areaChartIncome.subtotal)) }];
 
   const approveAppointment = () => {
     form.put(`/appointments/approve/${selectedAppointment.value.id}`, {
@@ -146,7 +145,7 @@
       </div>
 
       <div class="max-w-7xl mx-auto px-6 lg:px-8">
-        <div class="md:flex  gap-x-2">
+        <div class="md:flex gap-x-2">
           <div class="flex-1 w-full md:w-1/2">
             <div class="mt-8 mb-8">
               <p class="font-medium text-xl">Services Summary</p>
@@ -175,8 +174,23 @@
       </div>
 
       <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-white border-gray-200 rounded-lg pb-6 mt-10">
-        <p class="text-xl font-medium">Latest Appointments</p>
-        <p class="text-sm text-gray-700">Shown below are the latest appointments.</p>
+        <div class="flex justify-between items-center">
+          <div>
+            <p class="text-xl font-medium">Latest Appointments</p>
+            <p class="text-sm text-gray-700">Shown below are the latest appointments.</p>
+          </div>
+
+          <Link :href="route('appointments.index')" class="font-medium duration-200 ease-in-out transition hover:translate-x-1 hover:text-blue-500 flex items-center gap-x-1"
+            >
+            View All
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                fill-rule="evenodd"
+                d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
+                clip-rule="evenodd"
+              /></svg
+          ></Link>
+        </div>
         <div class="flex justify-between mt-7 gap-x-2 mb-6">
           <form-input label="Filter Service" class="w-48">
             <floating-select @change="searchAppointment" v-model="trashed">
@@ -210,7 +224,7 @@
             <tbody class="divide-y divide-gray-200 bg-white">
               <tr v-for="(appointment, i) in appointments" :key="i" class="hover:bg-gray-200" :class="{ 'bg-red-100': appointment.deleted_at }">
                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                  <Chip :label="appointment.appointment_status" :color="chipColor(appointment.appointment_status)"/>
+                  <Chip :label="appointment.appointment_status" :color="chipColor(appointment.appointment_status)" />
                 </td>
                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 gap-x-2">
                   <div class="flex items-center gap-x-2">
@@ -232,7 +246,7 @@
                 <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ stringLimit(appointment.message) }}</td>
                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ formatCurrency(appointment.subtotal) }}</td>
                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                  <Chip :label="appointment.payment_status" :color="chipColor(appointment.payment_status)"/>
+                  <Chip :label="appointment.payment_status" :color="chipColor(appointment.payment_status)" />
                 </td>
                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.created_at }}</td>
                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.deleted_at }}</td>
