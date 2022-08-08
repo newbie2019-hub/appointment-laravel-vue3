@@ -17,7 +17,7 @@ return new class extends Migration
             $table->id();
             $table->datetime('schedule');
             $table->foreignId('user_id')->nullable()->constrained();
-            $table->string('subtotal');
+            $table->float('subtotal');
             $table->string('payment_status')->default('Pending');
             $table->string('appointment_status')->default('Pending');
             $table->string('message');
