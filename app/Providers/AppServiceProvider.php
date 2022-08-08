@@ -14,7 +14,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        //
+
     }
 
     /**
@@ -30,5 +30,11 @@ class AppServiceProvider extends ServiceProvider
         Builder::macro('orWhereLike', function ($field, $string) {
             return $string ? $this->orWhere($field, 'like', '%' . $string . '%') : $this;
         });
+		
+		if(env('REDIRECT_HTTPS'))
+        {
+            \URL::forceScheme('https');
+        }
+
     }
 }
