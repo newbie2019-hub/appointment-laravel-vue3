@@ -93,7 +93,7 @@
     v-if="!isLink"
     :type="type"
     :disabled="disabled"
-    class="duration-200 items-center ease-in-out font-medium inline-flex rounded uppercase focus:ring-2 ring-offset-2 text-white ml-2 tracking-wider disabled:cursor-not-allowed"
+    class="disabled:bg-gray-200 duration-200 items-center ease-in-out font-medium inline-flex rounded uppercase focus:ring-2 ring-offset-2 text-white ml-2 tracking-wider disabled:cursor-not-allowed"
     :class="cssClass"
   >
     <slot />
@@ -103,7 +103,7 @@
     v-else
     :type="type"
     :disabled="disabled"
-    class="duration-200 items-center ease-in-out font-medium inline-flex rounded uppercase focus:ring-2 ring-offset-2 text-white ml-2 tracking-wider disabled:cursor-not-allowed"
+    class="disabled:bg-gray-200 duration-200 items-center ease-in-out font-medium inline-flex rounded uppercase focus:ring-2 ring-offset-2 text-white ml-2 tracking-wider disabled:cursor-not-allowed"
     :class="cssClass"
   >
     <slot />

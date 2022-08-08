@@ -29,13 +29,16 @@
 
   let cardElement, stripe;
 
+  let isBtnLoading = ref(false);
+
   onMounted(async () => {
     stripe = await loadStripe(usePage().props.value.stripe.public_key);
     const elements = stripe.elements();
-    cardElement = elements.create('card', { classes: { base: 'p-2 border-gray-500'}});
+    cardElement = elements.create('card', { classes: { base: 'p-2 border-gray-500' } });
   });
 
   const processPayment = async () => {
+    isBtnLoading.value = true;
     const { paymentMethod, error } = await stripe.createPaymentMethod('card', cardElement, {
       billing_details: {
         name: selectedAppointment.value.patient.full_name,
@@ -47,7 +50,6 @@
     });
 
     if (error) {
-      //  console.log(error.message)
       toast.error(error.message);
     } else {
       selectedAppointment.value.paymentMethodId = paymentMethod.id;
@@ -57,10 +59,11 @@
         },
         onSuccess: () => {
           toast.success(successMessage.value);
-          togglePaymentModal()
+          togglePaymentModal();
         },
       });
     }
+    isBtnLoading.value = true;
   };
 
   const toast = useToast();
@@ -160,7 +163,7 @@
         toast.error('Something went wrong');
       },
       onSuccess: () => {
-        toast.success(`${usePage().props.value.flash.message}`);
+        toast.success('Appointment has been marked as finished');
         toggleAppointmentModal();
       },
     });
@@ -371,7 +374,7 @@
                           >Details</Button
                         >
                         <Button
-                          v-if="!appointment.deleted_at && ((appointment.appointment_status != 'Approved' && appointment.appointment_status != 'Finished') || $page.props.auth.user.is_admin)"
+                          v-if="!appointment.deleted_at && (appointment.appointment_status != 'Finished') && (appointment.appointment_status != 'Approved' && !$page.props.auth.user.is_admin)"
                           @click="
                             isCreating = false;
                             toggleCreateModal(appointment);
@@ -382,7 +385,7 @@
                           >Update</Button
                         >
                         <Button
-                          v-if="!appointment.deleted_at"
+                          v-if="!appointment.deleted_at && appointment.payment_status != 'Paid' && (appointment.appointment_status == 'Approved' || appointment.appointment_status == 'Finished')"
                           @click.prevent="
                             togglePaymentModal();
                             selectedAppointment = { ...appointment };
@@ -485,18 +488,20 @@
         <div v-if="initializePaymentModal">
           <p class="text-center mt-4 mb-1 font-medium text-gray-500">Loading Secure Payment ...</p>
         </div>
-        <p class="mt-1 mb-2">Credit Card Information</p>
-        <div id="card-element" class=" [&>*]:border-gray-500 border-2 p-3 rounded-md mb-4"></div>
+        <div v-show="!initializePaymentModal">
+          <p class="mt-1 mb-2">Credit Card Information</p>
+          <div id="card-element" class="[&>*]:border-gray-500 border-2 p-3 rounded-md mb-4"></div>
+        </div>
         <form-input for="payment_fname" :error="errors.schedule" label="Full Name" class="mt-1 mb-3">
-          <floating-input disabled type="text" id="payment_fname" v-model="selectedAppointment.patient.full_name" aria-disabled/>
+          <floating-input disabled type="text" id="payment_fname" v-model="selectedAppointment.patient.full_name" aria-disabled />
         </form-input>
         <form-input for="payment_fname" :error="errors.schedule" label="Address" class="mt-3 mb-3">
-          <floating-text-area type="text" id="payment_fname" v-model="selectedAppointment.patient.address" disabled aria-disabled/>
+          <floating-text-area type="text" id="payment_fname" v-model="selectedAppointment.patient.address" disabled aria-disabled />
         </form-input>
       </template>
       <template v-slot:footer>
         <Button @click.prevent="togglePaymentModal" text size="sm" color="gray">Close</Button>
-        <Button @click.prevent="processPayment" text size="sm" color="success">Proceed</Button>
+        <Button @click.prevent="processPayment" text size="sm" color="success" :disabled="isBtnLoading">{{!isBtnLoading ? 'Proceed' : 'Processing..'}}</Button>
       </template>
     </Modal>
 
