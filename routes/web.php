@@ -42,6 +42,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::apiResource('/services', ServiceController::class);
 
     Route::apiResource('/patients', PatientController::class);
+    Route::post('/payment-branch', [PaymentController::class, 'branchPayment'])->name('payment-branch.store');
     Route::post('/payment', [PaymentController::class, 'store'])->name('payment.store');
 
     Route::apiResource('/inquiries', InquiryController::class)->only(['index', 'store', 'destroy']);

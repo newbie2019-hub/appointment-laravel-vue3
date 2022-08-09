@@ -17,7 +17,8 @@ class AppointmentController extends Controller
     public function index(Request $request)
     {
         if(auth()->user()->is_admin) {
-            $appointments = Appointment::with(['patient:id,first_name,last_name,email,gender,address','services.service'])->when($request->search, fn($query, $search) =>
+            $appointments = Appointment::with(['patient:id,first_name,last_name,email,gender,address','services.service'])
+            ->when($request->search, fn($query, $search) =>
                 $query->whereRelation('patient', 'first_name', 'like', '%'.$search.'%')
                 ->orWhereRelation('patient', 'last_name', 'like', '%'.$search.'%')
             )->when($request->trashed, fn($query, $filter) 

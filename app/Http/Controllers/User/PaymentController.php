@@ -20,22 +20,19 @@ class PaymentController extends Controller
     public function index(Request $request)
     {
         $payments = Payment::with([
-            'appointment'
+            'appointment', 'appointment.patient'
             ])->when($request->search, fn($query, $search) 
                 => $query->whereLike('payment_tye', $search)
             )->paginate(10)->withQueryString();
 
+        $paymentsCount = Payment::count();
+        $monthlyPaymentsCount = Payment::whereDate('created_at', '>=', now()->startOfMonth())->count();
+
         $filters = $request->only(['search']);
-        return Inertia::render('Payments', compact('payments', 'filters'));
+        return Inertia::render('Payments', compact('payments', 'filters', 'paymentsCount', 'monthlyPaymentsCount'));
     }
 
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
     public function store(Request $request)
     {
         $user = User::where('id', $request->patient['id'])->first();
@@ -51,6 +48,7 @@ class PaymentController extends Controller
             );
 
             Payment::create([
+                'total' => $request->subtotal,
                 'amount_tendered' => null,
                 'appointment_id' => $request->id,
                 'payment_type' => 'Stripe',
@@ -68,6 +66,26 @@ class PaymentController extends Controller
         } catch(\Exception $e) {
             return back()->withErrors(['message' => $e->getMessage()]);
         }
+    }
+
+    public function branchPayment(Request $request)
+    {
+        Payment::create([
+            'total' => $request->subtotal,
+            'amount_tendered' => $request->amount_tendered,
+            'appointment_id' => $request->appointment_id,
+            'payment_type' => 'On-Branch',
+            'change' => $request->change,
+            'receipt_url' => 'N/A'
+        ]);
+
+        $appointment = Appointment::where('id', $request->appointment_id)->first();
+
+        $appointment->update([
+            'payment_status' => 'Paid'
+        ]);
+        
+        return back()->with('message', 'Payment transaction is successful!');
     }
 
 }

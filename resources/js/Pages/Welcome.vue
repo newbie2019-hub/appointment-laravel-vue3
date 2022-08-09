@@ -70,7 +70,7 @@
           },
           onSuccess: () => {
             toast.success('Appointment created successfully!');
-            
+
             form.reset();
           },
         });
@@ -85,57 +85,52 @@
   <Head title="Welcome" />
   <!-- COLORS -->
   <div class="bg-green-500 bg-green-600 bg-red-500 bg-red-600 hidden bg-gray-600 bg-gray-500"></div>
-  <div class="container px-6 sm:px-8 md:px-2 mx-auto">
-    <nav class="flex justify-between container pt-8 fixed z-20">
-      <div>
-        <p class="font-bold text-lg">M. Dental Clinic</p>
-      </div>
-      <ul class="hidden md:flex gap-x-6">
-        <li>
-          <a href="#home" class="navigation-link font-medium">Home</a>
-        </li>
-        <li>
-          <a href="#services" class="navigation-link font-medium">Services</a>
-        </li>
-        <li>
-          <a href="#appointment" class="navigation-link font-medium">Appointment</a>
-        </li>
-        <li>
-          <a href="#contact" class="navigation-link font-medium">Contact Us</a>
-        </li>
-      </ul>
-      <div>
-        <Button v-if="!authenticatedUser" is-link :href="route('login')" size="sm" color="success">Sign In</Button>
-        <Button v-else is-link :href="route('dashboard')" size="sm" color="success">Account</Button>
-      </div>
-    </nav>
-    <div id="home" class="relative flex w-full h-screen z-10 items-center top-0">
+  <nav class="flex justify-between container pt-8 sticky top-0 z-20 md:max-w-6xl mx-auto">
+    <div>
+      <p class="font-bold text-lg">M. Dental Clinic</p>
+    </div>
+    <ul class="hidden md:flex gap-x-6">
+      <li>
+        <a href="#home" class="navigation-link font-medium">Home</a>
+      </li>
+      <li>
+        <a href="#services" class="navigation-link font-medium">Services</a>
+      </li>
+      <li>
+        <a href="#appointment" class="navigation-link font-medium">Appointment</a>
+      </li>
+      <li>
+        <a href="#contact" class="navigation-link font-medium">Contact Us</a>
+      </li>
+    </ul>
+    <div>
+      <Button v-if="!authenticatedUser" is-link :href="route('login')" size="sm" color="success">Sign In</Button>
+      <Button v-else is-link :href="route('dashboard')" size="sm" color="success">Account</Button>
+    </div>
+  </nav>
+  <div class="container px-6 sm:px-8 md:px-2 mx-auto md:max-w-6xl">
+    <div id="home" class="relative flex w-full h-[80vh] z-10 items-center top-0">
       <div class="w-full sm:w-full md:w-3/4 lg:w-1/2">
         <div class="">
           <p>Welcome to</p>
-          <p class="text-2xl font-medium mt-1">Manabat Dental Clinic</p>
-          <p class="text-6xl font-medium mt-2">Your <span class="text-blue-500">Dental Health</span> is Important to Us!</p>
+          <p class="text-3xl font-medium mt-1">Manabat Dental Clinic</p>
+          <p class="text-5xl md:text-6xl font-medium mt-2">Your <span class="text-blue-500">Dental Health</span> is Important to Us!</p>
           <p class="mt-4">We will help you treat your teeth to keep your smile perfect with a satisfying experience in a premium dental clinic.</p>
         </div>
         <button
-          class="ease-in-out drop-shadow-xl duration-150 bg-gradient-to-t from-blue-700 to-blue-400 hover:from-blue-600 hover:to-blue-300 focus:ring-2 ring-offset-2 text-white px-6 py-4 rounded-full mt-4"
+          class="ease-in-out drop-shadow-xl text-sm duration-150 bg-gradient-to-t from-blue-700 to-blue-400 hover:from-blue-600 hover:to-blue-300 focus:ring-2 ring-offset-2 text-white px-6 py-4 rounded-full mt-4"
         >
           Make Appointment
         </button>
       </div>
-      <div class="absolute bottom-10 sm:bottom-20 sm:right-0 bg-blue-500 drop-shadow-md text-white items-center pr-14 pl-10 py-4 rounded-lg">
-        <p>Contact Info</p>
-        <p class="ml-4">Email: emailaddress@gmail.com</p>
-        <p class="ml-4">Number: +63 921 654 8967</p>
-      </div>
-      <!-- <img src="/images/hero.jpg" alt="Close Up" class="hidden sm:block absolute sm:right-14 md:right-32 top-0 h-screen z-[-1] sm:brightness-80" /> -->
+      <img src="/images/hero.jpg" alt="Close Up" class="hidden absolute -mt-16 sm:block sm:right-14 md:right-32 top-0 h-screen z-[-1] sm:brightness-80" />
     </div>
   </div>
 
-  <div id="services" class="relative pt-20 pb-20 bg-blue-50 mt-20 mb-20">
-    <div class="container mx-auto flex gap-x-4 flex-col md:flex-row px-6 sm:px-8 md:px-2">
+  <div id="services" class="relative pt-20 pb-20 bg-blue-50 mt-24 mb-20">
+    <div class="container mx-auto flex gap-x-4 flex-col-reverse gap-y-8 md:flex-row px-6 sm:px-8 md:px-2 md:max-w-6xl">
       <div class="w-full md:w-1/2">
-        <img src="/images/services.png" alt="Close Up" class="w-96 z-[-1] sm:brightness-80 mx-auto" />
+        <img src="/images/services.png" alt="Close Up" class="w-96 z-[-1] sm:brightness-80 md:mx-auto" />
       </div>
       <div class="w-full md:w-1/2">
         <p class="text-blue-500 font-medium">Our Services</p>
@@ -179,7 +174,7 @@
   </div>
 
   <div id="appointment" class="relative pt-15 pb-20 mb-15">
-    <div class="container gap-y-4 gap-x-6 mx-auto flex flex-col md:flex-row px-6 sm:px-8 md:px-2">
+    <div class="container gap-y-4 gap-x-6 mx-auto flex flex-col md:flex-row px-6 sm:px-8 md:px-2 md:max-w-6xl">
       <div class="w-full md:w-1/2 relative">
         <div class="mx-auto sm:mt-20">
           <p class="text-blue-500 font-medium">Online Appointment</p>
@@ -190,7 +185,7 @@
         <CalendarIcon class="absolute h-96 top-0 z-[-1] text-gray-100" />
       </div>
       <div class="w-full md:w-1/2">
-        <div class="bg-white drop-shadow-md px-10 py-4">
+        <div class="bg-white drop-shadow-md px-10 py-10">
           <p class="text-xl font-medium">Appointment Form</p>
           <p class="text-sm mt-1 mb-2">
             Please create an account if you do not have one. It will be used for the monitoring of your appointment status. Creating an account is free and will always be.
@@ -204,7 +199,16 @@
             </form-input>
             <p class="mt-2 font-medium">Select Service</p>
             <div class="flex flex-wrap">
-              <VueMultiselect v-model="form.selected_services" :options="services" :multiple="true" selectLabel="Select" class="border-2 border-gray-500 rounded-lg" deselectLabel="Deselect" label="service" track-by="id">
+              <VueMultiselect
+                v-model="form.selected_services"
+                :options="services"
+                :multiple="true"
+                selectLabel="Select"
+                class="border-2 border-gray-500 rounded-lg"
+                deselectLabel="Deselect"
+                label="service"
+                track-by="id"
+              >
                 <template #option="props">
                   <div class="option__desc flex flex-col">
                     <span class="option__title">{{ props.option.service }}</span>
@@ -216,7 +220,7 @@
             </div>
             <p class="mt-2">Subtotal: {{ formatCurrency(form.subtotal) }}</p>
             <a v-if="!authenticatedUser" :href="route('login')" class="text-sm mt-6">Already have an <span class="underline decoration-wavy hover:text-blue-500">account?</span></a>
-            <div class="justify-end flex mb-4 mt-6">
+            <div class="justify-end flex mt-6">
               <Button type="button" @click.prevent="createAppointment" text size="sm">Make an Appointment</Button>
             </div>
           </form>
@@ -226,7 +230,7 @@
   </div>
 
   <div id="about" class="relative pt-12 pb-15 mb-20">
-    <div class="container gap-x-6 mx-auto flex flex-col md:flex-row px-6 items-center sm:px-8 md:px-2">
+    <div class="container gap-x-6 mx-auto flex gap-y-8 flex-col-reverse md:flex-row px-6 items-center sm:px-8 md:px-2 md:max-w-6xl">
       <div class="w-full md:w-1/2">
         <iframe
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3853.0602543030805!2d120.67080431437381!3d15.044783170071193!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3396f71be8895741%3A0x28fb6d6849ab6d25!2sManabat%20Dental%20Clinic!5e0!3m2!1sen!2sph!4v1658401388093!5m2!1sen!2sph"
@@ -254,7 +258,7 @@
   </div>
 
   <div id="contact" class="relative w-full bg-blue-500 p-12 mt-36">
-    <div class="container gap-x-6 mx-auto flex flex-col md:flex-row px-6 sm:px-8 md:px-2">
+    <div class="container gap-x-6 mx-auto gap-y-10 flex flex-col md:flex-row px-6 sm:px-8 md:px-2 md:max-w-6xl">
       <div class="w-full md:w-1/2 text-white">
         <p class="font-medium text-xl">GET IN TOUCH</p>
 

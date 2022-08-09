@@ -41,37 +41,53 @@
     <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
       {{ status }}
     </div>
+    <div class="flex w-full">
+      <div class="flex flex-col flex-1 h-screen items-center justify-center bg-white w-full text-left md:max-w-xl">
+        <div class="w-full md:max-w-sm shadow-lg bg-white max-w-sm px-10 py-8 rounded-lg md:p-0 md:shadow-none">
+          <div>
+            <p class="text-3xl font-bold mt-2">Sign-in to your account</p>
+            <p class="text-sm mb-4 mt-1">Please enter your login credentials to proceed to your account.</p>
+          </div>
+          <form @submit.prevent="submit">
+            <div>
+              <BreezeLabel for="email" value="Email" />
+              <BreezeInput id="email" type="email" class="mt-1 block w-full" v-model="form.email" required autofocus autocomplete="username" />
+              <p class="text-sm text-red-500">{{ errors.email }}</p>
+            </div>
 
+            <div class="mt-4">
+              <BreezeLabel for="password" value="Password" />
+              <BreezeInput id="password" type="password" class="mt-1 block w-full" v-model="form.password" required autocomplete="current-password" />
+              <p class="text-sm text-red-500">{{ errors.password }}</p>
+            </div>
+
+            <div class="mt-4 flex justify-between items-center">
+              <label class="flex items-center">
+                <BreezeCheckbox name="remember" v-model:checked="form.remember" />
+                <span class="ml-2 text-sm text-gray-600">Remember me</span>
+              </label>
+              <Link v-if="canResetPassword" :href="route('password.request')" class="hover:underline text-sm text-blue-400 hover:text-blue-700"> Forgot your password? </Link>
+            </div>
+            <div class="flex items-center justify-end mt-12 mb-4">
+              <button :disabled="form.processing" type="submit" class="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 duration-200 ease-in-out rounded-lg w-full disabled:bg-blue-400 disabled:cursor-progress">Log-in Account</button>
+            </div>
+          </form>
+
+          <hr class="mt-10 mb-6" />
+
+          <div class="mt-4 text-center">
+            <span class="text-sm">Don't have an account?</span> <Link :href="route('register')" class="text-sm text-gray-600 hover:text-blue-500 relative"> Sign-Up</Link>
+          </div>
+        </div>
+      </div>
+      <div class="hidden md:block flex-1 w-96">
+        <img src="images/alwayssmile.jpg" class="h-screen object-fit w-full blur-[1px]" alt="" />
+      </div>
+    </div>
+
+    <!-- 
     <p class="text-2xl font-medium mt-2">Welcome, User</p>
     <p class="text-sm mb-4">Please login to your account to proceed.</p>
-
-    <form @submit.prevent="submit">
-      <div>
-        <BreezeLabel for="email" value="Email" />
-        <BreezeInput id="email" type="email" class="mt-1 block w-full" v-model="form.email" required autofocus autocomplete="username" />
-        <p class="text-sm text-red-500">{{ errors.email }}</p>
-      </div>
-
-      <div class="mt-4">
-        <BreezeLabel for="password" value="Password" />
-        <BreezeInput id="password" type="password" class="mt-1 block w-full" v-model="form.password" required autocomplete="current-password" />
-        <p class="text-sm text-red-500">{{ errors.password }}</p>
-      </div>
-
-      <div class="mt-2 flex justify-between items-center">
-        <label class="flex items-center">
-          <BreezeCheckbox name="remember" v-model:checked="form.remember" />
-          <span class="ml-2 text-sm text-gray-600">Remember me</span>
-        </label>
-        <Link v-if="canResetPassword" :href="route('password.request')" class="hover:underline text-sm text-blue-400 hover:text-blue-700"> Forgot your password? </Link>
-      </div>
-
-      <div class="mt-4">
-        <Link :href="route('register')" class=" text-sm text-gray-600 hover:text-blue-500 relative"> Don't have an <span class="text-blue-500">account? </span></Link>
-      </div>
-      <div class="flex items-center justify-end mt-4 mb-4">
-        <button type="submit" class="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 duration-200 ease-in-out rounded-lg text-sm">Login Account</button>
-      </div>
-    </form>
+-->
   </BreezeGuestLayout>
 </template>

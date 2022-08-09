@@ -18,7 +18,8 @@
   const toast = useToast();
 
   const props = defineProps({
-    paymentsCount: Object,
+    monthlyPaymentsCount: Number,
+    paymentsCount: [Object, Number],
     payments: Object,
     errors: Object,
     filters: Object,
@@ -51,7 +52,7 @@
       <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-wrap gap-y-4 gap-x-4">
         <div class="bg-orange-500 flex-1 p-4 text-white rounded-md md:max-w-md">
           <div class="flex justify-between">
-            <div class="text-9xl flex items-center">00</div>
+            <div class="text-9xl flex items-center">{{ formatNumeric(monthlyPaymentsCount) }}</div>
             <div class="flex flex-col items-end gap-y-8">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -98,13 +99,24 @@
                         <th scope="col" class="px-3 py-3.5 text-left whitespace-nowrap">Schedule</th>
                         <th scope="col" class="px-3 py-3.5 text-left">Payment Type</th>
                         <th scope="col" class="px-3 py-3.5 text-left">Total</th>
+                        <th scope="col" class="px-3 py-3.5 text-left">Amount Tendered</th>
+                        <th scope="col" class="px-3 py-3.5 text-left">Change</th>
                         <th scope="col" class="px-3 py-3.5 text-left">Receipt</th>
-                        <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6 text-left">Actions</th>
                       </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-300 bg-white">
                       <tr v-for="(payment, i) in payments.data" :key="i" class="hover:bg-gray-200">
                         <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ payment.id }}</td>
+                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ payment.appointment.id }}</td>
+                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ payment.appointment.patient.full_name }}</td>
+                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ payment.appointment.schedule }}</td>
+                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ payment.payment_type }}</td>
+                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ payment.total }}</td>
+                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ payment.amount_tendered }}</td>
+                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ payment.change }}</td>
+                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                          <a v-if="payment.payment_type == 'Stripe'" :href="payment.receipt_url" target="_">View</a>
+                        </td>
                       
                       </tr>
                       <tr v-if="payments.data.length == 0">

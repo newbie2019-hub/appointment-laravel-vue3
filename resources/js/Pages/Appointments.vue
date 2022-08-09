@@ -37,6 +37,28 @@
     cardElement = elements.create('card', { classes: { base: 'p-2 border-gray-500' } });
   });
 
+  const processBranchPayment = async () => {
+    paymentForm.subtotal = selectedAppointment.value.subtotal;
+    paymentForm.appointment_id = selectedAppointment.value.id;
+
+    if (selectedAppointment.value.subtotal > paymentForm.amount_tendered) {
+      toast.error('Insufficient amount is received');
+    } else {
+      isBtnLoading.value = true;
+      paymentForm.transform((data) => ({...data, change: data.amount_tendered - data.subtotal})).post(route('payment-branch.store'), {
+        onError: () => {
+          toast.error('Something went wrong');
+        },
+        onSuccess: () => {
+          toast.success(successMessage.value);
+          toggleBranchPaymentModal();
+        },
+      });
+    }
+
+    isBtnLoading.value = false;
+  };
+
   const processPayment = async () => {
     isBtnLoading.value = true;
     const { paymentMethod, error } = await stripe.createPaymentMethod('card', cardElement, {
@@ -63,14 +85,16 @@
         },
       });
     }
-    isBtnLoading.value = true;
+    isBtnLoading.value = false;
   };
 
   const toast = useToast();
 
+  const paymentForm = useForm({ id: null, subtotal: null, change: null, appointment_id: null, amount_tendered: 0 });
   let form = useForm({ id: null, service: null, price: null, subtotal: 0, selected_services: [], user_id: null, message: '', schedule: '' });
   const selectedAppointment = ref({ id: null, message: null, schedule: null, patient: { first_name: null, last_name: null } });
 
+  const isBranchPaymentModalShown = ref(false);
   const isAppointmentModalShown = ref(false);
   const isCreating = ref(false);
   const isDeleteModalShown = ref(false);
@@ -81,9 +105,29 @@
 
   const selectedService = toRef(form, 'selected_services');
 
-  const togglePaymentModal = () => {
+  const togglePaymentModal = (isadmin) => {
     initializePaymentModal.value = true;
+    if (!isadmin) {
+      isPaymentModalShown.value = !isPaymentModalShown.value;
+
+      if (isPaymentModalShown.value) {
+        setTimeout(() => {
+          initializePaymentModal.value = false;
+          cardElement.mount('#card-element');
+        }, 1200);
+      }
+    } else {
+      isBranchPaymentModalShown.value = !isBranchPaymentModalShown.value;
+    }
+  };
+
+  const toggleAppointmentModal = () => {
+    isAppointmentModalShown.value = !isAppointmentModalShown.value;
+  };
+
+  const toggleStripePaymentModal = () => {
     isPaymentModalShown.value = !isPaymentModalShown.value;
+
     if (isPaymentModalShown.value) {
       setTimeout(() => {
         initializePaymentModal.value = false;
@@ -92,8 +136,8 @@
     }
   };
 
-  const toggleAppointmentModal = () => {
-    isAppointmentModalShown.value = !isAppointmentModalShown.value;
+  const toggleBranchPaymentModal = () => {
+    isBranchPaymentModalShown.value = !isBranchPaymentModalShown.value;
   };
 
   const toggleDeleteModal = () => {
@@ -374,7 +418,7 @@
                           >Details</Button
                         >
                         <Button
-                          v-if="!appointment.deleted_at && (appointment.appointment_status != 'Finished') && (appointment.appointment_status != 'Approved' && !$page.props.auth.user.is_admin)"
+                          v-if="!appointment.deleted_at && appointment.appointment_status != 'Finished' && appointment.appointment_status != 'Approved' && !$page.props.auth.user.is_admin"
                           @click="
                             isCreating = false;
                             toggleCreateModal(appointment);
@@ -387,7 +431,7 @@
                         <Button
                           v-if="!appointment.deleted_at && appointment.payment_status != 'Paid' && (appointment.appointment_status == 'Approved' || appointment.appointment_status == 'Finished')"
                           @click.prevent="
-                            togglePaymentModal();
+                            togglePaymentModal($page.props.auth.user.is_admin);
                             selectedAppointment = { ...appointment };
                           "
                           text
@@ -479,7 +523,7 @@
       </template>
     </Modal>
 
-    <Modal v-if="isPaymentModalShown" @close="togglePaymentModal">
+    <Modal v-if="isPaymentModalShown" @close="toggleStripePaymentModal">
       <template v-slot:title>
         <p class="font-bold text-xl">Payment Transaction</p>
         <p class="text-gray-500 text-sm mt-1">We do not store any credit card informations. All transactions are processed by Stripe.</p>
@@ -500,8 +544,27 @@
         </form-input>
       </template>
       <template v-slot:footer>
-        <Button @click.prevent="togglePaymentModal" text size="sm" color="gray">Close</Button>
-        <Button @click.prevent="processPayment" text size="sm" color="success" :disabled="isBtnLoading">{{!isBtnLoading ? 'Proceed' : 'Processing..'}}</Button>
+        <Button @click.prevent="toggleStripePaymentModal" text size="sm" color="gray">Close</Button>
+        <Button @click.prevent="processPayment" text size="sm" color="success" :disabled="isBtnLoading">{{ !isBtnLoading ? 'Proceed' : 'Processing..' }}</Button>
+      </template>
+    </Modal>
+
+    <Modal v-if="isBranchPaymentModalShown" @close="toggleBranchPaymentModal">
+      <template v-slot:title>
+        <p class="font-bold text-xl">Accept Payment</p>
+        <p class="text-gray-500 text-sm mt-1">Please fill-in all the fields in the form.</p>
+      </template>
+      <template v-slot:body>
+        <form-input for="payment_fname" :error="errors.schedule" label="Amount Tendered" class="mt-3 mb-3">
+          <floating-input type="number" id="amounttendered" v-model="paymentForm.amount_tendered" />
+        </form-input>
+        <form-input for="subtotal" :error="errors.subtotal" label="Subtotal" class="mt-3 mb-3">
+          <floating-input type="number" id="subtotal" v-model="selectedAppointment.subtotal" disabled aria-disabled />
+        </form-input>
+      </template>
+      <template v-slot:footer>
+        <Button @click.prevent="toggleBranchPaymentModal" text size="sm" color="gray">Close</Button>
+        <Button @click.prevent="processBranchPayment" text size="sm" color="success" :disabled="isBtnLoading">{{ !isBtnLoading ? 'Proceed Payment' : 'Processing..' }}</Button>
       </template>
     </Modal>
 
