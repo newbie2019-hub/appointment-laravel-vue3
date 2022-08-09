@@ -17,9 +17,16 @@ class PaymentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-     return Inertia::render('Payments');
+        $payments = Payment::with([
+            'appointment'
+            ])->when($request->search, fn($query, $search) 
+                => $query->whereLike('payment_tye', $search)
+            )->paginate(10)->withQueryString();
+
+        $filters = $request->only(['search']);
+        return Inertia::render('Payments', compact('payments', 'filters'));
     }
 
 

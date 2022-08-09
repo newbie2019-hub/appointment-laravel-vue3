@@ -20,6 +20,7 @@ class ServiceController extends Controller
             => $filter === "only" ? $query->onlyTrashed() : $query->withTrashed()
         )->paginate(10)->withQueryString();
 
+        $servicesCount = Service::count();
         $trashedServicesCount = Service::onlyTrashed()->count();
         /*  
          *  Filter with Query String 
@@ -28,7 +29,7 @@ class ServiceController extends Controller
          *  data 
         */
         $filters = $request->only(['search', 'trashed']);
-        return Inertia::render('Services', compact('services', 'filters', 'trashedServicesCount'));
+        return Inertia::render('Services', compact('servicesCount', 'services', 'filters', 'trashedServicesCount'));
     }
 
     public function store(ServiceRequest $request)
