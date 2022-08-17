@@ -287,44 +287,44 @@
   <Head title="Patient Appointments" />
 
   <BreezeAuthenticatedLayout>
-    <div class="max-w-7xl mx-auto px-6 lg:px-8">
-      <div class="sm:px-6 lg:px-8 mt-6 mx-auto">
-        <p class="font-medium text-xl">Appointment Summary</p>
+    <div class="px-6 mx-auto max-w-7xl lg:px-8">
+      <div class="mx-auto mt-6 sm:px-6 lg:px-8">
+        <p class="text-xl font-medium">Appointment Summary</p>
         <p>Here is an overview of your appointments.</p>
       </div>
-      <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-wrap gap-x-4 md:flex-row gap-y-4">
-        <div class="bg-red-500 flex-1 p-4 text-white rounded-md">
+      <div class="flex flex-wrap py-8 mx-auto max-w-7xl sm:px-6 lg:px-8 gap-x-4 md:flex-row gap-y-4">
+        <div class="flex-1 p-4 text-white bg-red-500 rounded-md">
           <div class="flex justify-between">
-            <div class="text-9xl flex items-center">{{ formatNumeric(trashedAppointmentsCount) }}</div>
+            <div class="flex items-center text-9xl">{{ formatNumeric(trashedAppointmentsCount) }}</div>
             <div class="flex flex-col items-end gap-y-8">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
-              <p class="uppercase font-medium tracking-wider leading-5 text-right">Trashed <br />Appointments</p>
+              <p class="font-medium leading-5 tracking-wider text-right uppercase">Trashed <br />Appointments</p>
             </div>
           </div>
           <span class="sr-only">Trashed Appointments</span>
         </div>
-        <div class="bg-green-600 flex-1 p-4 text-white rounded-md">
+        <div class="flex-1 p-4 text-white bg-green-600 rounded-md">
           <div class="flex justify-between">
-            <div class="text-9xl flex items-center">{{ formatNumeric(appointments.data.length) }}</div>
+            <div class="flex items-center text-9xl">{{ formatNumeric(appointments.data.length) }}</div>
             <div class="flex flex-col items-end gap-y-8">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
-              <p class="uppercase font-medium tracking-wider leading-5 text-right">Total <br />Appointments</p>
+              <p class="font-medium leading-5 tracking-wider text-right uppercase">Total <br />Appointments</p>
             </div>
           </div>
           <span class="sr-only">Total Appointments</span>
         </div>
-        <div class="bg-blue-600 flex-1 p-4 text-white rounded-md">
+        <div class="flex-1 p-4 text-white bg-blue-600 rounded-md">
           <div class="flex justify-between">
-            <div class="text-9xl flex items-center">{{ formatNumeric(todaysAppointment) }}</div>
+            <div class="flex items-center text-9xl">{{ formatNumeric(todaysAppointment) }}</div>
             <div class="flex flex-col items-end gap-y-8">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              <p class="uppercase font-medium tracking-wider leading-5 text-right">Today's <br />Appointments</p>
+              <p class="font-medium leading-5 tracking-wider text-right uppercase">Today's <br />Appointments</p>
             </div>
           </div>
           <span class="sr-only">Today's Appointments</span>
@@ -332,12 +332,12 @@
       </div>
     </div>
 
-    <div class="max-w-7xl mx-auto px-6 lg:px-8">
-      <div class="sm:px-6 lg:px-8 mt-6 mx-auto">
-        <p class="font-medium text-xl">Appointment Calendar</p>
+    <div class="px-6 mx-auto max-w-7xl lg:px-8">
+      <div class="mx-auto mt-6 sm:px-6 lg:px-8">
+        <p class="text-xl font-medium">Appointment Calendar</p>
         <p>Here is an overview of your appointments.</p>
       </div>
-      <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8 md:flex gap-x-4">
+      <div class="py-8 mx-auto max-w-7xl sm:px-6 lg:px-8 md:flex gap-x-4">
         <div class="flex-1 w-full">
           <Calendar :data="appointments.data" />
         </div>
@@ -345,13 +345,13 @@
     </div>
 
     <div class="py-10">
-      <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="px-6 mx-auto max-w-7xl lg:px-8">
         <div class="overflow-x-auto shadow-sm sm:rounded-lg">
           <div class="">
-            <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-white border-gray-200 rounded-lg pb-6">
+            <div class="pb-6 mx-auto bg-white border-gray-200 rounded-lg max-w-7xl sm:px-6 lg:px-8">
               <p class="text-xl font-medium">All Appointments</p>
               <p class="text-sm text-gray-700">Shown below are the appointments record</p>
-              <div class="flex justify-between mt-7 gap-x-2 mb-6">
+              <div class="flex justify-between mb-6 mt-7 gap-x-2">
                 <form-input label="Filter Service" class="w-48">
                   <floating-select @change="searchAppointment" v-model="trashed">
                     <option value="with">All Appointments</option>
@@ -391,23 +391,23 @@
                       <th scope="col" class="py-3.5 pl-4 pr-3 sm:pl-6 text-left">Actions</th>
                     </tr>
                   </thead>
-                  <tbody class="divide-y divide-gray-200 bg-white">
+                  <tbody class="bg-white divide-y divide-gray-200">
                     <tr v-for="(appointment, i) in appointments.data" :key="i" class="hover:bg-gray-200" :class="{ 'bg-red-100': appointment.deleted_at }">
-                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.id }}</td>
-                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                      <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ appointment.id }}</td>
+                      <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">
                         <Chip :label="appointment.appointment_status" :color="chipColor(appointment.appointment_status)" />
                       </td>
-                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.patient.full_name }}</td>
-                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.patient.email }}</td>
-                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.schedule }}</td>
+                      <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ appointment.patient.full_name }}</td>
+                      <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ appointment.patient.email }}</td>
+                      <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ appointment.schedule }}</td>
                       <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ stringLimit(appointment.message) }}</td>
-                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ formatCurrency(appointment.subtotal) }}</td>
-                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                      <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ formatCurrency(appointment.subtotal) }}</td>
+                      <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">
                         <Chip :label="appointment.payment_status" :color="chipColor(appointment.payment_status)" />
                       </td>
-                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.created_at }}</td>
-                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.deleted_at }}</td>
-                      <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-sm sm:pr-6">
+                      <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ appointment.created_at }}</td>
+                      <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ appointment.deleted_at }}</td>
+                      <td class="relative py-4 pl-3 pr-4 text-sm whitespace-nowrap sm:pr-6">
                         <Button
                           text
                           size="sm"
@@ -454,13 +454,13 @@
                     </tr>
                     <tr v-if="appointments.data.length == 0">
                       <td colspan="11">
-                        <div class="mx-auto text-center py-4 font-medium text-gray-600">No data available ..</div>
+                        <div class="py-4 mx-auto font-medium text-center text-gray-600">No data available ..</div>
                       </td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-              <p class="text-sm mt-2 text-gray-500">Showing {{ appointments.from ?? 0 }} to {{ appointments.to ?? 0 }} out of {{ appointments.total ?? 0 }} appointments.</p>
+              <p class="mt-2 text-sm text-gray-500">Showing {{ appointments.from ?? 0 }} to {{ appointments.to ?? 0 }} out of {{ appointments.total ?? 0 }} appointments.</p>
               <pagination :links="appointments.links" right />
             </div>
           </div>
@@ -470,19 +470,19 @@
 
     <Modal v-if="isAppointmentModalShown" @close="toggleAppointmentModal">
       <template v-slot:title>
-        <p class="font-bold text-xl">Appointment Information</p>
+        <p class="text-xl font-bold">Appointment Information</p>
         <p class="text-sm text-gray-600">Here are the informations for this appointment</p>
       </template>
       <template v-slot:body>
-        <p class="mb-2 mt-3">Patient Information</p>
+        <p class="mt-3 mb-2">Patient Information</p>
         <p class="text-sm">Full Name: {{ selectedAppointment.patient.full_name }}</p>
         <p class="text-sm">Email: {{ selectedAppointment.patient.email }}</p>
         <p class="text-sm">Gender: {{ selectedAppointment.patient.gender }}</p>
-        <p class="mb-2 mt-4">Appointment Information</p>
+        <p class="mt-4 mb-2">Appointment Information</p>
         <p class="text-sm">Schedule: {{ selectedAppointment.schedule }}</p>
         <p class="text-sm">Message: {{ selectedAppointment.message }}</p>
         <p class="text-sm">Created: {{ selectedAppointment.created_at }}</p>
-        <p class="mb-2 mt-4">Services Selected</p>
+        <p class="mt-4 mb-2">Services Selected</p>
         <p class="text-sm" v-for="services in selectedAppointment.services" :key="services.id">{{ services.service.service }} - {{ formatCurrency(services.service.price) }}</p>
       </template>
       <template v-slot:footer>
@@ -512,7 +512,7 @@
 
     <Modal v-if="isDeleteModalShown" @close="toggleDeleteModal">
       <template v-slot:title>
-        <p class="font-bold text-xl">Confirm Delete</p>
+        <p class="text-xl font-bold">Confirm Delete</p>
       </template>
       <template v-slot:body>
         <p class="text-sm text-gray-600">Are you sure you want to move this appointment to trash? Once moved to trash the appointment status will be marked as cancelled and cannot be restored.</p>
@@ -525,12 +525,12 @@
 
     <Modal v-if="isPaymentModalShown" @close="toggleStripePaymentModal">
       <template v-slot:title>
-        <p class="font-bold text-xl">Payment Transaction</p>
-        <p class="text-gray-500 text-sm mt-1">We do not store any credit card informations. All transactions are processed by Stripe.</p>
+        <p class="text-xl font-bold">Payment Transaction</p>
+        <p class="mt-1 text-sm text-gray-500">We do not store any credit card informations. All transactions are processed by Stripe.</p>
       </template>
       <template v-slot:body>
         <div v-if="initializePaymentModal">
-          <p class="text-center mt-4 mb-1 font-medium text-gray-500">Loading Secure Payment ...</p>
+          <p class="mt-4 mb-1 font-medium text-center text-gray-500">Loading Secure Payment ...</p>
         </div>
         <div v-show="!initializePaymentModal">
           <p class="mt-1 mb-2">Credit Card Information</p>
@@ -551,8 +551,8 @@
 
     <Modal v-if="isBranchPaymentModalShown" @close="toggleBranchPaymentModal">
       <template v-slot:title>
-        <p class="font-bold text-xl">Accept Payment</p>
-        <p class="text-gray-500 text-sm mt-1">Please fill-in all the fields in the form.</p>
+        <p class="text-xl font-bold">Accept Payment</p>
+        <p class="mt-1 text-sm text-gray-500">Please fill-in all the fields in the form.</p>
       </template>
       <template v-slot:body>
         <form-input for="payment_fname" :error="errors.schedule" label="Amount Tendered" class="mt-3 mb-3">
@@ -570,7 +570,7 @@
 
     <Modal v-if="isCreateModalShown" @close="toggleCreateModal">
       <template v-slot:title>
-        <p class="font-bold text-xl">{{ isCreating ? 'New Appointment' : 'Update Appointment' }}</p>
+        <p class="text-xl font-bold">{{ isCreating ? 'New Appointment' : 'Update Appointment' }}</p>
         <p>Please fill-in all fields.</p>
       </template>
       <template v-slot:body>
@@ -593,7 +593,7 @@
             track-by="id"
           >
             <template #option="props">
-              <div class="option__desc flex flex-col">
+              <div class="flex flex-col option__desc">
                 <span class="option__title">{{ props.option.service }}</span>
                 <span class="text-sm">{{ formatCurrency(props.option.price) }}</span>
               </div>
@@ -628,7 +628,7 @@
 
     <Modal v-if="isRestoreModalShown" @close="toggleRestoreModal">
       <template v-slot:title>
-        <p class="font-bold text-xl">Confirm Restore</p>
+        <p class="text-xl font-bold">Confirm Restore</p>
       </template>
       <template v-slot:body>
         <p class="text-sm text-gray-600">Are you sure you want to restore this scheduled appointment? This might cause conflicts to some of the schedules.</p>

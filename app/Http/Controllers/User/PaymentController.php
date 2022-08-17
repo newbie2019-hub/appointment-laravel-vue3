@@ -2,13 +2,19 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Extensions\ExtendedInvoice;
 use App\Http\Controllers\Controller;
 use App\Models\Appointment;
 use App\Models\Payment;
 use App\Models\User;
 use Error;
+use Exception;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use LaravelDaily\Invoices\Classes\Buyer;
+use LaravelDaily\Invoices\Classes\InvoiceItem;
+use LaravelDaily\Invoices\Classes\Party;
+use LaravelDaily\Invoices\Invoice;
 
 class PaymentController extends Controller
 {
@@ -79,13 +85,72 @@ class PaymentController extends Controller
             'receipt_url' => 'N/A'
         ]);
 
-        $appointment = Appointment::where('id', $request->appointment_id)->first();
+        try {
+            $this->generateInvoice($request->all());
+        }catch(Exception $e) {
+            return back()->withErrors(['error' => $e->getMessage()]);
+        }
 
-        $appointment->update([
-            'payment_status' => 'Paid'
-        ]);
+        // $appointment = Appointment::where('id', $request->appointment_id)->first();
+
+        // $appointment->update([
+        //     'payment_status' => 'Paid'
+        // ]);
         
         return back()->with('message', 'Payment transaction is successful!');
+    }
+
+    public function generateInvoice($data)
+    {
+        // dd($data);
+
+        $appointment = Appointment::with(['services.service:id,service,price', 'patient'])->where('id', $data['appointment_id'])->first();
+
+        $owner = new Party([
+            'name'          => auth()->user()->full_name,
+            'phone'         => auth()->user()->contact_number,
+            'custom_fields' => [
+                'business id' => '#123DEMO',
+            ],
+        ]);
+
+        $customer = new Buyer([
+            'name'          => $appointment->patient->full_name,
+            'custom_fields' => [
+                'email' => $appointment->patient->email,
+                'contact' => $appointment->patient->contact_number
+            ],
+        ]);
+
+        $items = [];
+        foreach($appointment->services as $service) {
+            $items[] = (new InvoiceItem())->title($service->service->service)->pricePerUnit($service->service->price);
+        }
+
+        $notes = [
+            'Thank you for choosing our service.',
+            'Have a nice day ahead!',
+        ];
+
+        $notes = implode("<br>", $notes);
+
+        $invoice = ExtendedInvoice::make('receipt')
+            ->buyer($customer)
+            ->status(__('invoices::invoice.paid'))
+            ->date(now())
+            ->dateFormat('Y/m/d h:i A')
+            ->seller($owner)
+            ->currencySymbol('₱')
+            ->currencyCode('PHP')
+            ->filename($appointment->patient->last_name . '_' . $appointment->patient->first_name)
+            ->addItems($items)
+            ->notes($notes)
+            ->currencyFormat('{SYMBOL}{VALUE}')
+            ->amountReceived($data['amount_tendered'])
+            ->save('public');
+
+        $link = $invoice->url();
+        return $invoice->stream();
     }
 
 }
