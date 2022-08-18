@@ -98,9 +98,12 @@ class PaymentController extends Controller
     {
         $appointment = Appointment::with(['services.service:id,service,price', 'patient'])->where('id', $id)->first();
         $payment = Payment::where('appointment_id', $id)->first();
+
+        $owner = User::where('id', 1)->first();
+
         $owner = new Party([
-            'name'          => auth()->user()->full_name,
-            'phone'         => auth()->user()->contact_number,
+            'name'          => $owner->full_name,
+            'phone'         => $owner->contact_number,
             'custom_fields' => [
                 'business id' => '#123DEMO',
             ],
