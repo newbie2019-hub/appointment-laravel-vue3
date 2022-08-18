@@ -11,7 +11,7 @@
   import { Inertia } from '@inertiajs/inertia';
   import { useToast } from 'vue-toastification';
   import Modal from '@/Components/Modal/Modal.vue';
-  import { formatNumeric, stringLimit } from '@/Composables/Utilities';
+  import { formatCurrency, formatNumeric, stringLimit } from '@/Composables/Utilities';
 
   const message = computed(() => usePage().props.value.flash.message);
 
@@ -29,7 +29,7 @@
 
   const isViewModalShown = ref(false);
 
-  let selectedUser = useForm({id: null, first_name: null, middle_name: null, last_name: null, gender: null, address: null, birthday: null});
+  let selectedUser = useForm({ id: null, first_name: null, middle_name: null, last_name: null, gender: null, address: null, birthday: null });
 
   const toggleViewModal = () => {
     isViewModalShown.value = !isViewModalShown.value;
@@ -94,7 +94,7 @@
                     <thead class="bg-gray-50">
                       <tr class="[&>*]:uppercase font-medium text-xs text-gray-500">
                         <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6">ID</th>
-                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Appointment ID</th>
+                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Appt. ID</th>
                         <th scope="col" class="px-3 py-3.5 text-left whitespace-nowrap">Patient</th>
                         <th scope="col" class="px-3 py-3.5 text-left whitespace-nowrap">Schedule</th>
                         <th scope="col" class="px-3 py-3.5 text-left">Payment Type</th>
@@ -111,13 +111,15 @@
                         <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ payment.appointment.patient.full_name }}</td>
                         <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ payment.appointment.schedule }}</td>
                         <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ payment.payment_type }}</td>
-                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ payment.total }}</td>
-                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ payment.amount_tendered }}</td>
-                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ payment.change }}</td>
+                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ formatCurrency(payment.total) }}</td>
+                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ formatCurrency(payment.amount_tendered) }}</td>
+                        <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ formatCurrency(payment.change) }}</td>
                         <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                           <a v-if="payment.payment_type == 'Stripe'" :href="payment.receipt_url" target="_">View</a>
+                          <Button is-link v-else :href="route('invoice.generate', payment.appointment.id)" text size="sm" color="success"
+                            >View Receipt</Button
+                          >
                         </td>
-                      
                       </tr>
                       <tr v-if="payments.data.length == 0">
                         <td colspan="8">
@@ -135,6 +137,5 @@
         </div>
       </div>
     </div>
-
   </BreezeAuthenticatedLayout>
 </template>

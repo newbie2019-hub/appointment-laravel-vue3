@@ -45,6 +45,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::post('/payment-branch', [PaymentController::class, 'branchPayment'])->name('payment-branch.store');
     Route::post('/payment', [PaymentController::class, 'store'])->name('payment.store');
 
+    Route::get('/invoice/{appointment}', [PaymentController::class, 'generateInvoice'])->name('invoice.generate');
     Route::apiResource('/inquiries', InquiryController::class)->only(['index', 'store', 'destroy']);
     Route::apiResource('/payments', PaymentController::class);
     

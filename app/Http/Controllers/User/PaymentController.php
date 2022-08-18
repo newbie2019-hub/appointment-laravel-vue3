@@ -76,7 +76,7 @@ class PaymentController extends Controller
 
     public function branchPayment(Request $request)
     {
-        Payment::create([
+        $payment = Payment::create([
             'total' => $request->subtotal,
             'amount_tendered' => $request->amount_tendered,
             'appointment_id' => $request->appointment_id,
@@ -85,27 +85,19 @@ class PaymentController extends Controller
             'receipt_url' => 'N/A'
         ]);
 
-        try {
-            $this->generateInvoice($request->all());
-        }catch(Exception $e) {
-            return back()->withErrors(['error' => $e->getMessage()]);
-        }
+        $appointment = Appointment::where('id', $request->appointment_id)->first();
 
-        // $appointment = Appointment::where('id', $request->appointment_id)->first();
-
-        // $appointment->update([
-        //     'payment_status' => 'Paid'
-        // ]);
+        $appointment->update([
+            'payment_status' => 'Paid'
+        ]);
         
         return back()->with('message', 'Payment transaction is successful!');
     }
 
-    public function generateInvoice($data)
+    public function generateInvoice(Request $request, $id)
     {
-        // dd($data);
-
-        $appointment = Appointment::with(['services.service:id,service,price', 'patient'])->where('id', $data['appointment_id'])->first();
-
+        $appointment = Appointment::with(['services.service:id,service,price', 'patient'])->where('id', $id)->first();
+        $payment = Payment::where('appointment_id', $id)->first();
         $owner = new Party([
             'name'          => auth()->user()->full_name,
             'phone'         => auth()->user()->contact_number,
@@ -137,7 +129,7 @@ class PaymentController extends Controller
         $invoice = ExtendedInvoice::make('receipt')
             ->buyer($customer)
             ->status(__('invoices::invoice.paid'))
-            ->date(now())
+            ->date($payment->created_at)
             ->dateFormat('Y/m/d h:i A')
             ->seller($owner)
             ->currencySymbol('₱')
@@ -146,10 +138,10 @@ class PaymentController extends Controller
             ->addItems($items)
             ->notes($notes)
             ->currencyFormat('{SYMBOL}{VALUE}')
-            ->amountReceived($data['amount_tendered'])
-            ->save('public');
+            ->amountReceived($payment->amount_tendered);
+            // ->save('public');
 
-        $link = $invoice->url();
+        // $link = $invoice->url();
         return $invoice->stream();
     }
 

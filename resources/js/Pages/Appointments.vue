@@ -429,6 +429,15 @@
                           >Update</Button
                         >
                         <Button
+                          is-link
+                          v-if="!appointment.deleted_at && appointment.payment_status == 'Paid'"
+                          :href="route('invoice.generate', appointment.id)"
+                          text
+                          size="sm"
+                          color="success"
+                          >View Receipt</Button
+                        >
+                        <Button
                           v-if="!appointment.deleted_at && appointment.payment_status != 'Paid' && (appointment.appointment_status == 'Approved' || appointment.appointment_status == 'Finished')"
                           @click.prevent="
                             togglePaymentModal($page.props.auth.user.is_admin);
