@@ -45,15 +45,17 @@
       toast.error('Insufficient amount is received');
     } else {
       isBtnLoading.value = true;
-      paymentForm.transform((data) => ({...data, change: data.amount_tendered - data.subtotal})).post(route('payment-branch.store'), {
-        onError: () => {
-          toast.error('Something went wrong');
-        },
-        onSuccess: () => {
-          toast.success(successMessage.value);
-          toggleBranchPaymentModal();
-        },
-      });
+      paymentForm
+        .transform((data) => ({ ...data, change: data.amount_tendered - data.subtotal }))
+        .post(route('payment-branch.store'), {
+          onError: () => {
+            toast.error('Something went wrong');
+          },
+          onSuccess: () => {
+            toast.success(successMessage.value);
+            toggleBranchPaymentModal();
+          },
+        });
     }
 
     isBtnLoading.value = false;
@@ -385,6 +387,7 @@
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Schedule</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Message</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Sub Total</th>
+                      <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Payment Type</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Payment</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Created On</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Deleted On</th>
@@ -402,6 +405,9 @@
                       <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ appointment.schedule }}</td>
                       <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ stringLimit(appointment.message) }}</td>
                       <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ formatCurrency(appointment.subtotal) }}</td>
+                      <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">
+                        {{ appointment.payment?.payment_type ?? 'N/A' }}
+                      </td>
                       <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">
                         <Chip :label="appointment.payment_status" :color="chipColor(appointment.payment_status)" />
                       </td>
@@ -430,13 +436,33 @@
                         >
                         <Button
                           is-link
-                          v-if="!appointment.deleted_at && appointment.payment_status == 'Paid'"
+                          :href="route('certificate.generate', appointment.id)"
+                          v-if="!appointment.deleted_at && appointment.appointment_status == 'Approved'"
+                          text
+                          size="sm"
+                          color="success"
+                          >Certificate</Button
+                        >
+                        <Button
+                          color="success"
+                          is-link
+                          text
+                          size="sm"
+                          v-if="appointment.payment?.payment_type == 'Stripe' && appointment.payment_status == 'Paid'"
+                          :href="appointment.payment?.receipt_url"
+                          target="_"
+                          >View Receipt</Button
+                        >
+                        <Button
+                          is-link
+                          v-if="appointment.payment?.payment_type == 'On-Branch' && appointment.payment_status == 'Paid'"
                           :href="route('invoice.generate', appointment.id)"
                           text
                           size="sm"
                           color="success"
                           >View Receipt</Button
                         >
+
                         <Button
                           v-if="!appointment.deleted_at && appointment.payment_status != 'Paid' && (appointment.appointment_status == 'Approved' || appointment.appointment_status == 'Finished')"
                           @click.prevent="

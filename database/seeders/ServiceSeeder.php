@@ -17,6 +17,10 @@ class ServiceSeeder extends Seeder
     {
         $data = [
             [
+                'service' => 'Dental Checkup',
+                'price'   => '300'
+            ],
+            [
                 'service' => 'Teeth Cleaning',
                 'price'   => '600'
             ],

@@ -16,8 +16,11 @@ class AppointmentController extends Controller
 {
     public function index(Request $request)
     {
+        $services = Service::get();
+        $users = [];
+
         if(auth()->user()->is_admin) {
-            $appointments = Appointment::with(['patient:id,first_name,last_name,email,gender,address','services.service'])
+            $appointments = Appointment::with(['patient:id,first_name,last_name,email,gender,address','services.service','payment:id,appointment_id,receipt_url,payment_type'])
             ->when($request->search, fn($query, $search) =>
                 $query->whereRelation('patient', 'first_name', 'like', '%'.$search.'%')
                 ->orWhereRelation('patient', 'last_name', 'like', '%'.$search.'%')
@@ -26,12 +29,11 @@ class AppointmentController extends Controller
             )->latest()->paginate(10)->withQueryString();
     
             $trashedAppointmentsCount = Appointment::onlyTrashed()->count();
-            $services = Service::get();
             $todaysAppointment = Appointment::whereDate('schedule', now())->count();
             $users = $this->search($request);
         }
         else {
-            $appointments = Appointment::where('user_id', auth()->id())->with(['patient:id,first_name,last_name,address,email,gender','services.service'])->when($request->search, fn($query, $search) =>
+            $appointments = Appointment::where('user_id', auth()->id())->with(['patient:id,first_name,last_name,address,email,gender','services.service','payment:id,appointment_id,receipt_url,payment_type'])->when($request->search, fn($query, $search) =>
                 $query->whereRelation('patient', 'first_name', 'like', '%'.$search.'%')
                 ->orWhereRelation('patient', 'last_name', 'like', '%'.$search.'%')
             )->when($request->trashed, fn($query, $filter) 
@@ -39,9 +41,7 @@ class AppointmentController extends Controller
             )->latest()->paginate(10)->withQueryString();
 
             $trashedAppointmentsCount = Appointment::onlyTrashed()->where('user_id', auth()->id())->count();
-            $services = Service::get();
             $todaysAppointment = Appointment::whereDate('schedule', now())->where('user_id', auth()->id())->count();
-            $users = [];
         }
         /*  
         *  Filter with Query String 

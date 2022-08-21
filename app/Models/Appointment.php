@@ -27,6 +27,11 @@ class Appointment extends Model
         return $date->format('Y-m-d h:i A');
     }
 
+    public function payment()
+    {
+        return $this->hasOne(Payment::class, 'appointment_id', 'id');
+    }
+
     protected $casts = [
         'schedule' => 'datetime',
     ];

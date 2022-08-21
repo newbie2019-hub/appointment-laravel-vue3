@@ -98,68 +98,68 @@
   <Head title="Dashboard" />
 
   <BreezeAuthenticatedLayout>
-    <div class="max-w-7xl mx-auto px-6 lg:px-8">
-      <div class="bg-white overflow-hidden sm:rounded-lg">
+    <div class="px-6 mx-auto max-w-7xl lg:px-8">
+      <div class="overflow-hidden bg-white sm:rounded-lg">
         <div class="p-6">
           <p class="text-xl font-medium">Welcome to Dashboard</p>
           <p class="text-sm text-gray-600">Shown below are the summary of your transactions and records.</p>
         </div>
       </div>
-      <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-wrap gap-y-4 gap-x-4">
-        <div class="bg-green-600 flex-1 p-4 text-white rounded-md md:max-w-md">
+      <div class="flex flex-wrap mx-auto max-w-7xl sm:px-6 lg:px-8 gap-y-4 gap-x-4">
+        <div class="flex-1 p-4 text-white bg-green-600 rounded-md md:max-w-md">
           <div class="flex justify-between">
-            <div class="text-9xl flex items-center">{{ formatNumeric(servicesCount) }}</div>
+            <div class="flex items-center text-9xl">{{ formatNumeric(servicesCount) }}</div>
             <div class="flex flex-col items-end gap-y-8">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
-              <p class="uppercase font-medium tracking-wider leading-5 text-right">Total <br />Services</p>
+              <p class="font-medium leading-5 tracking-wider text-right uppercase">Total <br />Services</p>
             </div>
           </div>
           <span class="sr-only">Total Services</span>
         </div>
-        <div class="bg-blue-600 flex-1 p-4 text-white rounded-md md:max-w-md">
+        <div class="flex-1 p-4 text-white bg-blue-600 rounded-md md:max-w-md">
           <div class="flex justify-between">
-            <div class="text-9xl flex items-center">{{ formatNumeric(patientsCount) }}</div>
+            <div class="flex items-center text-9xl">{{ formatNumeric(patientsCount) }}</div>
             <div class="flex flex-col items-end gap-y-8">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <p class="uppercase font-medium tracking-wider leading-5 text-right">Total <br />Patients</p>
+              <p class="font-medium leading-5 tracking-wider text-right uppercase">Total <br />Patients</p>
             </div>
           </div>
           <span class="sr-only">Total Patients</span>
         </div>
-        <div class="bg-orange-600 flex-1 p-4 text-white rounded-md">
+        <div class="flex-1 p-4 text-white bg-orange-600 rounded-md">
           <div class="flex justify-between">
-            <div class="text-9xl flex items-center">{{ formatNumeric(todaysAppointment) }}</div>
+            <div class="flex items-center text-9xl">{{ formatNumeric(todaysAppointment) }}</div>
             <div class="flex flex-col items-end gap-y-8">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-9 w-9" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
               </svg>
-              <p class="uppercase font-medium tracking-wider leading-5 text-right">Today's <br />Appointments</p>
+              <p class="font-medium leading-5 tracking-wider text-right uppercase">Today's <br />Appointments</p>
             </div>
           </div>
           <span class="sr-only">Today's Appointments</span>
         </div>
       </div>
 
-      <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="px-6 mx-auto max-w-7xl lg:px-8">
         <div class="md:flex gap-x-2">
           <div class="flex-1 w-full md:w-1/2">
             <div class="mt-8 mb-8">
-              <p class="font-medium text-xl">Services Summary</p>
+              <p class="text-xl font-medium">Services Summary</p>
               <p class="text-sm">Monthly overview of services booked by patients.</p>
             </div>
             <polar-charts :labels="labels" :series="series" />
           </div>
           <div class="flex-1 w-full md:w-1/2">
             <div class="mt-8 mb-8">
-              <p class="font-medium text-xl">Completed Appointments</p>
+              <p class="text-xl font-medium">Completed Appointments</p>
               <p class="text-sm">Here is an overview of your completed appointments for this week.</p>
             </div>
             <area-chart :labels="areaChartLabel" :series="areaChartSeries" />
@@ -167,9 +167,9 @@
         </div>
       </div>
 
-      <div class="max-w-7xl mx-auto px-6 lg:px-8">
+      <div class="px-6 mx-auto max-w-7xl lg:px-8">
         <div class="mt-8 mb-6">
-          <p class="font-medium text-xl">Appointment Calendar</p>
+          <p class="text-xl font-medium">Appointment Calendar</p>
           <p>Here is an overview of your appointments.</p>
         </div>
         <div class="flex-1 w-full">
@@ -177,16 +177,16 @@
         </div>
       </div>
 
-      <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-white border-gray-200 rounded-lg pb-6 mt-10">
-        <div class="flex justify-between items-center">
+      <div class="pb-6 mx-auto mt-10 bg-white border-gray-200 rounded-lg max-w-7xl sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between">
           <div>
             <p class="text-xl font-medium">Latest Appointments</p>
             <p class="text-sm text-gray-700">Shown below are the latest appointments.</p>
           </div>
 
-          <Link :href="route('appointments.index')" class="font-medium duration-200 ease-in-out transition hover:translate-x-1 hover:text-blue-500 flex items-center gap-x-1">
+          <Link :href="route('appointments.index')" class="flex items-center font-medium transition duration-200 ease-in-out hover:translate-x-1 hover:text-blue-500 gap-x-1">
             View All
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
               <path
                 fill-rule="evenodd"
                 d="M12.293 5.293a1 1 0 011.414 0l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414-1.414L14.586 11H3a1 1 0 110-2h11.586l-2.293-2.293a1 1 0 010-1.414z"
@@ -194,7 +194,7 @@
               /></svg
           ></Link>
         </div>
-        <div class="flex justify-between mt-7 gap-x-2 mb-6">
+        <div class="flex justify-between mb-6 mt-7 gap-x-2">
           <form-input label="Filter Service" class="w-48">
             <floating-select @change="searchAppointment" v-model="trashed">
               <option value="with">All Appointments</option>
@@ -224,36 +224,36 @@
                 <th scope="col" class="py-3.5 pl-4 pr-3 sm:pl-6 text-left">Actions</th>
               </tr>
             </thead>
-            <tbody class="divide-y divide-gray-200 bg-white">
+            <tbody class="bg-white divide-y divide-gray-200">
               <tr v-for="(appointment, i) in appointments" :key="i" class="hover:bg-gray-200" :class="{ 'bg-red-100': appointment.deleted_at }">
-                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">
                   <Chip :label="appointment.appointment_status" :color="chipColor(appointment.appointment_status)" />
                 </td>
-                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 gap-x-2">
+                <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6 gap-x-2">
                   <div class="flex items-center gap-x-2">
-                    <div class="rounded-full bg-blue-500 w-8 h-8 border-gray-100 flex items-center justify-center">
-                      <svg v-if="!appointment.patient.image" xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" viewBox="0 0 20 20" fill="currentColor">
+                    <div class="flex items-center justify-center w-8 h-8 bg-blue-500 border-gray-100 rounded-full">
+                      <svg v-if="!appointment.patient.image" xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-white" viewBox="0 0 20 20" fill="currentColor">
                         <path
                           fill-rule="evenodd"
                           d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
                           clip-rule="evenodd"
                         />
                       </svg>
-                      <img :src="`images/profile/${appointment.patient.image}`" class="object-fit rounded-full h-full" alt="" />
+                      <img :src="`images/profile/${appointment.patient.image}`" class="h-full rounded-full object-fit" alt="" />
                     </div>
                     {{ appointment.patient.full_name }}
                   </div>
                 </td>
-                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.patient.email }}</td>
-                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.schedule }}</td>
+                <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ appointment.patient.email }}</td>
+                <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ appointment.schedule }}</td>
                 <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ stringLimit(appointment.message) }}</td>
-                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ formatCurrency(appointment.subtotal) }}</td>
-                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ formatCurrency(appointment.subtotal) }}</td>
+                <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">
                   <Chip :label="appointment.payment_status" :color="chipColor(appointment.payment_status)" />
                 </td>
-                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.created_at }}</td>
-                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ appointment.deleted_at }}</td>
-                <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-sm sm:pr-6">
+                <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ appointment.created_at }}</td>
+                <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ appointment.deleted_at }}</td>
+                <td class="relative py-4 pl-3 pr-4 text-sm whitespace-nowrap sm:pr-6">
                   <Button
                     text
                     size="sm"
@@ -264,7 +264,7 @@
                     >Details</Button
                   >
                   <Button
-                    v-if="!appointment.deleted_at"
+                    v-if="!appointment.deleted_at && (appointment.appointment_status === 'Pending' || ($page.props.auth.user.is_admin))"
                     @click.prevent="
                       toggleDeleteModal();
                       selectedAppointment = appointment;
@@ -278,30 +278,30 @@
               </tr>
               <tr v-if="appointments.length == 0">
                 <td colspan="9">
-                  <div class="mx-auto text-center py-4 font-medium text-gray-600">No data available ..</div>
+                  <div class="py-4 mx-auto font-medium text-center text-gray-600">No data available ..</div>
                 </td>
               </tr>
             </tbody>
           </table>
         </div>
-        <p class="text-sm mt-2 text-gray-500">Showing the latest entry of appointments from patients.</p>
+        <p class="mt-2 text-sm text-gray-500">Showing the latest entry of appointments from patients.</p>
       </div>
 
       <Modal v-if="isAppointmentModalShown" @close="toggleAppointmentModal">
         <template v-slot:title>
-          <p class="font-bold text-xl">Appointment Information</p>
+          <p class="text-xl font-bold">Appointment Information</p>
           <p class="text-sm text-gray-600">Here are the informations for this appointment</p>
         </template>
         <template v-slot:body>
-          <p class="mb-2 mt-3">Patient Information</p>
+          <p class="mt-3 mb-2">Patient Information</p>
           <p class="text-sm">Full Name: {{ selectedAppointment.patient.full_name }}</p>
           <p class="text-sm">Email: {{ selectedAppointment.patient.email }}</p>
           <p class="text-sm">Gender: {{ selectedAppointment.patient.gender }}</p>
-          <p class="mb-2 mt-4">Appointment Information</p>
+          <p class="mt-4 mb-2">Appointment Information</p>
           <p class="text-sm">Schedule: {{ selectedAppointment.schedule }}</p>
           <p class="text-sm">Message: {{ selectedAppointment.message }}</p>
           <p class="text-sm">Created: {{ selectedAppointment.created_at }}</p>
-          <p class="mb-2 mt-4">Services Selected</p>
+          <p class="mt-4 mb-2">Services Selected</p>
           <p class="text-sm" v-for="services in selectedAppointment.services" :key="services.id">{{ services.service.service }} - {{ formatCurrency(services.service.price) }}</p>
         </template>
         <template v-slot:footer>
@@ -319,7 +319,7 @@
 
       <Modal v-if="isDeleteModalShown" @close="toggleDeleteModal">
         <template v-slot:title>
-          <p class="font-bold text-xl">Confirm Delete</p>
+          <p class="text-xl font-bold">Confirm Delete</p>
         </template>
         <template v-slot:body>
           <p class="text-sm text-gray-600">Are you sure you want to move this appointment to trash? Once moved to trash the appointment status will be marked as cancelled and cannot be restored.</p>

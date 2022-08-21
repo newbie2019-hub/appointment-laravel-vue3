@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DentalCertificateController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\User\AppointmentController;
 use App\Http\Controllers\User\DashboardController;
@@ -44,6 +45,8 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::apiResource('/patients', PatientController::class);
     Route::post('/payment-branch', [PaymentController::class, 'branchPayment'])->name('payment-branch.store');
     Route::post('/payment', [PaymentController::class, 'store'])->name('payment.store');
+
+    Route::get('/certificate/{appointment}', [DentalCertificateController::class, 'index'])->name('certificate.generate');
 
     Route::get('/invoice/{appointment}', [PaymentController::class, 'generateInvoice'])->name('invoice.generate');
     Route::apiResource('/inquiries', InquiryController::class)->only(['index', 'store', 'destroy']);

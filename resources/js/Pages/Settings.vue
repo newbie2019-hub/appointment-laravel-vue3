@@ -120,25 +120,25 @@
   <Head title="Dashboard" />
 
   <BreezeAuthenticatedLayout>
-    <div class="py-12 max-w-7xl mx-auto sm:px-6 lg:px-8">
-      <div class="max-w-7xl mx-auto px-6 lg:px-8">
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+    <div class="py-12 mx-auto max-w-7xl sm:px-6 lg:px-8">
+      <div class="px-6 mx-auto max-w-7xl lg:px-8">
+        <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
           <p class="text-xl font-medium">Account Settings</p>
           <p class="text-sm">Please make sure all of your informations are correct.</p>
         </div>
 
-        <div class="mt-6 sm:mt-5 space-y-6 sm:space-y-5">
+        <div class="mt-6 space-y-6 sm:mt-5 sm:space-y-5">
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label for="username" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> First Name </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="max-w-lg flex rounded-md shadow-sm flex-col">
+              <div class="flex flex-col max-w-lg rounded-md shadow-sm">
                 <input
                   type="text"
                   name="firstname"
                   id="firstname"
                   v-model="form.first_name"
                   autocomplete="firstname"
-                  class="border-gray-400 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm w-full"
+                  class="w-full border-gray-400 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   :class="{ 'border-red-400': errors.first_name }"
                 />
                 <p v-if="errors.first_name" class="text-sm text-red-500">{{ errors.first_name }}</p>
@@ -147,28 +147,28 @@
 
             <label for="middlename" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Middle Name </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="max-w-lg flex rounded-md shadow-sm">
+              <div class="flex max-w-lg rounded-md shadow-sm">
                 <input
                   type="text"
                   name="middlename"
                   id="middlename"
                   v-model="form.middle_name"
                   autocomplete="middlename"
-                  class="border-gray-400 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm w-full"
+                  class="w-full border-gray-400 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 />
               </div>
             </div>
 
             <label for="lastname" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Last Name </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="max-w-lg flex rounded-md shadow-sm flex-col">
+              <div class="flex flex-col max-w-lg rounded-md shadow-sm">
                 <input
                   type="text"
                   name="lastname"
                   id="lastname"
                   v-model="form.last_name"
                   autocomplete="lastname"
-                  class="border-gray-400 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm w-full"
+                  class="w-full border-gray-400 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   :class="{ 'border-red-400': errors.last_name }"
                 />
                 <p v-if="errors.last_name" class="text-sm text-red-500">{{ errors.last_name }}</p>
@@ -177,14 +177,14 @@
 
             <label for="contactnumber" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Contact Number </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="max-w-lg flex rounded-md shadow-sm flex-col">
+              <div class="flex flex-col max-w-lg rounded-md shadow-sm">
                 <input
                   type="text"
                   name="contactnumber"
                   id="contactnumber"
                   v-model="form.contact_number"
                   autocomplete="contactnumber"
-                  class="border-gray-400 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm w-full"
+                  class="w-full border-gray-400 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   :class="{ 'border-red-400': errors.contact_number }"
                 />
                 <p v-if="errors.contact_number" class="text-sm text-red-500">{{ errors.contact_number }}</p>
@@ -193,14 +193,14 @@
 
             <label for="birthday" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Date of Birth </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="max-w-lg flex rounded-md shadow-sm flex-col">
+              <div class="flex flex-col max-w-lg rounded-md shadow-sm">
                 <input
                   type="date"
                   name="birthday"
                   id="birthday"
                   v-model="form.birthday"
                   autocomplete="birthday"
-                  class="border-gray-400 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm w-full"
+                  class="w-full border-gray-400 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   :class="{ 'border-red-400': errors.birthday }"
                 />
                 <p v-if="errors.birthday" class="text-sm text-red-500">{{ errors.birthday }}</p>
@@ -209,14 +209,14 @@
 
             <label for="address" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Address </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="max-w-lg flex rounded-md shadow-sm flex-col">
+              <div class="flex flex-col max-w-lg rounded-md shadow-sm">
                 <textarea
                   type="text"
                   name="address"
                   id="address"
                   v-model="form.address"
                   autocomplete="address"
-                  class="border-gray-400 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm w-full"
+                  class="w-full border-gray-400 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   :class="{ 'border-red-400': errors.address }"
                 />
               </div>
@@ -225,7 +225,7 @@
 
             <label for="address" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Gender </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="max-w-lg flex rounded-md shadow-sm">
+              <div class="flex max-w-lg rounded-md shadow-sm">
                 <floating-select v-model="form.gender">
                   <option value="Male" class="font-medium">Male</option>
                   <option value="Female" class="font-medium">Female</option>
@@ -235,50 +235,50 @@
           </div>
         </div>
 
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-14">
-          <p class="text-xl font-medium">Account Image</p>
+        <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg mt-14">
+          <p class="text-xl font-medium">Profile Image</p>
           <p class="text-sm">Please choose a decent photo as this will be displayed publicly</p>
         </div>
-        <div class="mt-6 sm:mt-5 space-y-6 sm:space-y-5">
-          <div class="sm:border-t sm:border-gray-200 sm:pt-5 flex items-center gap-x-6">
+        <div class="mt-6 space-y-6 sm:mt-5 sm:space-y-5">
+          <div class="flex items-center sm:border-t sm:border-gray-200 sm:pt-5 gap-x-6">
             <!--- Avatar Container --->
-            <div class="w-16 h-16 rounded-full border-2 border-gray-400 flex items-center justify-center shadow-md overflow-hidden">
-              <svg v-if="!props.user.image && !form.image_preview" xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="gray" stroke-width="1">
+            <div class="flex items-center justify-center w-16 h-16 overflow-hidden border-2 border-gray-400 rounded-full shadow-md">
+              <svg v-if="!props.user.image && !form.image_preview" xmlns="http://www.w3.org/2000/svg" class="w-12 h-12" fill="none" viewBox="0 0 24 24" stroke="gray" stroke-width="1">
                 <path
                   stroke-linecap="round"
                   stroke-linejoin="round"
                   d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"
                 />
               </svg>
-              <img v-else-if="form.image_preview" :src="form.image_preview" class="object-fit rounded-full h-full" alt="" />
-              <img v-else :src="`images/profile/${props.user.image}`" class="object-fit rounded-full h-full" alt="" />
+              <img v-else-if="form.image_preview" :src="form.image_preview" class="h-full rounded-full object-fit" alt="" />
+              <img v-else :src="`images/profile/${props.user.image}`" class="h-full rounded-full object-fit" alt="" />
             </div>
             <div class="flex">
               <input id="avatar" type="file" class="hidden" @change="imageSelected" accept="image/*" />
-              <label for="avatar" class="px-3 py-2 hover:bg-blue-700 bg-blue-600 rounded-md text-white text-xs tracking-wider uppercase font-medium hover:cursor-pointer">Upload Image</label>
+              <label for="avatar" class="px-3 py-2 text-xs font-medium tracking-wider text-white uppercase bg-blue-600 rounded-md hover:bg-blue-700 hover:cursor-pointer">Upload Image</label>
               <Button color="error" size="sm" :disabled="!form.image_preview" @click="resetUploadedImage">Reset Image</Button>
             </div>
           </div>
-            <!-- <progress :value="form.progress?.percentage" max="100" class="h-6 w-full">{{ form.progress?.percentage }}%</progress> -->
+            <!-- <progress :value="form.progress?.percentage" max="100" class="w-full h-6">{{ form.progress?.percentage }}%</progress> -->
         </div>
 
-        <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg mt-14">
+        <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg mt-14">
           <p class="text-xl font-medium">Login Credentials</p>
           <p class="text-sm">Please make sure to have a unique password.</p>
         </div>
 
-        <div class="mt-6 sm:mt-5 space-y-6 sm:space-y-5">
+        <div class="mt-6 space-y-6 sm:mt-5 sm:space-y-5">
           <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:border-t sm:border-gray-200 sm:pt-5">
             <label for="email" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Email Address </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="max-w-lg flex rounded-md shadow-sm flex-col">
+              <div class="flex flex-col max-w-lg rounded-md shadow-sm">
                 <input
                   type="text"
                   name="email"
                   id="email"
                   v-model="form.email"
                   autocomplete="email"
-                  class="border-gray-400 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm w-full"
+                  class="w-full border-gray-400 rounded-md shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                   :class="{ 'border-red-400': errors.email }"
                 />
                 <p v-if="errors.email" class="text-sm text-red-500">{{ errors.email }}</p>
@@ -287,7 +287,7 @@
 
             <label for="password" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> Password </label>
             <div class="mt-1 sm:mt-0 sm:col-span-2">
-              <div class="max-w-lg flex rounded-md shadow-sm cursor-pointer" @click="toggleUpdatePasswordModal">
+              <div class="flex max-w-lg rounded-md shadow-sm cursor-pointer group" @click="toggleUpdatePasswordModal">
                 <input
                   type="password"
                   name="password"
@@ -295,15 +295,16 @@
                   value="*******"
                   autocomplete="password"
                   disabled
-                  class="transition duration-200 cursor-pointer hover:ring-1 border-gray-400 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 rounded-md shadow-sm w-full"
+                  class="w-full transition duration-200 border-gray-400 shadow-sm cursor-pointer disabled:bg-gray-100 rounded-bl-md rounded-tl-md group-hover:ring-1 focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50"
                 />
+                <Button size="sm" class="ml-0 rounded-none rounded-r-md rounded-br-md group-hover:bg-blue-800 group-hover:ring-1 group-hover:ring-offset-0">Update</Button>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="max-w-7xl mx-auto sm:mt-5 space-y-6 sm:space-y-5 lg:px-8 px-6">
+      <div class="px-6 mx-auto space-y-6 max-w-7xl sm:mt-5 sm:space-y-5 lg:px-8">
         <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
           <label for="password" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> </label>
           <div class="max-w-lg sm:col-span-2">
@@ -317,7 +318,7 @@
 
     <Modal v-if="isConfirmModalShown" @close="toggleConfirmModal">
       <template v-slot:title>
-        <p class="font-bold text-xl">Enter Current Password</p>
+        <p class="text-xl font-bold">Enter Current Password</p>
         <p class="text-sm text-gray-600">Please enter your current password to confirm your changes.</p>
       </template>
       <template v-slot:body>
@@ -335,7 +336,7 @@
 
     <Modal v-if="isUpdatePasswordShown" @close="toggleUpdatePasswordModal">
       <template v-slot:title>
-        <p class="font-bold text-xl">Update Password</p>
+        <p class="text-xl font-bold">Update Password</p>
         <p class="text-sm text-gray-600">Please enter your current password to confirm your changes.</p>
       </template>
       <template v-slot:body>
