@@ -1,0 +1,74 @@
+TO-DO
+
+Setup Basic Authentication [x]
+Modify Login Page [x]
+Modify Registration Page [x]
+ - Add Stepper [x]
+Add filtering (trashed, with, only) of appointments [x]
+Fix appointment schedule [x]
+Add Appointment Modal [x] 
+Appointment Status
+ - Finished [x]
+ - Pending [x]
+ - Approved [x]
+ - Cancelled [x]
+Appointment Payment Status
+ - Pending
+ - Paid (Online or Branch)
+Add no data on table
+ - Payment
+ - Services [x]
+ - Patients [x]
+ - Inquiries [x]
+ - Appointments [x]
+Add loading on table
+Fix card on appointment [x]
+Inquiry 
+ - Add View Modal [x]
+ - Limit Text Message on Table [x]
+Make Settings Page work [x]
+ - image upload [x]
+ - password update [x]
+ - validations [x]
+Trash Appointment [x]
+Patient Update Modal - Basic Info Only [x]
+Appointment Update [x]
+ - If Approved user cannot update it only admin can [x]
+Add Hover State on Table [x]
+ - Patients [x]
+ - Services [x]
+ - Appointments [x]
+Patient Table
+ - Add image on full name [x]
+Patient Viewing Modal [x]
+Add Dashboard Layout
+ - Charts for patients
+ - inquiries count [x]
+ - latest appointment [x]
+ - latest patient signup
+ - latest inquiry [x]
+ - income [x]
+ - summary cards [x]
+Added min and max on datetime schedule - HomePage [x]
+Add Payment Invoice - [x]
+Payment Button shows when appointment 
+ - is approved [x]
+ - is not paid
+Button for viewing payment record of appointment
+Updating payment status -
+ - add update for payment status if another charge occurs
+Payment Page [x]
+Store Payment [x]
+   - Amount tendered [x]
+   - change [x]
+   - generate receipt
+Updated Services Count - [x]
+Add User Restrictions [x]
+ - Sidenav [x]
+ - Modals [x]
+ - Routes 
+
+
+Stripe
+email: rejirok674@5k2u.com
+password: DentalClinic31254!
