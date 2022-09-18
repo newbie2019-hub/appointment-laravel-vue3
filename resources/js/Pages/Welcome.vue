@@ -85,7 +85,7 @@
   <Head title="Welcome" />
   <!-- COLORS -->
   <div class="bg-green-500 bg-green-600 bg-red-500 bg-red-600 hidden bg-gray-600 bg-gray-500"></div>
-  <nav class="flex justify-between container pt-8 sticky top-0 z-20 md:max-w-6xl mx-auto">
+  <nav class="flex justify-between container pt-8 sticky top-0 z-20 md:max-w-6xl mx-auto px-6 sm:px-8 md:px-2" >
     <div>
       <p class="font-bold text-lg">M. Dental Clinic</p>
     </div>

@@ -28,7 +28,10 @@
   </teleport>
   <aside :class="{ 'hidden': !isVisible }" class="w-64 fixed left-0 top-0 h-screen md:block z-40 border-r" aria-label="Sidebar">
     <div class="overflow-y-auto py-4 px-3 bg-gray-50 dark:bg-gray-800 h-full">
-      <img src="/images/logo.svg" alt="" class="mx-auto mt-4 mb-10" />
+      <div class="flex-col items-center justify-center mb-10">
+        <img src="/images/logo.png" alt="" class="mx-auto mt-4" width="100"/>
+        <p class="text-center mt-3 font-medium">Manabat-Flores <br/>Dental Clinic</p>
+      </div>
       <p class="text-gray-700 font-medium">Main Menu</p>
       <ul class="space-y-2 mt-4 px-3">
         <li>

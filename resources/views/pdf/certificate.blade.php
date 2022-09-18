@@ -56,11 +56,6 @@
 												text-transform: uppercase !important;
 								}
 
-								* {
-												font-family: "DejaVu Sans";
-								}
-
-
 								.mt-6 {
 												margin-top: 6rem;
 								}
@@ -75,6 +70,14 @@
 
 								.mt-3 {
 												margin-top: 3rem;
+								}
+
+								.mb-1 {
+									 margin-bottom: 1rem;
+								}
+
+								.mb-2 {
+									 margin-bottom: 2rem;
 								}
 
 								.font-lg {
@@ -104,6 +107,34 @@
 								.p-3 {
 												padding: 1rem;
 								}
+
+								.margin-35 {
+									  margin-left: 35%;
+								}
+
+								.margin-40 {
+									  margin-left: 40%;
+								}
+
+								.text-right {
+									  text-align: right
+								}
+
+								.px-3 {
+									  padding: 0 1.2rem 0 1.2rem;
+								}
+
+								.font-regular {
+									  font-weight: 400 !important;
+								}
+
+								.font-medium {
+									  font-weight: 600;
+								}
+
+								.mb-none {
+									  margin-bottom: 0 !important;
+								}
 				</style>
 </head>
 
@@ -113,21 +144,25 @@
 								<p class="text-center font-md">General Dentistry | Orthodonics</p>
 								<p class="text-center font-md">Purok 2 Sergio Bayam, Calumpit, Bulacan</p>
 				</div>
-				{{-- <div class="flex mt-4 font-lg">
-								<p>Name: <span class="underline">Yvan C. Sabay</span></p>
-								<p>Age: <span class="underline">22</span></p>
-								<p>Date: <span class="underline">2022-02-20</span></p>
-				</div> --}}
 				<table class="mt-3">
 								<thead>
-												<th scope="col" class="p-3">
-																<p class="font-lg">Name: <span class="underline">Yvan C. Sabay</span></p>
+												<th scope="col" class="px-3">
+																<p class="font-lg">Name: <span class="underline font-regular">{{ $name }}</span></p>
 												</th>
-												<th scope="col" class="p-3">
-																<p class="font-lg">Age: <span class="underline">23</span></p>
+												<th scope="col" class="px-3">
+																<p class="font-lg">Age: <span class="underline font-regular">{{ $age }}</span></p>
 												</th>
-												<th scope="col" class="p-3">
-																<p class="font-lg">Date: <span class="underline">2022-09-24</span></p>
+												<th scope="col" class="px-3">
+																<p class="font-lg">Date: <span class="underline font-regular">{{ $date }}</span></p>
+												</th>
+								</thead>
+								<tbody>
+								</tbody>
+				</table>
+				<table class="">
+								<thead>
+												<th scope="col" class="px-3">
+																<p class="font-lg">Address: <span class="underline font-regular">{{ $address }}</span></p>
 												</th>
 								</thead>
 								<tbody>
@@ -135,8 +170,14 @@
 				</table>
 				<h1 class="mt-3 text-center text-uppercase">Dental Certificate</h1>
 				<p class="mt-4 font-lg">This is to certify that the above patient's name had undergone dental treatment such as:</p>
+				<p class="margin-35 text-uppercase mt-3 font-lg mb-1">Services:</p>
+				@foreach ($services as $service)
+								<p class="margin-40 font-lg font-medium">{{ $service->service->service }}</p>
+				@endforeach
 				<p class="mt-5">Patient is advised to rest for at least days to avoid unnecessary complications.</p>
 				<p>This certification is issued upon request of the patient for whatever purpose it may serve him/her most.</p>
+				<h4 class="mt-5 text-right mb-none">Respectfully yours,</h4>
+				<h3 class="text-right font-regular">Dr. Joana Marie Manabat-Flores</h3>
 </body>
 
 </html>
