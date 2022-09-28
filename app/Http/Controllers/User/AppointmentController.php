@@ -21,38 +21,39 @@ class AppointmentController extends Controller
 
         if(auth()->user()->is_admin) {
             $appointments = Appointment::with(['patient:id,first_name,last_name,email,gender,address','services.service','payment:id,appointment_id,receipt_url,payment_type'])
+            ->withCount('prescription')
             ->when($request->search, fn($query, $search) =>
                 $query->whereRelation('patient', 'first_name', 'like', '%'.$search.'%')
                 ->orWhereRelation('patient', 'last_name', 'like', '%'.$search.'%')
-            )->when($request->trashed, fn($query, $filter) 
+            )->when($request->trashed, fn($query, $filter)
                 => $filter === "only" ? $query->onlyTrashed() : $query->withTrashed()
             )->latest()->paginate(10)->withQueryString();
-    
+
             $trashedAppointmentsCount = Appointment::onlyTrashed()->count();
             $todaysAppointment = Appointment::whereDate('schedule', now())->count();
             $users = $this->search($request);
         }
         else {
-            $appointments = Appointment::where('user_id', auth()->id())->with(['patient:id,first_name,last_name,address,email,gender','services.service','payment:id,appointment_id,receipt_url,payment_type'])->when($request->search, fn($query, $search) =>
+            $appointments = Appointment::where('user_id', auth()->id())->with(['patient:id,first_name,last_name,address,email,gender','services.service','payment:id,appointment_id,receipt_url,payment_type'])->withCount('prescription')->when($request->search, fn($query, $search) =>
                 $query->whereRelation('patient', 'first_name', 'like', '%'.$search.'%')
                 ->orWhereRelation('patient', 'last_name', 'like', '%'.$search.'%')
-            )->when($request->trashed, fn($query, $filter) 
+            )->when($request->trashed, fn($query, $filter)
                 => $filter === "only" ? $query->onlyTrashed() : $query->withTrashed()
             )->latest()->paginate(10)->withQueryString();
 
             $trashedAppointmentsCount = Appointment::onlyTrashed()->where('user_id', auth()->id())->count();
             $todaysAppointment = Appointment::whereDate('schedule', now())->where('user_id', auth()->id())->count();
         }
-        /*  
-        *  Filter with Query String 
-        *  is needed to preserve 
-        *  search and paginate 
-        *  data 
+        /*
+        *  Filter with Query String
+        *  is needed to preserve
+        *  search and paginate
+        *  data
         */
         $filters = $request->only(['search', 'trashed']);
         return Inertia::render('Appointments', compact('users', 'services', 'appointments', 'filters', 'trashedAppointmentsCount', 'todaysAppointment'));
     }
- 
+
     public function store(AppointmentRequest $request)
     {
         if(auth()->user()->is_admin == 1 && ($request->user_id == null || $request->user_id == '')){
@@ -61,18 +62,18 @@ class AppointmentController extends Controller
 
         if($this->isAppointmentAvailable($request)){
             $appointment = Appointment::create(
-                $request->safe()->except(['selected_services']) + 
+                $request->safe()->except(['selected_services']) +
                 [
                     'user_id' => auth()->id(),
                 ]
             );
-    
+
             $this->storeSelectedServices($request->validated(), $appointment->id);
             return back()->with('success', 'Appointment has been created successfully!');
         } else {
             return back()->withErrors(['error' => 'Selected schedule is unavailable.']);
         }
-       
+
     }
 
     public function update(Appointment $appointment, AppointmentRequest $request)
@@ -87,7 +88,7 @@ class AppointmentController extends Controller
 
     }
 
-    
+
     public function search($request)
     {
         return User::notAdmin()->when($request->search, fn($query, $search)
@@ -116,7 +117,7 @@ class AppointmentController extends Controller
          )->where('schedule', '>=', Carbon::parse($data['schedule'])->startOfHour()->format('Y-m-d H:i'))
         ->where('schedule', '<=', Carbon::parse($data['schedule'])->addHour()->format('Y-m-d H:i'))
         ->get();
-        
+
         return $doesExist->isEmpty();
     }
 

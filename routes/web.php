@@ -9,6 +9,7 @@ use App\Http\Controllers\User\PatientController;
 use App\Http\Controllers\User\PaymentController;
 use App\Http\Controllers\User\ServiceController;
 use App\Http\Controllers\User\SettingsController;
+use App\Http\Controllers\PrescriptionController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -32,6 +33,8 @@ Route::get('/', [HomeController::class, 'index']);
 
 Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+
+    Route::apiResource('/prescription', PrescriptionController::class)->only(['index', 'store']);
 
     Route::put('/appointments/restore/{appointment}', [AppointmentController::class, 'restore'])->withTrashed();
     Route::put('/appointments/finished/{appointment}', [AppointmentController::class, 'finished']);

@@ -32,6 +32,11 @@ class Appointment extends Model
         return $this->hasOne(Payment::class, 'appointment_id', 'id');
     }
 
+    public function prescription()
+    {
+        return $this->hasMany(Prescription::class, 'appointment_id', 'id');
+    }
+
     protected $casts = [
         'schedule' => 'datetime',
     ];
