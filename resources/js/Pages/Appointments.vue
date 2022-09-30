@@ -130,8 +130,10 @@ const toggleAppointmentModal = () => {
     isAppointmentModalShown.value = !isAppointmentModalShown.value;
 };
 
-const togglePrescriptionModal = (data = { ...initialPrescription }) => {
-    prescriptionData.appointment_id = data.id
+const togglePrescriptionModal = (id = null, data = { ...initialPrescription }) => {
+    prescriptionData.appointment_id = id
+    prescriptionData.note = data?.note
+    prescriptionData.prescription = data?.prescription
     isPrescriptionModalShown.value = !isPrescriptionModalShown.value;
 };
 
@@ -503,12 +505,13 @@ const searchPatient = debounce((val) => {
                                                 <Button is-link :href="route('certificate.generate', appointment.id)"
                                                     v-if="($page.props.auth.user.is_admin || appointment.payment_status !== 'Pending') && !appointment.deleted_at && (appointment.appointment_status == 'Approved' || appointment.appointment_status == 'Finished')"
                                                     text size="sm" color="success">Certificate</Button>
-                                                <Button @click.prevent="togglePrescriptionModal(appointment)"
+                                                <Button
+                                                    @click.prevent="togglePrescriptionModal(appointment.id,appointment.prescription)"
                                                     v-if="$page.props.auth.user.is_admin" text size="sm"
                                                     color="success">Prescription</Button>
-                                                <Button
-                                                    v-if="!$page.props.auth.user.is_admin && appointment.payment_status == 'Paid'" text size="sm"
-                                                    color="success">View Prescription</Button>
+                                                <Button is-link
+                                                    v-if="!$page.props.auth.user.is_admin && appointment.payment_status == 'Paid' && appointment.prescription != null"
+                                                   :href="route('prescription.generate', appointment.id)" text size="sm" color="success">View Prescription</Button>
                                                 <Button color="success" is-link text size="sm"
                                                     v-if="appointment.payment?.payment_type == 'Stripe' && appointment.payment_status == 'Paid'"
                                                     :href="appointment.payment?.receipt_url" target="_">View

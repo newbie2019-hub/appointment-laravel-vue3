@@ -34,6 +34,7 @@ Route::get('/', [HomeController::class, 'index']);
 Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
+    Route::get('/generate/prescription/{appointment}', [PrescriptionController::class, 'generate'])->name('prescription.generate');
     Route::apiResource('/prescription', PrescriptionController::class)->only(['index', 'store']);
 
     Route::put('/appointments/restore/{appointment}', [AppointmentController::class, 'restore'])->withTrashed();
@@ -54,7 +55,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::get('/invoice/{appointment}', [PaymentController::class, 'generateInvoice'])->name('invoice.generate');
     Route::apiResource('/inquiries', InquiryController::class)->only(['index', 'store', 'destroy']);
     Route::apiResource('/payments', PaymentController::class);
-    
+
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::post('/settings/update', [SettingsController::class, 'update'])->name('settings.update');
     Route::post('/settings/update-password', [SettingsController::class, 'updatePassword'])->name('settings.update-password');

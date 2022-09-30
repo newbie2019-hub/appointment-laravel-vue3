@@ -99,13 +99,13 @@
 
   <BreezeAuthenticatedLayout>
     <div class="px-6 mx-auto max-w-7xl lg:px-8">
-      <div class="overflow-hidden bg-white sm:rounded-lg">
+      <div class="overflow-hidden bg-white sm:rounded-lg" v-if="$page.props.auth.user.is_admin">
         <div class="p-6">
           <p class="text-xl font-medium">Welcome to Dashboard</p>
           <p class="text-sm text-gray-600">Shown below are the summary of your transactions and records.</p>
         </div>
       </div>
-      <div class="flex flex-wrap mx-auto max-w-7xl sm:px-6 lg:px-8 gap-y-4 gap-x-4">
+      <div class="flex flex-wrap mx-auto max-w-7xl sm:px-6 lg:px-8 gap-y-4 gap-x-4" v-if="$page.props.auth.user.is_admin">
         <div class="flex-1 p-4 text-white bg-green-600 rounded-md md:max-w-md">
           <div class="flex justify-between">
             <div class="flex items-center text-9xl">{{ formatNumeric(servicesCount) }}</div>

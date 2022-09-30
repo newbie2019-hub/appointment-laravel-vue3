@@ -34,7 +34,7 @@ class Appointment extends Model
 
     public function prescription()
     {
-        return $this->hasMany(Prescription::class, 'appointment_id', 'id');
+        return $this->hasOne(Prescription::class, 'appointment_id', 'id');
     }
 
     protected $casts = [
