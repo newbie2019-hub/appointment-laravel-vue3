@@ -115,7 +115,7 @@
             <span class="flex-1 ml-3 whitespace-nowrap">Patients</span>
           </Link>
         </li>
-        <li>
+        <!-- <li>
           <Link
             v-if="authenticatedUser.is_admin"
             :href="route('inquiries.index')"
@@ -136,7 +136,7 @@
             </svg>
             <span class="flex-1 ml-3 whitespace-nowrap">Inquiries</span>
           </Link>
-        </li>
+        </li> -->
         <li>
           <Link
             v-if="authenticatedUser.is_admin"

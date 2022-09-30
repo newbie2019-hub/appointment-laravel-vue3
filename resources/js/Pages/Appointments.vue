@@ -501,7 +501,7 @@ const searchPatient = debounce((val) => {
                                                       toggleCreateModal(appointment);
                                                     " text size="sm" color="success">Update</Button>
                                                 <Button is-link :href="route('certificate.generate', appointment.id)"
-                                                    v-if="($page.props.auth.user.is_admin || appointment.payment_status !== 'Pending') && !appointment.deleted_at && appointment.appointment_status == 'Approved'"
+                                                    v-if="($page.props.auth.user.is_admin || appointment.payment_status !== 'Pending') && !appointment.deleted_at && (appointment.appointment_status == 'Approved' || appointment.appointment_status == 'Finished')"
                                                     text size="sm" color="success">Certificate</Button>
                                                 <Button @click.prevent="togglePrescriptionModal(appointment)"
                                                     v-if="$page.props.auth.user.is_admin" text size="sm"
