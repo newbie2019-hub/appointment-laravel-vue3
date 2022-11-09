@@ -98,14 +98,14 @@
   <Head title="Dashboard" />
 
   <BreezeAuthenticatedLayout>
-    <div class="px-6 mx-auto max-w-7xl lg:px-8">
+    <div class="px-6 max-w-8xl lg:px-8">
       <div class="overflow-hidden bg-white sm:rounded-lg" v-if="$page.props.auth.user.is_admin">
         <div class="p-6">
           <p class="text-xl font-medium">Welcome to Dashboard</p>
           <p class="text-sm text-gray-600">Shown below are the summary of your transactions and records.</p>
         </div>
       </div>
-      <div class="flex flex-wrap mx-auto max-w-7xl sm:px-6 lg:px-8 gap-y-4 gap-x-4" v-if="$page.props.auth.user.is_admin">
+      <div class="flex flex-wrap max-w-8xl sm:px-6 lg:px-8 gap-y-4 gap-x-4" v-if="$page.props.auth.user.is_admin">
         <div class="flex-1 p-4 text-white bg-green-600 rounded-md md:max-w-md">
           <div class="flex justify-between">
             <div class="flex items-center text-9xl">{{ formatNumeric(servicesCount) }}</div>
@@ -148,7 +148,7 @@
         </div>
       </div>
 
-      <div class="px-6 mx-auto max-w-7xl lg:px-8">
+      <div class="px-6 max-w-8xl lg:px-8">
         <div class="md:flex gap-x-2">
           <div class="flex-1 w-full md:w-1/2">
             <div class="mt-8 mb-8">
@@ -167,7 +167,7 @@
         </div>
       </div>
 
-      <div class="px-6 mx-auto max-w-7xl lg:px-8">
+      <div class="px-6 max-w-8xl lg:px-8">
         <div class="mt-8 mb-6">
           <p class="text-xl font-medium">Appointment Calendar</p>
           <p>Here is an overview of your appointments.</p>
@@ -177,7 +177,7 @@
         </div>
       </div>
 
-      <div class="pb-6 mx-auto mt-10 bg-white border-gray-200 rounded-lg max-w-7xl sm:px-6 lg:px-8">
+      <div class="pb-6 mt-10 bg-white border-gray-200 rounded-lg max-w-8xl sm:px-6 lg:px-8">
         <div class="flex items-center justify-between">
           <div>
             <p class="text-xl font-medium">Latest Appointments</p>
@@ -195,7 +195,7 @@
           ></Link>
         </div>
         <div class="flex justify-between mb-6 mt-7 gap-x-2">
-          <form-input label="Filter Service" class="w-48">
+          <form-input label="Filter Appointment" class="w-52">
             <floating-select @change="searchAppointment" v-model="trashed">
               <option value="with">All Appointments</option>
               <option value="">Active Appointments</option>
@@ -225,7 +225,7 @@
               </tr>
             </thead>
             <tbody class="bg-white divide-y divide-gray-200">
-              <tr v-for="(appointment, i) in appointments" :key="i" class="hover:bg-gray-200" :class="{ 'bg-red-100': appointment.deleted_at }">
+              <tr v-for="(appointment, i) in appointments" :key="i" class="hover:bg-gray-100" :class="{ 'bg-red-100': appointment.deleted_at }">
                 <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">
                   <Chip :label="appointment.appointment_status" :color="chipColor(appointment.appointment_status)" />
                 </td>

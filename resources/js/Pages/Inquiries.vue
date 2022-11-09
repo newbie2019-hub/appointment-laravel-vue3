@@ -57,12 +57,12 @@
   <Head title="Dashboard" />
 
   <BreezeAuthenticatedLayout>
-    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="max-w-8xl mx-auto px-6 lg:px-8">
       <div class="sm:px-6 lg:px-8 mt-6 mx-auto">
         <p class="font-medium text-xl">Inquiry Summary</p>
         <p>Here is an overview of your inquiries.</p>
       </div>
-      <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-wrap gap-x-4 gap-y-4">
+      <div class="py-8 max-w-8xl mx-auto sm:px-6 lg:px-8 flex flex-wrap gap-x-4 gap-y-4">
         <div class="bg-green-600 flex-1 p-4 text-white rounded-md md:max-w-md">
           <div class="flex justify-between">
             <div class="text-9xl flex items-center">{{ formatNumeric(totalInquiries) }}</div>
@@ -89,13 +89,13 @@
         </div>
       </div>
     </div>
-    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="max-w-8xl mx-auto px-6 lg:px-8">
       <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
           <div class="overflow-x-auto shadow-sm sm:rounded-lg">
             <!-- <div class="p-6 bg-white border-b border-gray-200">Patients</div> -->
             <div class="">
-              <div class="max-w-7xl mx-auto bg-white rounded-lg pb-6">
+              <div class="max-w-8xl mx-auto bg-white rounded-lg pb-6">
                 <p class="text-xl font-medium">User Inquiries</p>
                 <p class="text-sm text-gray-700">Shown below are the inquiries of your users.</p>
                 <div class="flex justify-end mt-8">
@@ -117,7 +117,7 @@
                       </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200 bg-white">
-                      <tr v-for="(inquiry, i) in inquiries.data" :key="i" class="hover:bg-gray-200">
+                      <tr v-for="(inquiry, i) in inquiries.data" :key="i" class="hover:bg-gray-100">
                         <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ inquiry.id }}</td>
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900">{{ inquiry.email }}</td>
                         <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ inquiry.full_name }}</td>

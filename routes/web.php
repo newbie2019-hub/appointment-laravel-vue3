@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\DentalCertificateController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\User\InventoryController;
 use App\Http\Controllers\User\AppointmentController;
 use App\Http\Controllers\User\DashboardController;
 use App\Http\Controllers\User\InquiryController;
@@ -57,6 +58,7 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::apiResource('/payments', PaymentController::class);
 
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::apiResource('/inventory', InventoryController::class);
     Route::post('/settings/update', [SettingsController::class, 'update'])->name('settings.update');
     Route::post('/settings/update-password', [SettingsController::class, 'updatePassword'])->name('settings.update-password');
 });

@@ -11,7 +11,7 @@ import Pagination from '@/Shared/Pagination.vue';
 import Modal from '@/Components/Modal/Modal.vue';
 import { loadStripe } from '@stripe/stripe-js/pure';
 import { debounce } from 'lodash';
-import { ref, watch, watchEffect, computed, toRef, onMounted } from 'vue';
+import { ref, watch, computed, toRef, onMounted } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
 import { formatCurrency, formatNumeric, stringLimit, chipColor } from '@/Composables/Utilities';
 import { useToast } from 'vue-toastification';
@@ -315,12 +315,12 @@ const searchPatient = debounce((val) => {
     <Head title="Patient Appointments" />
 
     <BreezeAuthenticatedLayout>
-        <div class="px-6 mx-auto max-w-7xl lg:px-8">
+        <div class="px-6 max-w-8xl lg:px-8">
             <div class="mx-auto mt-6 sm:px-6 lg:px-8">
                 <p class="text-xl font-medium">Appointment Summary</p>
                 <p>Here is an overview of your appointments.</p>
             </div>
-            <div class="flex flex-wrap py-8 mx-auto max-w-7xl sm:px-6 lg:px-8 gap-x-4 md:flex-row gap-y-4">
+            <div class="flex flex-wrap py-8 max-w-8xl sm:px-6 lg:px-8 gap-x-4 md:flex-row gap-y-4">
                 <div class="flex-1 p-4 text-white bg-red-500 rounded-md">
                     <div class="flex justify-between">
                         <div class="flex items-center text-9xl">{{ formatNumeric(trashedAppointmentsCount) }}</div>
@@ -371,12 +371,12 @@ const searchPatient = debounce((val) => {
             </div>
         </div>
 
-        <div class="px-6 mx-auto max-w-7xl lg:px-8">
+        <div class="px-6 max-w-8xl lg:px-8">
             <div class="mx-auto mt-6 sm:px-6 lg:px-8">
                 <p class="text-xl font-medium">Appointment Calendar</p>
                 <p>Here is an overview of your appointments.</p>
             </div>
-            <div class="py-8 mx-auto max-w-7xl sm:px-6 lg:px-8 md:flex gap-x-4">
+            <div class="py-8 mx-auto max-w-8xl sm:px-6 lg:px-8 md:flex gap-x-4">
                 <div class="flex-1 w-full">
                     <Calendar :data="appointments.data" />
                 </div>
@@ -384,14 +384,14 @@ const searchPatient = debounce((val) => {
         </div>
 
         <div class="py-10">
-            <div class="px-6 mx-auto max-w-7xl lg:px-8">
+            <div class="px-6 max-w-8xl lg:px-8">
                 <div class="overflow-x-auto shadow-sm sm:rounded-lg">
                     <div class="">
-                        <div class="pb-6 mx-auto bg-white border-gray-200 rounded-lg max-w-7xl sm:px-6 lg:px-8">
+                        <div class="pb-6 mx-auto bg-white border-gray-200 rounded-lg max-w-8xl sm:px-6 lg:px-8">
                             <p class="text-xl font-medium">All Appointments</p>
                             <p class="text-sm text-gray-700">Shown below are the appointments record</p>
                             <div class="flex justify-between mb-6 mt-7 gap-x-2">
-                                <form-input label="Filter Service" class="w-48">
+                                <form-input label="Filter Appointment" class="w-56">
                                     <floating-select @change="searchAppointment" v-model="trashed">
                                         <option value="with">All Appointments</option>
                                         <option value="">Active Appointments</option>
@@ -446,7 +446,7 @@ const searchPatient = debounce((val) => {
                                     </thead>
                                     <tbody class="bg-white divide-y divide-gray-200">
                                         <tr v-for="(appointment, i) in appointments.data" :key="i"
-                                            class="hover:bg-gray-200" :class="{ 'bg-red-100': appointment.deleted_at }">
+                                            class="hover:bg-gray-100" :class="{ 'bg-red-100': appointment.deleted_at }">
                                             <td
                                                 class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">
                                                 {{

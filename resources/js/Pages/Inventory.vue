@@ -8,7 +8,7 @@
   import Pagination from '@/Shared/Pagination.vue';
   import Modal from '@/Components/Modal/Modal.vue';
   import { debounce } from 'lodash';
-  import { ref, watch, watchEffect } from 'vue';
+  import { ref } from 'vue';
   import { Inertia } from '@inertiajs/inertia';
   import { formatCurrency, formatNumeric } from '@/Composables/Utilities';
   import { useToast } from 'vue-toastification';
@@ -17,11 +17,11 @@
   const form = useForm({ id: null, service: null, price: null });
 
   const props = defineProps({
-    services: Object,
-    servicesCount: [Object, Number],
+    inventory: Object,
+    inventoryCount: [Object, Number],
     errors: Object,
     filters: Object,
-    trashedServicesCount: Number,
+    trashedInventoryCount: Number,
   });
 
   let search = ref(props.filters.search);
@@ -52,7 +52,7 @@
   };
 
   const storeService = () => {
-    Inertia.post(`/services`, selectedService.value, {
+    Inertia.post(`/inventory`, selectedService.value, {
       preserveState: true,
       onSuccess: () => {
         toast.success('Service has been added successfully!');
@@ -63,7 +63,7 @@
   };
 
   const deleteService = () => {
-    Inertia.delete(`/services/${service_id.value}`, {
+    Inertia.delete(`/inventory/${service_id.value}`, {
       preserveState: true,
       onSuccess: () => {
         toast.success('Service has been moved to trash successfully!');
@@ -74,7 +74,7 @@
   };
 
   const updateService = () => {
-    Inertia.put(`/services/${selectedService.value.id}`, selectedService.value, {
+    Inertia.put(`/inventory/${selectedService.value.id}`, selectedService.value, {
       preserveState: true,
       onSuccess: () => {
         toast.success('Service has been updated successfully!');
@@ -85,7 +85,7 @@
   };
 
   const restoreService = () => {
-    form.put(`/services/restore/${selectedService.value.id}`, {
+    form.put(`/inventory/restore/${selectedService.value.id}`, {
       preserveState: true,
       onSuccess: () => {
         toast.success('Service has been restored successfully!');
@@ -94,8 +94,8 @@
     });
   };
 
-  const searchServices = debounce(() => {
-    Inertia.get('/services', { search: search.value, trashed: trashed.value }, { preserveState: true });
+  const searchInventory = debounce(() => {
+    Inertia.get('/inventory', { search: search.value, trashed: trashed.value }, { preserveState: true });
   }, 300);
 </script>
 
@@ -105,50 +105,50 @@
   <BreezeAuthenticatedLayout>
     <div class="max-w-8xl px-6 lg:px-8">
       <div class="sm:px-6 lg:px-8 mt-6 mx-auto">
-        <p class="font-medium text-xl">Services Summary</p>
-        <p>Here is an overview of your services.</p>
+        <p class="font-medium text-xl">Inventory Summary</p>
+        <p>Here is an overview of your inventory.</p>
       </div>
       <div class="py-8 max-w-8xl mx-auto sm:px-6 lg:px-8 flex flex-wrap gap-y-4 gap-x-4">
         <div class="bg-red-500 flex-1 p-4 text-white rounded-md md:max-w-md">
           <div class="flex justify-between">
-            <div class="text-9xl flex items-center">{{ formatNumeric(trashedServicesCount) }}</div>
+            <div class="text-9xl flex items-center">{{ formatNumeric(trashedInventoryCount) }}</div>
             <div class="flex flex-col items-end gap-y-8">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
               </svg>
-              <p class="uppercase font-medium tracking-wider leading-5">Trashed <br />Services</p>
+              <p class="uppercase font-medium tracking-wider leading-5">Trashed <br />Inventory</p>
             </div>
           </div>
-          <span class="sr-only">Trashed Services</span>
+          <span class="sr-only">Trashed Inventory</span>
         </div>
         <div class="bg-green-600 flex-1 p-4 text-white rounded-md md:max-w-md">
           <div class="flex justify-between">
-            <div class="text-9xl flex items-center">{{ formatNumeric(servicesCount) }}</div>
+            <div class="text-9xl flex items-center">{{ formatNumeric(inventoryCount) }}</div>
             <div class="flex flex-col items-end gap-y-8">
               <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
                 <path stroke-linecap="round" stroke-linejoin="round" d="M13 10V3L4 14h7v7l9-11h-7z" />
               </svg>
-              <p class="uppercase font-medium tracking-wider leading-5 text-right">Total <br />Services</p>
+              <p class="uppercase font-medium tracking-wider leading-5 text-right">Total <br />Inventory</p>
             </div>
           </div>
-          <span class="sr-only">Total Services</span>
+          <span class="sr-only">Total Inventory</span>
         </div>
       </div>
     </div>
 
     <div class="py-10">
       <div class="max-w-8xl px-6 lg:px-8">
-        <div class="overflow-x-auto sm:rounded-lg">
+        <div class="overflow-x-auto shadow-sm sm:rounded-lg">
           <div class="">
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8 bg-white border-gray-200 rounded-lg pb-6">
-              <p class="text-xl font-medium">Offered Services</p>
-              <p class="text-sm text-gray-700">Shown below are the services you offer.</p>
+              <p class="text-xl font-medium">Inventory Equipment</p>
+              <p class="text-sm text-gray-700">Shown below are your inventory equipments</p>
               <div class="flex justify-between mt-7 gap-x-2 mb-6">
-                <form-input label="Filter Service" class="w-48">
+                <form-input label="Filter Inventory" class="w-56">
                   <floating-select @change="searchServices" v-model="trashed">
-                    <option value="with">All Services</option>
-                    <option value="">Active Services</option>
-                    <option value="only">Trashed Services</option>
+                    <option value="with">All Equipments</option>
+                    <option value="">Active Inventory</option>
+                    <option value="only">Trashed Inventory</option>
                   </floating-select>
                 </form-input>
                 <div class="flex gap-x-2">
@@ -159,10 +159,10 @@
                     "
                     size="sm"
                     color="success"
-                    >Add Service</Button
+                    >Add Equipment</Button
                   >
-                  <form-input label="Search Service" for="search">
-                    <floating-input v-model="search" id="search" @keyup="searchServices" />
+                  <form-input label="Search Inventory" for="search">
+                    <floating-input v-model="search" id="search" @keyup="searchInventory" />
                   </form-input>
                 </div>
               </div>
@@ -171,28 +171,32 @@
                   <thead class="bg-gray-50">
                     <tr class="[&>*]:uppercase font-medium text-xs text-gray-500">
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6">ID</th>
-                      <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Service Type</th>
-                      <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Price</th>
+                      <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Equipment</th>
+                      <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Type</th>
+                      <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Status</th>
+                      <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Remarks</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Created On</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Deleted On</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 sm:pl-6 text-left">Actions</th>
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-gray-200 bg-white">
-                    <tr v-for="(service, i) in services.data" :key="i" :class="{ 'bg-red-100': service.deleted_at }" class="hover:bg-gray-100">
-                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ service.id }}</td>
-                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ service.service }}</td>
-                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ formatCurrency(service.price) }}</td>
-                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ service.created_at }}</td>
-                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ service.deleted_at }}</td>
+                    <tr v-for="(inv, i) in inventory.data" :key="i" :class="{ 'bg-red-100': inv.deleted_at }" class="hover:bg-gray-100">
+                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ inv.id }}</td>
+                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ inv.equipment }}</td>
+                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ inv.type }}</td>
+                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ inv.status }}</td>
+                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ inv.remarks }}</td>
+                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ inv.created_at }}</td>
+                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ inv.deleted_at }}</td>
                       <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-sm sm:pr-6">
                         <Button
                           text
                           size="sm"
-                          v-if="service.deleted_at"
+                          v-if="inv.deleted_at"
                           @click.prevent="
                             toggleRestoreModal();
-                            selectedService = { ...service };
+                            selectedService = { ...inv };
                           "
                           >Restore</Button
                         >
@@ -203,7 +207,7 @@
                           @click.prevent="
                             isCreating = false;
                             toggleServiceModal();
-                            selectedService = { ...service };
+                            selectedService = { ...inv };
                           "
                           >Update</Button
                         >
@@ -211,16 +215,16 @@
                           text
                           size="sm"
                           color="error"
-                          v-if="service.deleted_at == null"
+                          v-if="inv.deleted_at == null"
                           @click.prevent="
                             toggleDeleteModal();
-                            service_id = service.id;
+                            service_id = inv.id;
                           "
                           >Trash</Button
                         >
                       </td>
                     </tr>
-                    <tr v-if="services.data.length == 0">
+                    <tr v-if="inventory.data.length == 0">
                       <td colspan="6">
                         <div class="mx-auto text-center py-4 font-medium text-gray-600">No data available ..</div>
                       </td>
@@ -228,8 +232,8 @@
                   </tbody>
                 </table>
               </div>
-              <p class="text-sm mt-2 text-gray-500">Showing {{ services.from ?? 0 }} to {{ services.to ?? 0 }} out of {{ services.total ?? 0 }} services.</p>
-              <pagination :links="services.links" right />
+              <p class="text-sm mt-2 text-gray-500">Showing {{ inventory.from ?? 0 }} to {{ inventory.to ?? 0 }} out of {{ inventory.total ?? 0 }} inventory.</p>
+              <pagination :links="inventory.links" right />
             </div>
           </div>
         </div>

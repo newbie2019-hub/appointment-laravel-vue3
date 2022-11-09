@@ -17,39 +17,35 @@ class ServiceSeeder extends Seeder
     {
         $data = [
             [
-                'service' => 'Dental Checkup',
-                'price'   => '300'
-            ],
-            [
-                'service' => 'Teeth Cleaning',
-                'price'   => '600'
-            ],
-            [
-                'service' => 'Teeth Whitening',
-                'price'   => '700'
-            ],
-            [
-                'service' => 'Teeth Extraction',
-                'price'   => '750'
-            ],
-            [
-                'service' => 'Crowns',
-                'price'   => '1500'
-            ],
-            [
-                'service' => 'Teeth Fillings',
+                'service' => 'Oral Prophylaxis/Cleaning',
                 'price'   => '800'
             ],
             [
-                'service' => 'Veneers',
-                'price'   => '1000'
+                'service' => 'Extraction',
+                'price'   => '800'
+            ],
+            [
+                'service' => 'Extraction (Wisdom Tooth)',
+                'price'   => '8000'
             ],
             [
                 'service' => 'Braces',
-                'price'   => '15000'
+                'price'   => '45000'
             ],
             [
-                'service' => 'Dentures',
+                'service' => 'Prosthesis/Denture (plastic)',
+                'price'   => '8000'
+            ],
+            [
+                'service' => 'Prosthesis/Denture (porcelain)',
+                'price'   => '25000'
+            ],
+            [
+                'service' => 'Fixed Partial Denture (FPO/Jacket)',
+                'price'   => '8000'
+            ],
+            [
+                'service' => 'Tooth Restoration (Pasta)',
                 'price'   => '1000'
             ],
         ];

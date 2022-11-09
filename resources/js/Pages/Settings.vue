@@ -120,8 +120,8 @@
   <Head title="Dashboard" />
 
   <BreezeAuthenticatedLayout>
-    <div class="py-12 mx-auto max-w-7xl sm:px-6 lg:px-8">
-      <div class="px-6 mx-auto max-w-7xl lg:px-8">
+    <div class="py-12 mx-auto max-w-8xl sm:px-6 lg:px-8">
+      <div class="px-6 mx-auto max-w-8xl lg:px-8">
         <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
           <p class="text-xl font-medium">Account Settings</p>
           <p class="text-sm">Please make sure all of your informations are correct.</p>
@@ -304,7 +304,7 @@
         </div>
       </div>
 
-      <div class="px-6 mx-auto space-y-6 max-w-7xl sm:mt-5 sm:space-y-5 lg:px-8">
+      <div class="px-6 mx-auto space-y-6 max-w-8xl sm:mt-5 sm:space-y-5 lg:px-8">
         <div class="sm:grid sm:grid-cols-3 sm:gap-4 sm:items-start sm:pt-5">
           <label for="password" class="block text-sm font-medium text-gray-700 sm:mt-px sm:pt-2"> </label>
           <div class="max-w-lg sm:col-span-2">

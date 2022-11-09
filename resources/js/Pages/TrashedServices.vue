@@ -47,10 +47,10 @@
 </script>
 
 <template>
-  <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
+  <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
     <div class="overflow-x-auto shadow-sm sm:rounded-lg">
       <div class="">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 bg-white border-gray-200 rounded-lg pb-6">
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8 bg-white border-gray-200 rounded-lg pb-6">
           <p class="text-xl font-medium">Trashed Services</p>
           <p class="text-sm text-gray-700">Shown below are the services you offer.</p>
           <div class="flex justify-end mt-7 gap-x-2 mb-6">

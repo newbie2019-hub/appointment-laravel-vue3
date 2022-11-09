@@ -94,12 +94,12 @@
   <Head title="Dashboard" />
 
   <BreezeAuthenticatedLayout>
-    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="max-w-8xl mx-auto px-6 lg:px-8">
       <div class="sm:px-6 lg:px-8 mt-6 mx-auto">
         <p class="font-medium text-xl">Patients Summary</p>
         <p>Here is an overview of your patients.</p>
       </div>
-      <div class="py-8 max-w-7xl mx-auto sm:px-6 lg:px-8 flex flex-wrap gap-y-4 gap-x-4">
+      <div class="py-8 max-w-8xl mx-auto sm:px-6 lg:px-8 flex flex-wrap gap-y-4 gap-x-4">
         <div class="bg-red-500 flex-1 p-4 text-white rounded-md md:max-w-md">
           <div class="flex justify-between">
             <div class="text-9xl flex items-center">{{ formatNumeric(trashedPatientsCount) }}</div>
@@ -126,16 +126,16 @@
         </div>
       </div>
     </div>
-    <div class="max-w-7xl mx-auto px-6 lg:px-8">
+    <div class="max-w-8xl mx-auto px-6 lg:px-8">
       <div class="py-8">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
-          <div class="overflow-x-auto shadow-sm sm:rounded-lg">
+        <div class="max-w-8xl mx-auto sm:px-6 lg:px-8">
+          <div class="overflow-x-auto sm:rounded-lg">
             <div class="">
-              <div class="max-w-7xl mx-auto bg-white rounded-lg pb-6">
+              <div class="max-w-8xl mx-auto bg-white rounded-lg pb-6">
                 <p class="text-xl font-medium">Patients Record</p>
                 <p class="text-sm text-gray-700">Shown below are the records of your patients.</p>
                 <div class="flex justify-between mt-7 mb-7">
-                  <form-input label="Filter Service" class="w-48">
+                  <form-input label="Filter Patients" class="w-5">
                     <floating-select @change="searchPatient" v-model="trashed">
                       <option value="with">All Patients</option>
                       <option value="">Active Patients</option>
@@ -162,7 +162,7 @@
                       </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-300 bg-white">
-                      <tr v-for="(patient, i) in patients.data" :key="i" :class="{ 'bg-red-100': patient.deleted_at }" class="hover:bg-gray-200">
+                      <tr v-for="(patient, i) in patients.data" :key="i" :class="{ 'bg-red-100': patient.deleted_at }" class="hover:bg-gray-100">
                         <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ patient.id }}</td>
                         <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 flex items-center gap-x-2">
                           <div class="rounded-full bg-blue-400 w-8 h-8 border-gray-100 flex items-center justify-center">

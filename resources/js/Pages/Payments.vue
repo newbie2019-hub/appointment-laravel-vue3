@@ -44,12 +44,12 @@
   <Head title="Payments" />
 
   <BreezeAuthenticatedLayout>
-    <div class="px-6 mx-auto max-w-7xl lg:px-8">
+    <div class="px-6 mx-auto max-w-8xl lg:px-8">
       <div class="mx-auto mt-6 sm:px-6 lg:px-8">
         <p class="text-xl font-medium">Payments Summary</p>
         <p>Here is an overview of your transactions.</p>
       </div>
-      <div class="flex flex-wrap py-8 mx-auto max-w-7xl sm:px-6 lg:px-8 gap-y-4 gap-x-4">
+      <div class="flex flex-wrap py-8 mx-auto max-w-8xl sm:px-6 lg:px-8 gap-y-4 gap-x-4">
         <div class="flex-1 p-4 text-white bg-orange-500 rounded-md md:max-w-md">
           <div class="flex justify-between">
             <div class="flex items-center text-9xl">{{ formatNumeric(monthlyPaymentsCount) }}</div>
@@ -76,12 +76,12 @@
         </div>
       </div>
     </div>
-    <div class="px-6 mx-auto max-w-7xl lg:px-8">
+    <div class="px-6 mx-auto max-w-8xl lg:px-8">
       <div class="py-8">
-        <div class="mx-auto max-w-7xl sm:px-6 lg:px-8">
+        <div class="mx-auto max-w-8xl sm:px-6 lg:px-8">
           <div class="overflow-x-auto shadow-sm sm:rounded-lg">
             <div class="">
-              <div class="pb-6 mx-auto bg-white rounded-lg max-w-7xl">
+              <div class="pb-6 mx-auto bg-white rounded-lg max-w-8xl">
                 <p class="text-xl font-medium">Payment Records</p>
                 <p class="text-sm text-gray-700">Shown below are the records of your payment transactions.</p>
                 <div class="flex justify-end mt-7 mb-7">
@@ -105,7 +105,7 @@
                       </tr>
                     </thead>
                     <tbody class="bg-white divide-y divide-gray-300">
-                      <tr v-for="(payment, i) in payments.data" :key="i" class="hover:bg-gray-200">
+                      <tr v-for="(payment, i) in payments.data" :key="i" class="hover:bg-gray-100">
                         <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ payment.id }}</td>
                         <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ payment.appointment.id }}</td>
                         <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ payment.appointment.patient.full_name }}</td>
