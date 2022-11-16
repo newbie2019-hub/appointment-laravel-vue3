@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\InventoryRequest;
 use App\Models\Inventory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -10,11 +11,6 @@ use Inertia\Inertia;
 
 class InventoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
     public function index(Request $request)
     {
         $inventory = Inventory::when(
@@ -39,14 +35,17 @@ class InventoryController extends Controller
         return Inertia::render('Inventory', compact('inventoryCount', 'inventory', 'filters', 'trashedInventoryCount'));
     }
 
-    public function store(Request $request)
+    public function store(InventoryRequest $request)
     {
-        //
+        Inventory::create($request->validated());
+        return back()->with('message', 'Equipment has been added successfully!');
+
     }
 
-    public function update(Request $request, $id)
+    public function update(Inventory $inventory, InventoryRequest $request)
     {
-        //
+        $inventory->update($request->validated());
+        return back()->with('message', 'Equipment has been updated successfully!');
     }
 
     public function destroy(Inventory $inventory)

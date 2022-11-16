@@ -14,6 +14,12 @@
   import { useToast } from 'vue-toastification';
   const toast = useToast();
 
+  const equipmentStatuses = ['Good Condition', 'For Repair', 'For Cleaning', 'For Disposal']
+  const equipmentTypes = ['Equipment', 'Consumable', 'Basic Instruments']
+
+  const equipmentStatus = (status) => equipmentStatuses[status - 1]
+  const equipmentType = (type) => equipmentTypes[type - 1]
+
   const form = useForm({ id: null, service: null, price: null });
 
   const props = defineProps({
@@ -28,22 +34,23 @@
   let trashed = ref(props.filters.trashed);
 
   const isDeleteModalShown = ref(false);
-  const isServiceModalShown = ref(false);
+  const isEquipmentModalShown = ref(false);
 
   const toggleDeleteModal = () => {
     isDeleteModalShown.value = !isDeleteModalShown.value;
   };
 
-  const toggleServiceModal = () => {
-    isServiceModalShown.value = !isServiceModalShown.value;
+  const toggleEquipmentModal = () => {
+    isEquipmentModalShown.value = !isEquipmentModalShown.value;
   };
 
-  const selectedEquipment = ref({ id: null, service: null, price: null });
+  const selectedEquipment = ref({ id: null, equipment: null, quantity: null, type: null, unit: null, status: null });
   const equipment_id = ref(null);
   const isCreating = ref(false);
   const isRestoreModalShown = ref(false);
 
   const toggleRestoreModal = () => {
+    selectedEquipment.value = { id: null, equipment: '', quantity: '', type: '', unit: null, status: '' };
     isRestoreModalShown.value = !isRestoreModalShown.value;
   };
 
@@ -55,9 +62,9 @@
     Inertia.post(`/inventory`, selectedEquipment.value, {
       preserveState: true,
       onSuccess: () => {
-        toast.success('Service has been added successfully!');
-        selectedEquipment.value = { id: null, service: null, price: null };
-        toggleServiceModal();
+        toast.success('Equipment has been added successfully!');
+        selectedEquipment.value = { id: null, equipment: null, quantity: null, type: null, unit: null, status: null };
+        toggleEquipmentModal();
       },
     });
   };
@@ -79,9 +86,9 @@
     Inertia.put(`/inventory/${selectedEquipment.value.id}`, selectedEquipment.value, {
       preserveState: true,
       onSuccess: () => {
-        toast.success('Service has been updated successfully!');
-        selectedEquipment.value = { id: null, service: null, price: null };
-        toggleServiceModal();
+        toast.success('Equipment has been updated successfully!');
+        selectedEquipment.value = { id: null, equipment: null, quantity: null, type: null, unit: null, status: null };
+        toggleEquipmentModal();
       },
     });
   };
@@ -90,7 +97,7 @@
     form.put(`/inventory/restore/${selectedEquipment.value.id}`, {
       preserveState: true,
       onSuccess: () => {
-        toast.success('Service has been restored successfully!');
+        toast.success('Equipment has been restored successfully!');
         toggleRestoreModal();
       },
     });
@@ -140,7 +147,7 @@
 
     <div class="py-10">
       <div class="max-w-8xl px-6 lg:px-8">
-        <div class="overflow-x-auto shadow-sm sm:rounded-lg">
+        <div class="overflow-x-auto sm:rounded-lg">
           <div class="">
             <div class="max-w-8xl mx-auto sm:px-6 lg:px-8 bg-white border-gray-200 rounded-lg pb-6">
               <p class="text-xl font-medium">Inventory Equipment</p>
@@ -156,7 +163,7 @@
                 <div class="flex gap-x-2">
                   <Button
                     @click.prevent="
-                      toggleServiceModal();
+                      toggleEquipmentModal();
                       isCreating = true;
                     "
                     size="sm"
@@ -176,21 +183,25 @@
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Equipment</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Type</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Status</th>
+                      <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Unit</th>
+                      <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Quantity</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Remarks</th>
-                      <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Created On</th>
+                      <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Added On</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap">Deleted On</th>
                       <th scope="col" class="py-3.5 pl-4 pr-3 sm:pl-6 text-left">Actions</th>
                     </tr>
                   </thead>
                   <tbody class="divide-y divide-gray-200 bg-white">
                     <tr v-for="(inv, i) in inventory.data" :key="i" :class="{ 'bg-red-100': inv.deleted_at }" class="hover:bg-gray-100">
-                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ inv.id }}</td>
-                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ inv.equipment }}</td>
-                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ inv.type }}</td>
-                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ inv.status }}</td>
-                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ inv.remarks }}</td>
-                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ inv.created_at }}</td>
-                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">{{ inv.deleted_at }}</td>
+                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900 sm:pl-6">{{ inv.id }}</td>
+                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900 sm:pl-6">{{ inv.equipment }}</td>
+                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900 sm:pl-6">{{ equipmentType(inv.type) }}</td>
+                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900 sm:pl-6">{{ equipmentStatus(inv.status) }}</td>
+                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900 sm:pl-6">{{ inv.unit }}</td>
+                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900 sm:pl-6">{{ inv.quantity }}</td>
+                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900 sm:pl-6">{{ inv.remarks }}</td>
+                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900 sm:pl-6">{{ inv.created_at }}</td>
+                      <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm text-gray-900 sm:pl-6">{{ inv.deleted_at }}</td>
                       <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-sm sm:pr-6">
                         <Button
                           text
@@ -208,7 +219,7 @@
                           v-else
                           @click.prevent="
                             isCreating = false;
-                            toggleServiceModal();
+                            toggleEquipmentModal();
                             selectedEquipment = { ...inv };
                           "
                           >Update</Button
@@ -242,23 +253,48 @@
       </div>
     </div>
 
-    <Modal v-if="isServiceModalShown" @close="toggleServiceModal">
+    <Modal v-if="isEquipmentModalShown" @close="toggleEquipmentModal">
       <template v-slot:title>
-        <p class="font-bold text-xl">Offered Service</p>
+        <p class="font-bold text-xl">Clinic Equipment</p>
         <p class="text-sm text-gray-600">All input fields are required</p>
       </template>
       <template v-slot:body>
         <form action="" class="mt-2">
-          <form-input label="Service Type" for="service" :error="errors.service">
-            <floating-input v-model="selectedEquipment.service" id="service" required aria-required />
+          <form-input label="Equipment" for="service" :error="errors.equipment">
+            <floating-input v-model="selectedEquipment.equipment" id="service" required aria-required />
           </form-input>
-          <form-input label="Price" for="price" class="mt-3" :error="errors.price">
-            <floating-input type="number" v-model="selectedEquipment.price" id="price" required aria-required />
+          <div class="grid grid-cols-2 gap-x-0.5">
+              <form-input label="Unit" for="unit" class="mt-1" :error="errors.unit">
+                <floating-input v-model="selectedEquipment.unit" id="unit" required aria-required />
+              </form-input>
+              <form-input label="Qty" for="qty" class="mt-1" :error="errors.quantity">
+                <floating-input v-model="selectedEquipment.quantity" id="qty" required aria-required />
+              </form-input>
+          </div>
+          <form-input label="Type" class="w-full mt-3">
+            <floating-select v-model="selectedEquipment.type">
+                <option value="" disabled>Please Select</option>
+                <option value="1">Equipment</option>
+                <option value="2">Consumables</option>
+                <option value="3">Basic Instruments</option>
+            </floating-select>
+          </form-input>
+          <form-input label="Status" class="w-full mt-3">
+            <floating-select v-model="selectedEquipment.status">
+                <option value="" disabled>Please Select</option>
+                <option value="1">Good Condition</option>
+                <option value="2">For Repair</option>
+                <option value="3">For Cleaning</option>
+                <option value="4">For Disposal</option>
+            </floating-select>
+          </form-input>
+          <form-input label="Remarks" for="remarks" class="mt-3" :error="errors.remarks">
+            <floating-input v-model="selectedEquipment.remarks" id="remarks" required aria-required />
           </form-input>
         </form>
       </template>
       <template v-slot:footer>
-        <Button @click.prevent="toggleServiceModal" text size="sm" color="gray">Close</Button>
+        <Button @click.prevent="toggleEquipmentModal" text size="sm" color="gray">Close</Button>
         <Button @click.prevent="initiateMethod" text size="sm" color="success">Save</Button>
       </template>
     </Modal>

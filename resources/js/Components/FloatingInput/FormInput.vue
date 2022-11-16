@@ -20,7 +20,7 @@
       <slot />
       <label
         :for="props.for"
-        class="bg-white px-1 cursor-text text-gray-800 left-0 -top-3 scale-75 text-base duration-200 ease-in-out absolute peer-placeholder-shown:top-2.5 peer-placeholder-shown:scale-100 peer-placeholder-shown:left-3 peer-focus:-top-2.5 peer-focus:scale-75 peer-focus:left-0 peer-focus:text-blue-500"
+        class="bg-white px-1 cursor-text text-gray-800 left-0 -top-2.5 scale-75 text-sm duration-200 ease-in-out absolute peer-placeholder-shown:top-3 peer-placeholder-shown:scale-100 peer-placeholder-shown:left-3 peer-focus:-top-2.5 peer-focus:scale-75 peer-focus:left-0 peer-focus:text-blue-500"
       >
         {{ label }}
       </label>

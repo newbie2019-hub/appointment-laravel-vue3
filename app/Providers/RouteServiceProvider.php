@@ -45,7 +45,6 @@ class RouteServiceProvider extends ServiceProvider
          *  for automatic resolve
         */
         Route::model('patient', User::class);
-        Route::model('inventory', Inventory::class);
     }
 
     /**

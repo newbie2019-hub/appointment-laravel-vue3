@@ -20,7 +20,7 @@
       <div @click.prevent="emitClose" class="fixed inset-0 w-full flex min-h-screen justify-center items-center bg-gray-700/50 z-40"></div>
       <div class="flex w-full px-4 sm:px-0">
         <Transition>
-          <div class="mx-auto min-w-full sm:min-w-[368px] md:max-w-[428px] bg-white box-shadow-lg rounded-lg min-w-2xl z-40 inset-0">
+          <div class="mx-auto min-w-full sm:min-w-[426px] md:max-w-[426px] bg-white box-shadow-lg rounded-lg min-w-2xl z-40 inset-0">
             <div class="px-5 pt-5 pb-3">
               <slot name="title" />
             </div>
