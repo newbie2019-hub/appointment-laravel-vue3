@@ -2,10 +2,10 @@
 
 namespace App\Enums;
 
-enum EquipmentStatus: int
+enum EquipmentStatus: string
 {
-    case 1 = 'Good Condition';
-    case 2 = 'For Repair';
-    case 3 = 'For Cleaning';
-    case 4 = 'For Disposal';
+    case GoodCondition = '1';
+    case ForRepair = '2';
+    case ForCleaning = '3';
+    case ForDisposal = '4';
 }

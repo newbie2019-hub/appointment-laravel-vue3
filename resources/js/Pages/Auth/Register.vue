@@ -33,9 +33,9 @@
         form.reset('password', 'password_confirmation');
       },
       onSuccess: () => {
-        toast.success('Your account has been created successfully!');
+        toast.success('Account created! \nPlease check your email as your account \nstatus is still on pending');
       },
-      onError: () => toast.error('Some fields are missing!'),
+      onError: () => toast.error('Some fields are incorrect or missing!'),
     });
   };
 

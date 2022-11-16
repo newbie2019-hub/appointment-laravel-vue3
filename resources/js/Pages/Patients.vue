@@ -27,6 +27,7 @@
   let search = ref(props.filters.search);
   let trashed = ref(props.filters.trashed);
 
+  const approveModalShown = ref(false);
   const isRestoreModalShown = ref(false);
   const isDeleteModalShown = ref(false);
   const isViewModalShown = ref(false);
@@ -57,6 +58,21 @@
     isUpdateModalShown.value = !isUpdateModalShown.value;
   };
 
+  const approveUser = () => {
+    selectedUser.put(`/approve/${selectedUser.value.id}`, {
+      preserveState: true,
+      onFinish: () => {
+        approveModalShown.value = false;
+      },
+      onSuccess: () => {
+        toast.success('Account has been approved successfully!');
+      },
+      onError: () => {
+        toast.error('Something went wrong!');
+      },
+    })
+  }
+
   const deletePatient = () => {
     selectedUser.delete(`/patients/${selectedUser.value.id}`, {
       preserveState: true,
@@ -78,6 +94,21 @@
       onSuccess: () => {
         toast.success(`${message.value}`);
         toggleUpdateModal()
+      },
+      onError: () => {
+        toast.error('Something went wrong!');
+      },
+    });
+  };
+
+  const restorePatient = () => {
+    selectedUser.put(`/patients/restore/${selectedUser.value.id}`, {
+      preserveState: true,
+      onFinish: () => {
+        toggleRestoreModal();
+      },
+      onSuccess: () => {
+        toast.success('Account has been restored successfully!');
       },
       onError: () => {
         toast.error('Something went wrong!');
@@ -135,7 +166,7 @@
                 <p class="text-xl font-medium">Patients Record</p>
                 <p class="text-sm text-gray-700">Shown below are the records of your patients.</p>
                 <div class="flex justify-between mt-7 mb-7">
-                  <form-input label="Filter Patients" class="w-5">
+                  <form-input label="Filter Patients" class="w-52">
                     <floating-select @change="searchPatient" v-model="trashed">
                       <option value="with">All Patients</option>
                       <option value="">Active Patients</option>
@@ -156,6 +187,7 @@
                         <th scope="col" class="px-3 py-3.5 text-left whitespace-nowrap">Contact Number</th>
                         <th scope="col" class="px-3 py-3.5 text-left">Gender</th>
                         <th scope="col" class="px-3 py-3.5 text-left">Email</th>
+                        <th scope="col" class="py-3.5 pl-4 pr-3 text-left sm:pl-6">Approved</th>
                         <th scope="col" class="px-3 py-3.5 text-left">Created On</th>
                         <th scope="col" class="px-3 py-3.5 text-left whitespace-nowrap">Deleted At</th>
                         <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6 text-left">Actions</th>
@@ -181,9 +213,23 @@
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900">{{ patient.contact_number }}</td>
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900 capitalize">{{ patient.gender }}</td>
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900">{{ patient.email }}</td>
+                        <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900">
+                         <div class="px-4 py-2 text-xs text-white rounded-full flex justify-center items-center" :class="parseInt(patient.is_approved) ? 'bg-green-600' : 'bg-red-600'">{{ parseInt(patient.is_approved) ? 'Approved' : 'Pending' }}</div>
+                        </td>
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900">{{ patient.created_at }}</td>
                         <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-900">{{ patient.deleted_at }}</td>
                         <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-sm sm:pr-6">
+                          <Button
+                            v-if="!parseInt(patient.is_approved)"
+                            @click.prevent="
+                              approveModalShown = true
+                              selectedUser.value = { ...patient };
+                            "
+                            text
+                            size="sm"
+                            color="success"
+                            >Approve</Button
+                          >
                           <Button
                             @click.prevent="
                               toggleViewModal();
@@ -217,8 +263,8 @@
                           <Button
                             v-else
                             @click.prevent="
-                              toggleRestoreModal();
                               selectedUser.value = { ...patient };
+                              toggleRestoreModal();
                             "
                             text
                             size="sm"
@@ -244,12 +290,23 @@
       </div>
     </div>
 
+    <Modal v-if="approveModalShown" @close="approveModalShown = false">
+      <template #title>
+        <p class="font-bold text-xl">Confirm Approve</p>
+        <p class="text-sm mt-2">Are you sure you want to approve this account?</p>
+      </template>
+      <template #footer>
+        <Button @click.prevent="approveModalShown = false" text size="sm" color="">Cancel</Button>
+        <Button @click.prevent="approveUser" text size="sm" color="success">Approve</Button>
+      </template>
+    </Modal>
+
     <Modal v-if="isViewModalShown" @close="toggleViewModal">
-      <template v-slot:title>
+      <template #title>
         <p class="font-bold text-xl">Patient Information</p>
         <p class="text-sm">Here are the informations of the patient</p>
       </template>
-      <template v-slot:body>
+      <template #body>
         <div class="rounded-full bg-blue-400 w-16 h-16 border-gray-100 flex items-center justify-center mx-auto mt-4">
           <svg v-if="!selectedUser.value.image" xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-white" viewBox="0 0 20 20" fill="currentColor">
             <path
@@ -275,32 +332,32 @@
           </div>
         </div>
       </template>
-      <template v-slot:footer>
+      <template #footer>
         <Button @click.prevent="toggleViewModal" text size="sm" color="gray">Close</Button>
       </template>
     </Modal>
 
     <Modal v-if="isDeleteModalShown" @close="toggleDeleteModal">
-      <template v-slot:title>
+      <template #title>
         <p class="font-bold text-xl">Confirm Delete</p>
       </template>
-      <template v-slot:body>
+      <template #body>
         <p class="text-sm text-gray-600">
           Are you sure you want to trash this service? <span class="text-sm text-red-500"><br />Note: This data can still be restored.</span>
         </p>
       </template>
-      <template v-slot:footer>
+      <template #footer>
         <Button @click.prevent="toggleDeleteModal" text size="sm" color="gray">Close</Button>
         <Button @click.prevent="deletePatient" text size="sm" color="error">Confirm</Button>
       </template>
     </Modal>
 
     <Modal v-if="isUpdateModalShown" @close="toggleUpdateModal">
-      <template v-slot:title>
+      <template #title>
         <p class="font-bold text-xl">Update User</p>
         <p class="text-sm">All input fields are required.</p>
       </template>
-      <template v-slot:body>
+      <template #body>
         <div class="w-full">
           <form-input for="firstname" :error="errors.first_name" label="First Name" class="mt-3">
             <floating-input type="text" id="firstname" v-model="selectedUser.first_name" autofocus autocomplete="name" />
@@ -339,22 +396,22 @@
           </div>
         </div>
       </template>
-      <template v-slot:footer>
+      <template #footer>
         <Button @click.prevent="toggleUpdateModal" text size="sm" color="gray">Close</Button>
         <Button @click.prevent="updatePatient" text size="sm" color="success">Save Changes</Button>
       </template>
     </Modal>
 
     <Modal v-if="isRestoreModalShown" @close="toggleRestoreModal">
-      <template v-slot:title>
+      <template #title>
         <p class="font-bold text-xl">Confirm Restore</p>
       </template>
-      <template v-slot:body>
-        <p class="text-sm text-gray-600">Are you sure you want to make this service available again?</p>
+      <template #body>
+        <p class="text-sm text-gray-600">Are you sure you want to restore this account? All of its transaction data will be restored as well.</p>
       </template>
-      <template v-slot:footer>
+      <template #footer>
         <Button @click.prevent="toggleRestoreModal" text size="sm" color="gray">Close</Button>
-        <Button @click.prevent="restoreService" text size="sm" color="success">Restore</Button>
+        <Button @click.prevent="restorePatient" text size="sm" color="success">Restore</Button>
       </template>
     </Modal>
   </BreezeAuthenticatedLayout>

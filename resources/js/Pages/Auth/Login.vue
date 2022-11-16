@@ -1,16 +1,14 @@
 <script setup>
-  import BreezeButton from '@/Components/Button/Button.vue';
   import BreezeCheckbox from '@/Components/Checkbox.vue';
   import BreezeGuestLayout from '@/Layouts/Guest.vue';
   import BreezeInput from '@/Components/Input.vue';
   import BreezeLabel from '@/Components/Label.vue';
-  import BreezeValidationErrors from '@/Components/ValidationErrors.vue';
   import { Head, Link, useForm } from '@inertiajs/inertia-vue3';
   import { useToast } from 'vue-toastification';
 
   const toast = useToast();
 
-  defineProps({
+  const props = defineProps({
     canResetPassword: Boolean,
     status: String,
     errors: Object,
@@ -26,7 +24,7 @@
     form.post(route('login'), {
       onFinish: () => form.reset('password'),
       onError: () => {
-        toast.error('Something went wrong!');
+        toast.error(props.errors.auth ?? 'Something went wrong!');
       },
     });
   };
@@ -85,7 +83,7 @@
       </div>
     </div>
 
-    <!-- 
+    <!--
     <p class="text-2xl font-medium mt-2">Welcome, User</p>
     <p class="text-sm mb-4">Please login to your account to proceed.</p>
 -->

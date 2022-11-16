@@ -38,8 +38,8 @@
     isServiceModalShown.value = !isServiceModalShown.value;
   };
 
-  const selectedService = ref({ id: null, service: null, price: null });
-  const service_id = ref(null);
+  const selectedEquipment = ref({ id: null, service: null, price: null });
+  const equipment_id = ref(null);
   const isCreating = ref(false);
   const isRestoreModalShown = ref(false);
 
@@ -48,44 +48,46 @@
   };
 
   const initiateMethod = () => {
-    isCreating.value ? storeService() : updateService();
+    isCreating.value ? storeEquipment() : updateService();
   };
 
-  const storeService = () => {
-    Inertia.post(`/inventory`, selectedService.value, {
+  const storeEquipment = () => {
+    Inertia.post(`/inventory`, selectedEquipment.value, {
       preserveState: true,
       onSuccess: () => {
         toast.success('Service has been added successfully!');
-        selectedService.value = { id: null, service: null, price: null };
+        selectedEquipment.value = { id: null, service: null, price: null };
         toggleServiceModal();
       },
     });
   };
 
   const deleteService = () => {
-    Inertia.delete(`/inventory/${service_id.value}`, {
+    Inertia.delete(`/inventory/${equipment_id.value}`, {
       preserveState: true,
-      onSuccess: () => {
-        toast.success('Service has been moved to trash successfully!');
-        service_id.value = null;
+      onFinish: () => {
         toggleDeleteModal();
+      },
+      onSuccess: () => {
+        toast.success('Equipment has been moved to trash successfully!');
+        equipment_id.value = null;
       },
     });
   };
 
   const updateService = () => {
-    Inertia.put(`/inventory/${selectedService.value.id}`, selectedService.value, {
+    Inertia.put(`/inventory/${selectedEquipment.value.id}`, selectedEquipment.value, {
       preserveState: true,
       onSuccess: () => {
         toast.success('Service has been updated successfully!');
-        selectedService.value = { id: null, service: null, price: null };
+        selectedEquipment.value = { id: null, service: null, price: null };
         toggleServiceModal();
       },
     });
   };
 
-  const restoreService = () => {
-    form.put(`/inventory/restore/${selectedService.value.id}`, {
+  const restoreEquipment = () => {
+    form.put(`/inventory/restore/${selectedEquipment.value.id}`, {
       preserveState: true,
       onSuccess: () => {
         toast.success('Service has been restored successfully!');
@@ -145,7 +147,7 @@
               <p class="text-sm text-gray-700">Shown below are your inventory equipments</p>
               <div class="flex justify-between mt-7 gap-x-2 mb-6">
                 <form-input label="Filter Inventory" class="w-56">
-                  <floating-select @change="searchServices" v-model="trashed">
+                  <floating-select @change="searchInventory" v-model="trashed">
                     <option value="with">All Equipments</option>
                     <option value="">Active Inventory</option>
                     <option value="only">Trashed Inventory</option>
@@ -196,7 +198,7 @@
                           v-if="inv.deleted_at"
                           @click.prevent="
                             toggleRestoreModal();
-                            selectedService = { ...inv };
+                            selectedEquipment = { ...inv };
                           "
                           >Restore</Button
                         >
@@ -207,7 +209,7 @@
                           @click.prevent="
                             isCreating = false;
                             toggleServiceModal();
-                            selectedService = { ...inv };
+                            selectedEquipment = { ...inv };
                           "
                           >Update</Button
                         >
@@ -218,7 +220,7 @@
                           v-if="inv.deleted_at == null"
                           @click.prevent="
                             toggleDeleteModal();
-                            service_id = inv.id;
+                            equipment_id = inv.id;
                           "
                           >Trash</Button
                         >
@@ -248,10 +250,10 @@
       <template v-slot:body>
         <form action="" class="mt-2">
           <form-input label="Service Type" for="service" :error="errors.service">
-            <floating-input v-model="selectedService.service" id="service" required aria-required />
+            <floating-input v-model="selectedEquipment.service" id="service" required aria-required />
           </form-input>
           <form-input label="Price" for="price" class="mt-3" :error="errors.price">
-            <floating-input type="number" v-model="selectedService.price" id="price" required aria-required />
+            <floating-input type="number" v-model="selectedEquipment.price" id="price" required aria-required />
           </form-input>
         </form>
       </template>
@@ -267,7 +269,7 @@
       </template>
       <template v-slot:body>
         <p class="text-sm text-gray-600">
-          Are you sure you want to trash this service? <span class="text-sm text-red-500"><br />Note: This data can still be restored.</span>
+          Are you sure you want to trash this equipment? <span class="text-sm text-red-500"><br />Note: This data can still be restored.</span>
         </p>
       </template>
       <template v-slot:footer>
@@ -281,11 +283,11 @@
         <p class="font-bold text-xl">Confirm Restore</p>
       </template>
       <template v-slot:body>
-        <p class="text-sm text-gray-600">Are you sure you want to make this service available again?</p>
+        <p class="text-sm text-gray-600">Are you sure you want to make this equipment available again?</p>
       </template>
       <template v-slot:footer>
         <Button @click.prevent="toggleRestoreModal" text size="sm" color="gray">Close</Button>
-        <Button @click.prevent="restoreService" text size="sm" color="success">Restore</Button>
+        <Button @click.prevent="restoreEquipment" text size="sm" color="success">Restore</Button>
       </template>
     </Modal>
   </BreezeAuthenticatedLayout>

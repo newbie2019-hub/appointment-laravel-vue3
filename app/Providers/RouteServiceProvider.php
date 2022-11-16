@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Models\Inventory;
 use App\Models\User;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -38,12 +39,13 @@ class RouteServiceProvider extends ServiceProvider
                 ->group(base_path('routes/web.php'));
         });
 
-        /** 
-         *  Explicit route model binding 
-         *  binds patient to User::class 
+        /**
+         *  Explicit route model binding
+         *  binds patient to User::class
          *  for automatic resolve
         */
         Route::model('patient', User::class);
+        Route::model('inventory', Inventory::class);
     }
 
     /**

@@ -47,7 +47,9 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::put('/services/restore/{service}', [ServiceController::class, 'restore'])->withTrashed();
     Route::apiResource('/services', ServiceController::class);
 
+    Route::put('/patients/restore/{user}', [PatientController::class, 'restore'])->withTrashed();
     Route::apiResource('/patients', PatientController::class);
+
     Route::post('/payment-branch', [PaymentController::class, 'branchPayment'])->name('payment-branch.store');
     Route::post('/payment', [PaymentController::class, 'store'])->name('payment.store');
 
@@ -58,7 +60,10 @@ Route::middleware(['auth', 'verified'])->group(function() {
     Route::apiResource('/payments', PaymentController::class);
 
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+
+    Route::put('/inventory/restore/{inventory}', [InventoryController::class, 'restore'])->withTrashed();
     Route::apiResource('/inventory', InventoryController::class);
+
     Route::post('/settings/update', [SettingsController::class, 'update'])->name('settings.update');
     Route::post('/settings/update-password', [SettingsController::class, 'updatePassword'])->name('settings.update-password');
 });
