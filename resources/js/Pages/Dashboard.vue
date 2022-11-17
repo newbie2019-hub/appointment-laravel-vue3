@@ -148,7 +148,7 @@
         </div>
       </div>
 
-      <div class="px-6 max-w-8xl lg:px-8">
+      <div class="px-6 max-w-8xl lg:px-8" v-if="$page.props.auth.user.is_admin">
         <div class="md:flex gap-x-2">
           <div class="flex-1 w-full md:w-1/2">
             <div class="mt-8 mb-8">
@@ -167,7 +167,7 @@
         </div>
       </div>
 
-      <div class="px-6 max-w-8xl lg:px-8">
+      <div class="px-6 max-w-8xl lg:px-8" >
         <div class="mt-8 mb-6">
           <p class="text-xl font-medium">Appointment Calendar</p>
           <p>Here is an overview of your appointments.</p>

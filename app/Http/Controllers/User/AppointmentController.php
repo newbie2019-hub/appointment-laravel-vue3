@@ -4,12 +4,14 @@ namespace App\Http\Controllers\User;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AppointmentRequest;
+use App\Mail\AppointmentApproved;
 use App\Models\Appointment;
 use App\Models\AppointmentService;
 use App\Models\Service;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Mail;
 use Inertia\Inertia;
 
 class AppointmentController extends Controller
@@ -140,9 +142,11 @@ class AppointmentController extends Controller
 
     public function approve(Appointment $appointment)
     {
+        $appointment->load(['patient']);
         $appointment->update([
             'appointment_status' => 'Approved'
         ]);
+        Mail::to($appointment->patient->email)->send(new AppointmentApproved($appointment));
         return back()->with('success', 'Appointment has been approved successfully!');
     }
 

@@ -1,5 +1,5 @@
 <template>
-  <div class="h-96">
+  <div class="h-[420px]">
     <vue-cal class="vuecal--blue-theme" :events="events" />
   </div>
 </template>

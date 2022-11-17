@@ -385,7 +385,7 @@ const searchPatient = debounce((val) => {
 
         <div class="py-10">
             <div class="px-6 max-w-8xl lg:px-8">
-                <div class="overflow-x-auto shadow-sm sm:rounded-lg">
+                <div class="overflow-x-auto sm:rounded-lg">
                     <div class="">
                         <div class="pb-6 mx-auto bg-white border-gray-200 rounded-lg max-w-8xl sm:px-6 lg:px-8">
                             <p class="text-xl font-medium">All Appointments</p>
@@ -503,7 +503,7 @@ const searchPatient = debounce((val) => {
                                                       toggleCreateModal(appointment);
                                                     " text size="sm" color="success">Update</Button>
                                                 <Button is-link :href="route('certificate.generate', appointment.id)"
-                                                    v-if="($page.props.auth.user.is_admin || appointment.payment_status !== 'Pending') && !appointment.deleted_at && (appointment.appointment_status == 'Approved' || appointment.appointment_status == 'Finished')"
+                                                    v-if="($page.props.auth.user.is_admin || appointment.payment_status !== 'Pending') && !appointment.deleted_at && (appointment.appointment_status == 'Finished')"
                                                     text size="sm" color="success">Certificate</Button>
                                                 <Button
                                                     @click.prevent="togglePrescriptionModal(appointment.id,appointment.prescription)"

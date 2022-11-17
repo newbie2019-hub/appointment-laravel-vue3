@@ -5,17 +5,25 @@
   import FloatingSelect from '@/Components/FloatingInput/FloatingSelect.vue';
   import FormInput from '@/Components/FloatingInput/FormInput.vue';
   import FloatingTextArea from '@/Components/FloatingInput/FloatingTextArea.vue';
-  import { ref, computed, watch, toRef } from 'vue';
+  import { ref, computed, watch, toRef, onMounted } from 'vue';
   import Checkbox from '@/Components/Checkbox.vue';
   import { formatCurrency } from '@/Composables/Utilities';
   import { MapIcon, CalendarIcon } from '@heroicons/vue/solid';
   import { useToast } from 'vue-toastification';
   import VueMultiselect from 'vue-multiselect';
+  import Datepicker from '@vuepic/vue-datepicker';
+  import '@vuepic/vue-datepicker/dist/main.css'
 
   import moment from 'moment';
 
   const toast = useToast();
 
+  const scrollpx = ref(0);
+  const handleScroll = () => scrollpx.value = window.scrollY
+
+  onMounted(() => {
+    window.addEventListener('scroll', handleScroll);
+  })
   const authenticatedUser = computed(() => {
     return usePage().props.value.auth.user;
   });
@@ -79,13 +87,13 @@
       window.location.href = '/login';
     }
   };
+
 </script>
 
 <template>
   <Head title="Welcome" />
   <!-- COLORS -->
-  <div class="bg-green-500 bg-green-600 bg-red-500 bg-red-600 hidden bg-gray-600 bg-gray-500"></div>
-  <nav class="flex justify-between container pt-8 sticky top-0 z-20 md:max-w-6xl mx-auto px-6 sm:px-8 md:px-2" >
+  <nav class="flex justify-between container pt-8 sticky top-0 z-20 md:max-w-6xl mx-auto px-6 sm:px-8 md:px-2" :class="scrollpx >= 200 ? 'scrolled' : ''">
     <div>
       <p class="font-bold text-lg">M. Dental Clinic</p>
     </div>
@@ -114,61 +122,69 @@
         <div class="">
           <p>Welcome to</p>
           <p class="text-3xl font-medium mt-1">Manabat Dental Clinic</p>
-          <p class="text-5xl md:text-6xl font-medium mt-2">Your <span class="text-blue-500">Dental Health</span> is Important to Us!</p>
+          <p class="text-5xl md:text-6xl font-medium mt-3">Your <span class="text-blue-600">Dental Health</span> is Important to Us!</p>
           <p class="mt-4">We will help you treat your teeth to keep your smile perfect with a satisfying experience in a premium dental clinic.</p>
         </div>
         <button
-          class="ease-in-out drop-shadow-xl text-sm duration-150 bg-gradient-to-t from-blue-700 to-blue-400 hover:from-blue-600 hover:to-blue-300 focus:ring-2 ring-offset-2 text-white px-6 py-4 rounded-full mt-4"
+          class="ease-in-out text-sm duration-150 bg-blue-500  hover:bg-blue-600 focus:ring-2 ring-offset-2 text-white px-6 py-4 rounded-full mt-5"
         >
           Make Appointment
         </button>
       </div>
-      <img src="/images/hero.jpg" alt="Close Up" class="hidden absolute -mt-16 sm:block sm:right-14 md:right-32 top-0 h-screen z-[-1] sm:brightness-80" />
     </div>
   </div>
 
-  <div id="services" class="relative pt-20 pb-20 bg-blue-50 mt-24 mb-20">
-    <div class="container mx-auto flex gap-x-4 flex-col-reverse gap-y-8 md:flex-row px-6 sm:px-8 md:px-2 md:max-w-6xl">
-      <div class="w-full md:w-1/2">
-        <img src="/images/services.png" alt="Close Up" class="w-96 z-[-1] sm:brightness-80 md:mx-auto" />
-      </div>
-      <div class="w-full md:w-1/2">
+  <div id="services" class="relative pt-20 pb-20 mb-20">
+    <div class="container mx-auto flex gap-x-4 gap-y-8 md:flex-row px-6 sm:px-8 md:px-2 md:max-w-6xl">
+
+      <div class="w-full">
         <p class="text-blue-500 font-medium">Our Services</p>
         <p class="text-5xl font-medium mt-2">Best Quality Service</p>
-        <p class="mt-4 w-3/4">We offer you the best quality service for you and your family at the most affordable price.</p>
-        <div class="mt-4">
-          <p class="flex gap-x-2 items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-            </svg>
-            Teeth Whitening
-          </p>
-          <p class="flex gap-x-2 items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-            </svg>
-            Root Canal
-          </p>
-          <p class="flex gap-x-2 items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-            </svg>
-            Modern Anesthetic
-          </p>
-          <p class="flex gap-x-2 items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-            </svg>
-            Dentures
-          </p>
-          <p class="flex gap-x-2 items-center">
-            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
-              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
-            </svg>
-            and many more...
-          </p>
-          <p class="mt-4">Schedule an appointment below.</p>
-        </div>
+        <p class="mt-4">We offer you the best quality service for you and your family at the most affordable price.</p>
+      </div>
+      <div class="w-full">
+          <div class="px-6 py-4">
+            <p class="text-2xl font-medium">Offered Services</p>
+            <p class="text-gray-600">Here are our offered services that you can avail in our clinic</p>
+            <div class="w-full">
+                <p class="flex mt-2 gap-x-2 items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    Teeth Whitening
+                </p>
+                <p class="flex  mt-2 gap-x-2 items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    Root Canal
+                </p>
+                <p class="flex mt-2 gap-x-2 items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    Modern Anesthetic
+                </p>
+                <p class="flex mt-2 gap-x-2 items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    Dentures
+                </p>
+                <p class="flex mt-2 gap-x-2 items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    Braces
+                </p>
+                <p class="flex mt-2 gap-x-2 items-center">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd" />
+                    </svg>
+                    Cleaning
+                </p>
+              </div>
+          </div>
       </div>
     </div>
   </div>
@@ -182,7 +198,7 @@
           <p class="mt-4 w-3/4">Fill-up the form to check the availability of your desired date for your appointment. If it is available we will then reserve it just for you.</p>
           <p>{{ form.first_name }}</p>
         </div>
-        <CalendarIcon class="absolute h-96 top-0 z-[-1] text-gray-100" />
+        <CalendarIcon class="absolute h-96 top-0 z-[-1] text-gray-50" />
       </div>
       <div class="w-full md:w-1/2">
         <div class="bg-white drop-shadow-md px-10 py-10">
@@ -191,9 +207,10 @@
             Please create an account if you do not have one. It will be used for the monitoring of your appointment status. Creating an account is free and will always be.
           </p>
           <form class="flex flex-col">
-            <form-input for="appointment" :error="errors.schedule" label="Date and Time" class="mt-3">
-              <floating-input type="datetime-local" id="appointment" v-model="form.schedule" :min="moment().format('YYYY-MM-DDT00:00')" :max="moment().add(2, 'month').format('YYYY-MM-DDT00:00')" />
-            </form-input>
+            <!-- <form-input for="appointment" :error="errors.schedule" label="Date and Time" class="mt-3">
+              <floating-input type="datetime-local" id="appointment" v-model="form.schedule" :min="moment().add(2, 'days').format('YYYY-MM-DDT00:00')" :max="moment().add(2, 'month').format('YYYY-MM-DDT00:00')" />
+            </form-input> -->
+            <Datepicker label="Select Schedule" v-model="form.schedule" :is24="false" weekStart="0" :min-date="moment().add(2, 'days').format('YYYY-MM-DDT00:00')" :max-date="moment().add(2, 'month').format('YYYY-MM-DDT00:00')"/>
             <form-input for="message" :error="errors.message" label="Message" class="mt-3">
               <floating-text-area id="message" v-model="form.message" />
             </form-input>
@@ -221,7 +238,7 @@
             <p class="mt-2">Subtotal: {{ formatCurrency(form.subtotal) }}</p>
             <a v-if="!authenticatedUser" :href="route('login')" class="text-sm mt-6">Already have an <span class="underline decoration-wavy hover:text-blue-500">account?</span></a>
             <div class="justify-end flex mt-6">
-              <Button type="button" @click.prevent="createAppointment" text size="sm">Make an Appointment</Button>
+              <Button type="button" @click.prevent="createAppointment" size="sm">Make Appointment</Button>
             </div>
           </form>
         </div>
@@ -252,7 +269,7 @@
           <p class="mt-4">We are currently located at 2000 MacArthur Hwy, San Fernando, 2000 Pampanga. You can visit our clinic for a walk-in reservation</p>
           <p>{{ form.first_name }}</p>
         </div>
-        <MapIcon class="absolute -top-20 w-96 -right-8 z-[-1] text-gray-100" />
+        <MapIcon class="absolute -top-20 w-96 -right-8 z-[-1] text-gray-50" />
       </div>
     </div>
   </div>
@@ -305,4 +322,20 @@
   .style-chooser .vs__open-indicator {
     fill: #313131;
   }
+
+  .scrolled {
+    width: 100%;
+    height: 75px;
+    background: rgba(255, 255, 255, 0.2);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.3);
+    padding: 1.5rem 5rem;
+    z-index: 999;
+    top: 4px;
+    border-radius: 4px;
+  }
+
+  @media and (max-width: )
 </style>
