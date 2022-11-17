@@ -337,5 +337,4 @@
     border-radius: 4px;
   }
 
-  @media and (max-width: )
 </style>
