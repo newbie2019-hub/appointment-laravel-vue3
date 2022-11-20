@@ -21,6 +21,11 @@ return new class extends Migration
             $table->string('payment_status')->default('Pending');
             $table->string('appointment_status')->default('Pending');
             $table->string('message');
+            $table->string('q1', 4);
+            $table->string('q2', 4);
+            $table->string('q3', 4);
+            $table->string('q4', 4);
+            $table->string('q5', 4);
             $table->softDeletes();
             $table->timestamps();
         });

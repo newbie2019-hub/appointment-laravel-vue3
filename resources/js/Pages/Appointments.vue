@@ -47,6 +47,9 @@ onMounted(async () => {
     });
 });
 
+const toggleHealthForm = () => isHealthFormShown.value = !isHealthFormShown.value
+const toggleViewHealthForm = () => isViewHealthFormShown.value = !isViewHealthFormShown.value
+
 const processBranchPayment = async () => {
     paymentForm.subtotal = selectedAppointment.value.subtotal;
     paymentForm.appointment_id = selectedAppointment.value.id;
@@ -134,6 +137,13 @@ let form = useForm({
     user_id: null,
     message: "",
     schedule: "",
+    healthFormData: {
+        q1: null,
+        q2: null,
+        q3: null,
+        q4: null,
+        q5: null,
+    }
 });
 
 const selectedAppointment = ref({
@@ -141,6 +151,13 @@ const selectedAppointment = ref({
     message: null,
     schedule: null,
     patient: { first_name: null, last_name: null },
+    healthFormData: {
+        q1: null,
+        q2: null,
+        q3: null,
+        q4: null,
+        q5: null,
+    }
 });
 
 const isCreating = ref(false);
@@ -153,6 +170,7 @@ const isAppointmentModalShown = ref(false);
 const isBranchPaymentModalShown = ref(false);
 const isPrescriptionModalShown = ref(false);
 const isHealthFormShown = ref(false);
+const isViewHealthFormShown = ref(false);
 
 const selectedService = toRef(form, "selected_services");
 
@@ -298,9 +316,11 @@ const saveAppointment = () => {
             preserveState: true,
             onError: (err) => {
                 toast.error(`${errorMessage.value}`);
+                toggleHealthForm()
             },
             onSuccess: () => {
                 toast.success("Appointment created successfully!");
+                toggleHealthForm()
                 toggleCreateModal();
                 form.reset();
             },
@@ -747,6 +767,16 @@ const searchPatient = debounce((val) => {
                                                     >Details</Button
                                                 >
                                                 <Button
+                                                    text
+                                                    size="sm"
+                                                    @click="
+                                                        toggleViewHealthForm();
+                                                        selectedAppointment.healthFormData =
+                                                            {q1: appointment.q1, q2: appointment.q2, q3: appointment.q3, q4: appointment.q4, q5: appointment.q5};
+                                                    "
+                                                    >Health Form</Button
+                                                >
+                                                <Button
                                                     v-if="
                                                         !appointment.deleted_at &&
                                                         appointment.appointment_status !=
@@ -1160,8 +1190,6 @@ const searchPatient = debounce((val) => {
             </template>
         </Modal>
 
-        <HealthForm v-if="isHealthFormShown" :data="healthFormData" />
-
         <Modal
             v-if="isBranchPaymentModalShown"
             @close="toggleBranchPaymentModal"
@@ -1243,6 +1271,7 @@ const searchPatient = debounce((val) => {
                             weekStart="0"
                             :disabledWeekDays="[0]"
                             minutesIncrement="30"
+                            :startTime="{ hours: '10', minutes: '00'}"
                             noMinutesOverlay
                             :min-date="
                                 moment()
@@ -1332,7 +1361,7 @@ const searchPatient = debounce((val) => {
                     >Close</Button
                 >
                 <Button
-                    @click.prevent="initiateMethod"
+                    @click.prevent="toggleHealthForm"
                     text
                     size="sm"
                     color="success"
@@ -1368,5 +1397,8 @@ const searchPatient = debounce((val) => {
                 >
             </template>
         </Modal>
+
+        <HealthForm v-if="isHealthFormShown" :data="form.healthFormData" @emit-close="toggleHealthForm" @emit-save-appointment="initiateMethod"/>
+        <HealthForm view-only v-if="isViewHealthFormShown" :data="selectedAppointment.healthFormData" @emit-close="toggleViewHealthForm"/>
     </BreezeAuthenticatedLayout>
 </template>

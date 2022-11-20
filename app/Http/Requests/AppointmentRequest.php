@@ -22,13 +22,18 @@ class AppointmentRequest extends FormRequest
      * @return array<string, mixed>
      */
     public function rules()
-    {  
+    {
         return [
             'schedule' => 'required',
             'selected_services' => 'required',
             'subtotal' => 'required',
             'user_id' => 'sometimes|exists:users,id',
-            'message' => 'required|max:255'
+            'message' => 'required|max:255',
+            'healthFormData.q1' => 'required',
+            'healthFormData.q2' => 'required',
+            'healthFormData.q3' => 'required',
+            'healthFormData.q4' => 'required',
+            'healthFormData.q5' => 'required',
         ];
     }
 

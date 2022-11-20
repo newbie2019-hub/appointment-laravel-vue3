@@ -42,7 +42,13 @@
     selected_services: [],
     subtotal: 0,
     message: '',
-    healthFormData: {}
+    healthFormData: {
+        q1: null,
+        q2: null,
+        q3: null,
+        q4: null,
+        q5: null,
+    }
   });
 
   const selectedService = toRef(form, 'selected_services');
@@ -80,11 +86,13 @@
           preserveState: true,
           onError: (err) => {
             // console.log(errorMessage.value)
-            toast.error(`${errorMessage.value}`);
+            toast.error(props.errors.error ?? 'Please fill-in all the required fields');
+            toggleHealthForm()
           },
           onSuccess: () => {
             toast.success('Appointment created successfully!');
             form.reset();
+            toggleHealthForm()
           },
         });
     } else {
@@ -310,7 +318,7 @@
     </div>
   </div>
 
-  <HealthForm v-if="isHealthFormShown" :data="form.healthFormData"/>
+  <HealthForm v-if="isHealthFormShown" :data="form.healthFormData" @emit-close="toggleHealthForm" @emit-save-appointment="createAppointment"/>
 </template>
 
 <style>

@@ -71,12 +71,16 @@ class AppointmentController extends Controller
         if(auth()->user()->is_admin == 1 && ($request->user_id == null || $request->user_id == '')){
             return back()->withErrors(['error' => 'Current signed-in account is admin']);
         }
-
         if($this->isAppointmentAvailable($request)){
             $appointment = Appointment::create(
-                $request->safe()->except(['selected_services']) +
+                $request->safe()->except(['selected_services', 'healthFormData']) +
                 [
                     'user_id' => auth()->id(),
+                    'q1' => $request->healthFormData["q1"],
+                    'q2' => $request->healthFormData["q2"],
+                    'q3' => $request->healthFormData["q3"],
+                    'q4' => $request->healthFormData["q4"],
+                    'q5' => $request->healthFormData["q5"],
                 ]
             );
 
