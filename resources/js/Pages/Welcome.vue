@@ -97,7 +97,6 @@
 
 <template>
   <Head title="Welcome" />
-  <!-- COLORS -->
   <nav class="flex justify-between container pt-8 sticky top-0 z-20 md:max-w-6xl mx-auto px-6 sm:px-8 md:px-6" :class="scrollpx >= 200 ? 'scrolled' : ''">
     <div>
       <p class="font-bold text-lg">M. Dental Clinic</p>
@@ -121,9 +120,9 @@
       <Button v-else is-link :href="route('dashboard')" size="sm" color="success">Account</Button>
     </div>
   </nav>
-  <div class="container px-6 sm:px-8 md:px-6 mx-auto md:max-w-6xl">
-    <div id="home" class="relative flex w-full h-[80vh] z-10 items-center top-0">
-      <div class="w-full sm:w-full md:w-3/4 lg:w-1/2">
+  <div class="container mt-12 sm:mt-4 px-6 sm:px-8 md:px-6 mx-auto md:max-w-6xl">
+    <div id="home" class="relative flex-wrap md:flex md:flex-nowrap w-full h-[80vh] z-10 items-center top-0">
+      <div class="w-full sm:w-full md:w-1/2">
         <div class="">
           <p>Welcome to</p>
           <p class="text-3xl font-medium mt-1">Manabat Dental Clinic</p>
@@ -135,6 +134,11 @@
         >
           Make Appointment
         </button>
+      </div>
+      <div class="w-full md:w-1/2 flex items-center justify-center">
+        <div class="rounded-full w-96 h-96 relative overflow-hidden">
+            <img src="/images/hero.jpg" class="object-cover w-full h-full" alt="">
+        </div>
       </div>
     </div>
   </div>
