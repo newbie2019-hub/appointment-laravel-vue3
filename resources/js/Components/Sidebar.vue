@@ -128,7 +128,7 @@ const closeSidebar = () => {
                     <Link
                         v-if="authenticatedUser.is_admin"
                         :href="route('patients.index')"
-                        :class="isCurrentRoute('patients.index')"
+                        :class="isCurrentRoute('patients.index') || isCurrentRoute('patients.show')"
                         class="flex items-center pl-9 pr-4 py-3 text-sm font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
                     >
                         <svg

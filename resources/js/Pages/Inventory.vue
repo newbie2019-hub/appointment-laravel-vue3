@@ -170,7 +170,7 @@
                     color="success"
                     >Add Equipment</Button
                   >
-                  <form-input label="Search Inventory" for="search">
+                  <form-input label="Search Inventory" for="search" class="w-52 md:w-64">
                     <floating-input v-model="search" id="search" @keyup="searchInventory" />
                   </form-input>
                 </div>

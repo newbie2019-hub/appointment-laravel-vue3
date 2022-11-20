@@ -14,7 +14,7 @@ class Service extends Model
 
     protected function serializeDate(DateTimeInterface $date)
     {
-        return $date->format('d-M-Y h:i A');
+        return $date->format('F j, Y h:i A');
     }
 
     public function monthly_appointments()

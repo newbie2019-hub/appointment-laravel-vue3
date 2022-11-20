@@ -19,7 +19,7 @@ class UserFactory extends Factory
     {
 
         $gender = fake()->randomElement(['Male', 'Female']);
-        
+
         return [
             'first_name' => fake()->firstName($gender),
             'middle_name' => fake()->lastName(),
@@ -31,6 +31,7 @@ class UserFactory extends Factory
             'email' => fake()->safeEmail(),
             'email_verified_at' => now(),
             'password' => 'password',
+            'is_approved' => 1,
             'remember_token' => Str::random(10),
         ];
     }

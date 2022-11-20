@@ -79,13 +79,13 @@
     <div class="px-6 mx-auto max-w-8xl lg:px-8">
       <div class="py-8">
         <div class="mx-auto max-w-8xl sm:px-6 lg:px-8">
-          <div class="overflow-x-auto shadow-sm sm:rounded-lg">
+          <div class="overflow-x-auto sm:rounded-lg">
             <div class="">
               <div class="pb-6 mx-auto bg-white rounded-lg max-w-8xl">
                 <p class="text-xl font-medium">Payment Records</p>
                 <p class="text-sm text-gray-700">Shown below are the records of your payment transactions.</p>
                 <div class="flex justify-end mt-7 mb-7">
-                  <form-input label="Search Payment" for="search">
+                  <form-input label="Search Payment" for="search" class="w-52 md:w-64">
                     <floating-input v-model="search" @keyup="searchPayment" id="search" />
                   </form-input>
                 </div>

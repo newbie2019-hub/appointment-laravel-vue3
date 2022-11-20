@@ -24,7 +24,7 @@ class Appointment extends Model
 
     protected function serializeDate(DateTimeInterface $date)
     {
-        return $date->format('Y-m-d h:i A');
+        return $date->format('F j, Y h:i A');
     }
 
     public function payment()

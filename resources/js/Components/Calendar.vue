@@ -1,6 +1,6 @@
 <template>
   <div class="h-[420px]">
-    <vue-cal class="vuecal--blue-theme" :events="events" />
+    <vue-cal class="vuecal--blue-theme" :events="events" :time-from="9 * 60" :time-to="17 * 60" :on-event-click="onEventClick"/>
   </div>
 </template>
 <script setup>
@@ -8,6 +8,8 @@
   import 'vue-cal/dist/vuecal.css';
   import moment from 'moment';
   import { watchEffect, onMounted, ref } from 'vue';
+
+  const emits = defineEmits(['emitEvent'])
 
   const props = defineProps({
     data: {
@@ -19,6 +21,11 @@
   watchEffect(() => {});
 
   const events = ref([]);
+
+  const onEventClick = (event, e) => {
+    emits('emitEvent', event)
+    e.stopPropagation()
+  }
 
   onMounted(() => {
     props.data.map((event) => {

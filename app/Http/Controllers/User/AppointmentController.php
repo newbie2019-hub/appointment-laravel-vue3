@@ -27,9 +27,19 @@ class AppointmentController extends Controller
             ->when($request->search, fn($query, $search) =>
                 $query->whereRelation('patient', 'first_name', 'like', '%'.$search.'%')
                 ->orWhereRelation('patient', 'last_name', 'like', '%'.$search.'%')
-            )->when($request->trashed, fn($query, $filter)
-                => $filter === "only" ? $query->onlyTrashed() : $query->withTrashed()
-            )->latest()->paginate(10)->withQueryString();
+            )->when($request->trashed, function($query) use($request){
+                if($request->trashed === 'pending') {
+                    $query->where('appointment_status', 'Pending');
+                } else if($request->trashed === 'finished') {
+                    $query->where('appointment_status', 'Finished');
+                } else if($request->trashed === 'approved') {
+                    $query->where('appointment_status', 'Approved');
+                } else if($request->trashed === 'only') {
+                    $query->onlyTrashed();
+                } else {
+                    $query->withTrashed();
+                }
+            })->latest()->paginate(10)->withQueryString();
 
             $trashedAppointmentsCount = Appointment::onlyTrashed()->count();
             $todaysAppointment = Appointment::whereDate('schedule', now())->count();

@@ -49,6 +49,11 @@ class User extends Authenticatable
         'remember_token',
     ];
 
+    public function appointments()
+    {
+        return $this->hasMany(Appointment::class, 'user_id', 'id');
+    }
+
     public function scopeNotAdmin($query)
     {
         return $query->where('is_admin', '<>', 1);

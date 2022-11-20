@@ -12,6 +12,7 @@
   import { useToast } from 'vue-toastification';
   import Modal from '@/Components/Modal/Modal.vue';
   import { formatNumeric, stringLimit } from '@/Composables/Utilities';
+  import { Link } from '@inertiajs/inertia-vue3'
 
   const message = computed(() => usePage().props.value.flash.message);
 
@@ -173,7 +174,7 @@
                       <option value="only">Trashed Patients</option>
                     </floating-select>
                   </form-input>
-                  <form-input label="Search Patient" for="search">
+                  <form-input label="Search Patient" for="search" class="w-52 md:w-72">
                     <floating-input v-model="search" @keyup="searchPatient" id="search" />
                   </form-input>
                 </div>
@@ -334,6 +335,7 @@
       </template>
       <template #footer>
         <Button @click.prevent="toggleViewModal" text size="sm" color="gray">Close</Button>
+        <Link :href="route('patients.show', selectedUser.value.id)" class="text-xs text-blue-600 px-4 py-2 hover:text-blue-700 flex justify-center items-center hover:bg-blue-100 uppercase font-medium rounded-sm">View Transactions</Link>
       </template>
     </Modal>
 

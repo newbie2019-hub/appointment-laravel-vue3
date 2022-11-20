@@ -3,16 +3,14 @@ import BreezeAuthenticatedLayout from "@/Layouts/Authenticated.vue";
 import Button from "@/Components/Button/Button.vue";
 import { Head, useForm, usePage } from "@inertiajs/inertia-vue3";
 import FloatingInput from "@/Components/FloatingInput/FloatingInput.vue";
+import FloatingTextArea from "@/Components/FloatingInput/FloatingTextArea.vue";
 import FormInput from "@/Components/FloatingInput/FormInput.vue";
 import FloatingSelect from "@/Components/FloatingInput/FloatingSelect.vue";
-import FloatingTextArea from "@/Components/FloatingInput/FloatingTextArea.vue";
 import Chip from "@/Components/Chip.vue";
 import Pagination from "@/Shared/Pagination.vue";
 import Modal from "@/Components/Modal/Modal.vue";
-import HealthForm from "@/Components/HealthForm.vue";
-import { loadStripe } from "@stripe/stripe-js/pure";
 import { debounce } from "lodash";
-import { ref, watch, computed, toRef, onMounted } from "vue";
+import { ref, computed, toRef, onMounted } from "vue";
 import { Inertia } from "@inertiajs/inertia";
 import {
     formatCurrency,
@@ -21,11 +19,13 @@ import {
     chipColor,
 } from "@/Composables/Utilities";
 import { useToast } from "vue-toastification";
-import Calendar from "@/Components/Calendar.vue";
 import VueMultiselect from "vue-multiselect";
-import Datepicker from "@vuepic/vue-datepicker";
-import "@vuepic/vue-datepicker/dist/main.css";
-import moment from "moment";
+
+const props = defineProps({
+    user: Object,
+    filters: Object,
+    errors: Object,
+});
 
 const errorMessage = computed(() => {
     return usePage().props.value.errors.error ?? "Something went wrong";
@@ -35,17 +35,7 @@ const successMessage = computed(() => {
     return usePage().props.value.flash.success ?? "Success";
 });
 
-let cardElement, stripe;
-
 let isBtnLoading = ref(false);
-
-onMounted(async () => {
-    stripe = await loadStripe(usePage().props.value.stripe.public_key);
-    const elements = stripe.elements();
-    cardElement = elements.create("card", {
-        classes: { base: "p-2 border-gray-500" },
-    });
-});
 
 const processBranchPayment = async () => {
     paymentForm.subtotal = selectedAppointment.value.subtotal;
@@ -114,9 +104,7 @@ const initialPrescription = {
     prescription: "",
     note: "",
 };
-
 let prescriptionData = useForm({ ...initialPrescription });
-
 const paymentForm = useForm({
     id: null,
     subtotal: null,
@@ -124,7 +112,6 @@ const paymentForm = useForm({
     appointment_id: null,
     amount_tendered: 0,
 });
-
 let form = useForm({
     id: null,
     service: null,
@@ -135,7 +122,6 @@ let form = useForm({
     message: "",
     schedule: "",
 });
-
 const selectedAppointment = ref({
     id: null,
     message: null,
@@ -152,7 +138,6 @@ const initializePaymentModal = ref(false);
 const isAppointmentModalShown = ref(false);
 const isBranchPaymentModalShown = ref(false);
 const isPrescriptionModalShown = ref(false);
-const isHealthFormShown = ref(false);
 
 const selectedService = toRef(form, "selected_services");
 
@@ -186,17 +171,6 @@ const togglePrescriptionModal = (
     isPrescriptionModalShown.value = !isPrescriptionModalShown.value;
 };
 
-const toggleStripePaymentModal = () => {
-    isPaymentModalShown.value = !isPaymentModalShown.value;
-
-    if (isPaymentModalShown.value) {
-        setTimeout(() => {
-            initializePaymentModal.value = false;
-            cardElement.mount("#card-element");
-        }, 1200);
-    }
-};
-
 const toggleBranchPaymentModal = () => {
     isBranchPaymentModalShown.value = !isBranchPaymentModalShown.value;
 };
@@ -220,14 +194,6 @@ const toggleCreateModal = (data = null) => {
         form.schedule = moment(data.schedule).format("YYYY-MM-DDThh:mm");
     }
     isCreateModalShown.value = !isCreateModalShown.value;
-};
-
-const initiateMethod = () => {
-    if (isCreating.value) {
-        saveAppointment();
-    } else {
-        updateAppointment();
-    }
 };
 
 const generatePrescription = () => {
@@ -325,165 +291,85 @@ const updateAppointment = () => {
     );
 };
 
-const props = defineProps({
-    appointments: Object,
-    errors: Object,
-    filters: Object,
-    trashedAppointmentsCount: Number,
-    todaysAppointment: Number,
-    services: Object,
-    users: Object,
-});
-
-const setSubtotalValue = () => {
-    form.subtotal = 0;
-    form.selected_services?.map((service) => {
-        form.subtotal += parseFloat(service.price);
-    });
-};
-
-const openEventModal = (data) => {
-    console.log(data);
-};
-
-watch(selectedService, setSubtotalValue);
-
 let search = ref(props.filters.search);
 let trashed = ref(props.filters.trashed);
 
 const searchAppointment = debounce(() => {
     Inertia.get(
-        "/appointments",
+        `/patients/${props.user.id}`,
         { search: search.value, trashed: trashed.value },
-        { preserveState: true }
-    );
-}, 300);
-
-const searchPatient = debounce((val) => {
-    Inertia.get(
-        "/appointments",
-        { search: val },
-        {
-            preserveState: true,
-            only: ["users"],
-        }
+        { replace: true, preserveState: true }
     );
 }, 300);
 </script>
 
 <template>
-    <Head title="Patient Appointments" />
+    <Head title="User Profile" />
 
     <BreezeAuthenticatedLayout>
-        <div class="px-6 max-w-8xl lg:px-8">
-            <div class="mx-auto mt-6 sm:px-6 lg:px-8">
-                <p class="text-xl font-medium">Appointment Summary</p>
-                <p>Here is an overview of your appointments.</p>
-            </div>
-            <div
-                class="flex flex-wrap py-8 max-w-8xl sm:px-6 lg:px-8 gap-x-4 md:flex-row gap-y-4"
-            >
-                <div class="flex-1 p-4 text-white bg-red-500 rounded-md">
-                    <div class="flex justify-between">
-                        <div class="flex items-center text-9xl">
-                            {{ formatNumeric(trashedAppointmentsCount) }}
+        <div class="max-w-8xl px-6 lg:px-8">
+            <div class="sm:px-6 lg:px-8 mt-6 mx-auto">
+                <p class="font-medium text-xl">User Profile</p>
+                <p>Profile Information</p>
+                <div class="grid grid-cols-2 lg:grid-cols-4 mt-4">
+                    <div class="w-full h-full flex items-center">
+                        <div class="w-48 h-48 rounded-md" :class="{'bg-gray-100 flex items-center justify-center' : !user.image}">
+                            <img
+                                v-if="user.image"
+                                :src="`/images/profile/${user.image}`"
+                                class="object-fit h-full"
+                                alt=""
+                            />
+                            <p class="text-gray-400">No Image</p>
                         </div>
-                        <div class="flex flex-col items-end gap-y-8">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="w-10 h-10"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                stroke-width="2"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
-                                />
-                            </svg>
-                            <p
-                                class="font-medium leading-5 tracking-wider text-right uppercase"
-                            >
-                                Trashed <br />Appointments
+                    </div>
+                    <div>
+                        <div>
+                            <p class="text-gray-500">Patient's Name</p>
+                            <p class="font-semibold">
+                                {{ user.full_name }}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 mt-2">Gender</p>
+                            <p class="font-semibold">
+                                {{ user.gender }}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 mt-2">Contact Number</p>
+                            <p class="font-semibold">
+                                {{ user.contact_number }}
                             </p>
                         </div>
                     </div>
-                    <span class="sr-only">Trashed Appointments</span>
-                </div>
-                <div class="flex-1 p-4 text-white bg-green-600 rounded-md">
-                    <div class="flex justify-between">
-                        <div class="flex items-center text-9xl">
-                            {{ formatNumeric(appointments.data.length) }}
+                    <div>
+                        <div class="mt-4 lg:mt-0">
+                            <p class="text-gray-500">Email Address</p>
+                            <p class="font-semibold">
+                                {{ user.email }}
+                            </p>
                         </div>
-                        <div class="flex flex-col items-end gap-y-8">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="w-10 h-10"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                stroke-width="2"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M13 10V3L4 14h7v7l9-11h-7z"
-                                />
-                            </svg>
-                            <p
-                                class="font-medium leading-5 tracking-wider text-right uppercase"
-                            >
-                                Total <br />Appointments
+                        <div>
+                            <p class="text-gray-500 mt-2">Date of Birth</p>
+                            <p class="font-semibold">
+                                {{ user.birthday }}
+                            </p>
+                        </div>
+                        <div>
+                            <p class="text-gray-500 mt-2">Registered Date</p>
+                            <p class="font-semibold">
+                                {{ user.created_at }}
                             </p>
                         </div>
                     </div>
-                    <span class="sr-only">Total Appointments</span>
-                </div>
-                <div class="flex-1 p-4 text-white bg-blue-600 rounded-md">
-                    <div class="flex justify-between">
-                        <div class="flex items-center text-9xl">
-                            {{ formatNumeric(todaysAppointment) }}
-                        </div>
-                        <div class="flex flex-col items-end gap-y-8">
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                class="h-9 w-9"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                                stroke-width="2"
-                            >
-                                <path
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
-                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
-                                />
-                            </svg>
-                            <p
-                                class="font-medium leading-5 tracking-wider text-right uppercase"
-                            >
-                                Today's <br />Appointments
-                            </p>
-                        </div>
-                    </div>
-                    <span class="sr-only">Today's Appointments</span>
-                </div>
-            </div>
-        </div>
 
-        <div class="px-6 max-w-8xl lg:px-8">
-            <div class="mx-auto mt-6 sm:px-6 lg:px-8">
-                <p class="text-xl font-medium">Appointment Calendar</p>
-                <p>Here is an overview of your appointments.</p>
-            </div>
-            <div class="py-8 mx-auto max-w-8xl sm:px-6 lg:px-8 md:flex gap-x-4">
-                <div class="flex-1 w-full">
-                    <Calendar
-                        :data="appointments.data"
-                        @emit-event="openEventModal"
-                    />
+                    <div class="mt-4 lg:mt-0">
+                        <p class="text-gray-500">Address</p>
+                        <p class="font-semibold">
+                            {{ user.address }}
+                        </p>
+                    </div>
                 </div>
             </div>
         </div>
@@ -495,11 +381,13 @@ const searchPatient = debounce((val) => {
                         <div
                             class="pb-6 mx-auto bg-white border-gray-200 rounded-lg max-w-8xl sm:px-6 lg:px-8"
                         >
-                            <p class="text-xl font-medium">All Appointments</p>
+                            <p class="text-xl font-medium">
+                                Patient Appointments
+                            </p>
                             <p class="text-sm text-gray-700">
                                 Shown below are the appointments record
                             </p>
-                            <div class="flex justify-between mb-6 mt-7 gap-x-2">
+                            <div class="flex justify-end mb-6 mt-7 gap-x-2">
                                 <form-input
                                     label="Filter Appointment"
                                     class="w-56"
@@ -517,38 +405,8 @@ const searchPatient = debounce((val) => {
                                         <option value="only">
                                             Trashed Appointments
                                         </option>
-                                        <option value="pending">
-                                            Pending Appointments
-                                        </option>
-                                        <option value="approved">
-                                            Approved Appointments
-                                        </option>
-                                        <option value="finished">
-                                            Finished Appointments
-                                        </option>
                                     </floating-select>
                                 </form-input>
-                                <div class="flex gap-x-2">
-                                    <Button
-                                        @click.prevent="
-                                            isCreating = true;
-                                            toggleCreateModal();
-                                        "
-                                        size="sm"
-                                        color="success"
-                                        >Add Appointment</Button
-                                    >
-                                    <form-input
-                                        label="Search Appointment"
-                                        for="search"
-                                    >
-                                        <floating-input
-                                            v-model="search"
-                                            id="search"
-                                            @keyup="searchAppointment"
-                                        />
-                                    </form-input>
-                                </div>
                             </div>
                             <div class="overflow-x-auto">
                                 <table
@@ -569,18 +427,6 @@ const searchPatient = debounce((val) => {
                                                 class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap"
                                             >
                                                 Status
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap"
-                                            >
-                                                Patient
-                                            </th>
-                                            <th
-                                                scope="col"
-                                                class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap"
-                                            >
-                                                Email
                                             </th>
                                             <th
                                                 scope="col"
@@ -638,7 +484,7 @@ const searchPatient = debounce((val) => {
                                         <tr
                                             v-for="(
                                                 appointment, i
-                                            ) in appointments.data"
+                                            ) in user.appointments"
                                             :key="i"
                                             class="hover:bg-gray-100"
                                             :class="{
@@ -664,19 +510,6 @@ const searchPatient = debounce((val) => {
                                                         )
                                                     "
                                                 />
-                                            </td>
-                                            <td
-                                                class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6"
-                                            >
-                                                {{
-                                                    appointment.patient
-                                                        .full_name
-                                                }}
-                                            </td>
-                                            <td
-                                                class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6"
-                                            >
-                                                {{ appointment.patient.email }}
                                             </td>
                                             <td
                                                 class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6"
@@ -907,7 +740,7 @@ const searchPatient = debounce((val) => {
                                             </td>
                                         </tr>
                                         <tr
-                                            v-if="appointments.data.length == 0"
+                                            v-if="user.appointments.length == 0"
                                         >
                                             <td colspan="11">
                                                 <div
@@ -920,12 +753,6 @@ const searchPatient = debounce((val) => {
                                     </tbody>
                                 </table>
                             </div>
-                            <p class="mt-2 text-sm text-gray-500">
-                                Showing {{ appointments.from ?? 0 }} to
-                                {{ appointments.to ?? 0 }} out of
-                                {{ appointments.total ?? 0 }} appointments.
-                            </p>
-                            <pagination :links="appointments.links" right />
                         </div>
                     </div>
                 </div>
@@ -1160,8 +987,6 @@ const searchPatient = debounce((val) => {
             </template>
         </Modal>
 
-        <HealthForm v-if="isHealthFormShown" :data="healthFormData" />
-
         <Modal
             v-if="isBranchPaymentModalShown"
             @close="toggleBranchPaymentModal"
@@ -1236,26 +1061,11 @@ const searchPatient = debounce((val) => {
                         label="Date and Time"
                         class="mt-3"
                     >
-                        <Datepicker
-                            label="Select Schedule"
+                        <floating-input
+                            type="datetime-local"
+                            id="appointment"
                             v-model="form.schedule"
-                            :is24="false"
-                            weekStart="0"
-                            :disabledWeekDays="[0]"
-                            minutesIncrement="30"
-                            noMinutesOverlay
-                            :min-date="
-                                moment()
-                                    .add(1, 'day')
-                                    .format('YYYY-MM-DDT00:00')
-                            "
-                            :max-date="
-                                moment()
-                                    .add(2, 'month')
-                                    .format('YYYY-MM-DDT00:00')
-                            "
                         />
-                        <!-- <floating-input type="datetime-local" id="appointment" v-model="form.schedule" /> -->
                     </form-input>
                     <form-input
                         for="message"

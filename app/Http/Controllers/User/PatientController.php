@@ -47,6 +47,18 @@ class PatientController extends Controller
         return back()->with('message', 'Patient record has been updated successfully!!');
     }
 
+    public function show(User $user, Request $request)
+    {
+        $filters = $request->only(['search', 'trashed']);
+        $trashedPatientsCount = User::notAdmin()->onlyTrashed()->count();
+
+        $user->load(['appointments' => function($query) use($request){
+            $query->when($request->trashed, fn($query, $filter)
+            => $filter === "only" ? $query->onlyTrashed() : $query->withTrashed());
+        }, 'appointments.patient', 'appointments.services.service', 'appointments.prescription']);
+        return Inertia::render('ViewUsers', compact(['user', 'filters']));
+    }
+
     public function destroy(User $user)
     {
         $user->delete();

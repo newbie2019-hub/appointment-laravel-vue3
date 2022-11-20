@@ -144,7 +144,7 @@
               <p class="text-xl font-medium">Offered Services</p>
               <p class="text-sm text-gray-700">Shown below are the services you offer.</p>
               <div class="flex justify-between mt-7 gap-x-2 mb-6">
-                <form-input label="Filter Service" class="w-48">
+                <form-input label="Filter Service" class="w-52">
                   <floating-select @change="searchServices" v-model="trashed">
                     <option value="with">All Services</option>
                     <option value="">Active Services</option>
@@ -161,7 +161,7 @@
                     color="success"
                     >Add Service</Button
                   >
-                  <form-input label="Search Service" for="search">
+                  <form-input label="Search Service" for="search" class="w-52 md:w-72">
                     <floating-input v-model="search" id="search" @keyup="searchServices" />
                   </form-input>
                 </div>

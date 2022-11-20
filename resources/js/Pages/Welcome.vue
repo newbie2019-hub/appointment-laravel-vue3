@@ -3,6 +3,7 @@
   import Button from '@/Components/Button/Button.vue';
   import FloatingInput from '@/Components/FloatingInput/FloatingInput.vue';
   import FloatingSelect from '@/Components/FloatingInput/FloatingSelect.vue';
+  import HealthForm from '@/Components/HealthForm.vue';
   import FormInput from '@/Components/FloatingInput/FormInput.vue';
   import FloatingTextArea from '@/Components/FloatingInput/FloatingTextArea.vue';
   import { ref, computed, watch, toRef, onMounted } from 'vue';
@@ -32,11 +33,16 @@
     return usePage().props.value.errors.error ?? 'Something went wrong';
   });
 
+  const isHealthFormShown = ref(false)
+
+  const toggleHealthForm = () => isHealthFormShown.value = !isHealthFormShown.value
+
   const form = useForm({
     schedule: '',
     selected_services: [],
     subtotal: 0,
     message: '',
+    healthFormData: {}
   });
 
   const selectedService = toRef(form, 'selected_services');
@@ -69,7 +75,7 @@
   const createAppointment = () => {
     if (authenticatedUser.value) {
       form
-        .transform((data) => ({ ...data, schedule: moment(data.schedule).format('YYYY-MM-DD HH:mm') }))
+        // .transform((data) => ({ ...data, schedule: moment(data.schedule).format('YYYY-MM-DD HH:mm') }))
         .post('/appointments', {
           preserveState: true,
           onError: (err) => {
@@ -78,7 +84,6 @@
           },
           onSuccess: () => {
             toast.success('Appointment created successfully!');
-
             form.reset();
           },
         });
@@ -93,7 +98,7 @@
 <template>
   <Head title="Welcome" />
   <!-- COLORS -->
-  <nav class="flex justify-between container pt-8 sticky top-0 z-20 md:max-w-6xl mx-auto px-6 sm:px-8 md:px-2" :class="scrollpx >= 200 ? 'scrolled' : ''">
+  <nav class="flex justify-between container pt-8 sticky top-0 z-20 md:max-w-6xl mx-auto px-6 sm:px-8 md:px-6" :class="scrollpx >= 200 ? 'scrolled' : ''">
     <div>
       <p class="font-bold text-lg">M. Dental Clinic</p>
     </div>
@@ -116,7 +121,7 @@
       <Button v-else is-link :href="route('dashboard')" size="sm" color="success">Account</Button>
     </div>
   </nav>
-  <div class="container px-6 sm:px-8 md:px-2 mx-auto md:max-w-6xl">
+  <div class="container px-6 sm:px-8 md:px-6 mx-auto md:max-w-6xl">
     <div id="home" class="relative flex w-full h-[80vh] z-10 items-center top-0">
       <div class="w-full sm:w-full md:w-3/4 lg:w-1/2">
         <div class="">
@@ -135,7 +140,7 @@
   </div>
 
   <div id="services" class="relative pt-20 pb-20 mb-20">
-    <div class="container mx-auto flex gap-x-4 gap-y-8 md:flex-row px-6 sm:px-8 md:px-2 md:max-w-6xl">
+    <div class="container mx-auto flex-col md:flex gap-x-4 gap-y-8 md:flex-row px-6 sm:px-8 md:px-6 md:max-w-6xl">
 
       <div class="w-full">
         <p class="text-blue-500 font-medium">Our Services</p>
@@ -190,7 +195,7 @@
   </div>
 
   <div id="appointment" class="relative pt-15 pb-20 mb-15">
-    <div class="container gap-y-4 gap-x-6 mx-auto flex flex-col md:flex-row px-6 sm:px-8 md:px-2 md:max-w-6xl">
+    <div class="container gap-y-4 gap-x-6 mx-auto flex flex-col md:flex-row px-6 sm:px-8 md:px-6 md:max-w-6xl">
       <div class="w-full md:w-1/2 relative">
         <div class="mx-auto sm:mt-20">
           <p class="text-blue-500 font-medium">Online Appointment</p>
@@ -207,10 +212,7 @@
             Please create an account if you do not have one. It will be used for the monitoring of your appointment status. Creating an account is free and will always be.
           </p>
           <form class="flex flex-col">
-            <!-- <form-input for="appointment" :error="errors.schedule" label="Date and Time" class="mt-3">
-              <floating-input type="datetime-local" id="appointment" v-model="form.schedule" :min="moment().add(2, 'days').format('YYYY-MM-DDT00:00')" :max="moment().add(2, 'month').format('YYYY-MM-DDT00:00')" />
-            </form-input> -->
-            <Datepicker label="Select Schedule" v-model="form.schedule" :is24="false" weekStart="0" :min-date="moment().add(2, 'days').format('YYYY-MM-DDT00:00')" :max-date="moment().add(2, 'month').format('YYYY-MM-DDT00:00')"/>
+            <Datepicker placeholder="Select Schedule" v-model="form.schedule" :is24="false" weekStart="0" :disabledWeekDays="[0]" minutesIncrement="30" noMinutesOverlay :startTime="{ hours: '10', minutes: '00'}" :min-date="moment().add(2, 'day').format('YYYY-MM-DDT00:00')" :max-date="moment().add(2, 'month').format('YYYY-MM-DDT00:00')"/>
             <form-input for="message" :error="errors.message" label="Message" class="mt-3">
               <floating-text-area id="message" v-model="form.message" />
             </form-input>
@@ -238,7 +240,7 @@
             <p class="mt-2">Subtotal: {{ formatCurrency(form.subtotal) }}</p>
             <a v-if="!authenticatedUser" :href="route('login')" class="text-sm mt-6">Already have an <span class="underline decoration-wavy hover:text-blue-500">account?</span></a>
             <div class="justify-end flex mt-6">
-              <Button type="button" @click.prevent="createAppointment" size="sm">Make Appointment</Button>
+              <Button type="button" @click.prevent="toggleHealthForm" size="sm">Make Appointment</Button>
             </div>
           </form>
         </div>
@@ -247,7 +249,7 @@
   </div>
 
   <div id="about" class="relative pt-12 pb-15 mb-20">
-    <div class="container gap-x-6 mx-auto flex gap-y-8 flex-col-reverse md:flex-row px-6 items-center sm:px-8 md:px-2 md:max-w-6xl">
+    <div class="container gap-x-6 mx-auto flex gap-y-8 flex-col-reverse md:flex-row px-6 items-center sm:px-8 md:px-6 md:max-w-6xl">
       <div class="w-full md:w-1/2">
         <iframe
           src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3853.0602543030805!2d120.67080431437381!3d15.044783170071193!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3396f71be8895741%3A0x28fb6d6849ab6d25!2sManabat%20Dental%20Clinic!5e0!3m2!1sen!2sph!4v1658401388093!5m2!1sen!2sph"
@@ -260,7 +262,7 @@
         ></iframe>
       </div>
       <div class="w-full md:w-1/2 relative">
-        <div class="mx-auto z-20 sm:text-right">
+        <div class="mx-auto z-20 md:text-right">
           <p class="text-blue-500 font-medium">Our Location</p>
           <p class="text-5xl font-medium mt-2">
             Manabat-Flores <br />
@@ -275,7 +277,7 @@
   </div>
 
   <div id="contact" class="relative w-full bg-blue-500 p-12 mt-36">
-    <div class="container gap-x-6 mx-auto gap-y-10 flex flex-col md:flex-row px-6 sm:px-8 md:px-2 md:max-w-6xl">
+    <div class="container gap-x-6 mx-auto gap-y-10 flex flex-col md:flex-row px-6 sm:px-8 md:px-6 md:max-w-6xl">
       <div class="w-full md:w-1/2 text-white">
         <p class="font-medium text-xl">GET IN TOUCH</p>
 
@@ -303,6 +305,8 @@
       </div>
     </div>
   </div>
+
+  <HealthForm v-if="isHealthFormShown" :data="form.healthFormData"/>
 </template>
 
 <style>
