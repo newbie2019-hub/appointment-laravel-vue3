@@ -27,7 +27,7 @@ class PaymentController extends Controller
     {
         $payments = Payment::with([
             'appointment', 'appointment.patient'
-            ])->when($request->search, fn($query, $search) 
+            ])->when($request->search, fn($query, $search)
                 => $query->whereLike('payment_tye', $search)
             )->paginate(10)->withQueryString();
 
@@ -67,7 +67,7 @@ class PaymentController extends Controller
             $appointment->update([
                 'payment_status' => 'Paid'
             ]);
-            
+
             return back()->with('message', 'Payment transaction is successful!');
         } catch(\Exception $e) {
             return back()->withErrors(['message' => $e->getMessage()]);
@@ -77,11 +77,14 @@ class PaymentController extends Controller
     public function branchPayment(Request $request)
     {
         $payment = Payment::create([
-            'total' => $request->subtotal,
+            'addons_note' => $request->addons_note,
+            'addons_amount' => $request->addons_amount,
             'amount_tendered' => $request->amount_tendered,
+            'sub_total' => $request->subtotal,
+            'total' => $request->subtotal + $request->addons_amount,
+            'change' => $request->change,
             'appointment_id' => $request->appointment_id,
             'payment_type' => 'On-Branch',
-            'change' => $request->change,
             'receipt_url' => 'N/A'
         ]);
 
@@ -90,7 +93,7 @@ class PaymentController extends Controller
         $appointment->update([
             'payment_status' => 'Paid'
         ]);
-        
+
         return back()->with('message', 'Payment transaction is successful!');
     }
 
@@ -120,6 +123,10 @@ class PaymentController extends Controller
         $items = [];
         foreach($appointment->services as $service) {
             $items[] = (new InvoiceItem())->title($service->service->service)->pricePerUnit($service->service->price);
+        }
+
+        if($payment->addons_note){
+            $items[] = (new InvoiceItem())->title($payment->addons_note)->pricePerUnit($payment->addons_amount);
         }
 
         $notes = [

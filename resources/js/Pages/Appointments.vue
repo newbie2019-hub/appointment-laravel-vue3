@@ -54,7 +54,7 @@ const processBranchPayment = async () => {
     paymentForm.subtotal = selectedAppointment.value.subtotal;
     paymentForm.appointment_id = selectedAppointment.value.id;
 
-    if (selectedAppointment.value.subtotal > paymentForm.amount_tendered) {
+    if (parseFloat(selectedAppointment.value.subtotal) + parseFloat(paymentForm.addons_amount ?? 0) > paymentForm.amount_tendered) {
         toast.error("Insufficient amount is received");
     } else {
         isBtnLoading.value = true;
@@ -126,6 +126,8 @@ const paymentForm = useForm({
     change: null,
     appointment_id: null,
     amount_tendered: 0,
+    addons_amount: 0,
+    addons_note: '',
 });
 
 let form = useForm({
@@ -174,6 +176,9 @@ const isViewHealthFormShown = ref(false);
 
 const selectedService = toRef(form, "selected_services");
 
+const totalPayment = computed(() => {
+    return parseFloat(selectedAppointment.value.subtotal) + parseFloat(paymentForm.addons_amount === '' ? 0 : paymentForm.addons_amount)
+})
 const togglePaymentModal = (isadmin) => {
     initializePaymentModal.value = true;
     if (!isadmin) {
@@ -1214,6 +1219,30 @@ const searchPatient = debounce((val) => {
                     />
                 </form-input>
                 <form-input
+                    for="addons_amount"
+                    :error="errors.addons_amount"
+                    label="Addons Amount"
+                    class="mt-3 mb-3"
+                >
+                    <floating-input
+                        type="number"
+                        id="addons_amount"
+                        v-model="paymentForm.addons_amount"
+                    />
+                </form-input>
+                <form-input
+                    for="addons_note"
+                    :error="errors.addons_note"
+                    label="Addons Note"
+                    class="mt-3 mb-3"
+                >
+                    <floating-text-area
+                        type="text"
+                        id="addons_note"
+                        v-model="paymentForm.addons_note"
+                    />
+                </form-input>
+                <form-input
                     for="subtotal"
                     :error="errors.subtotal"
                     label="Subtotal"
@@ -1227,6 +1256,7 @@ const searchPatient = debounce((val) => {
                         aria-disabled
                     />
                 </form-input>
+                <p>Total Amount: {{ totalPayment }}</p>
             </template>
             <template v-slot:footer>
                 <Button
@@ -1399,6 +1429,6 @@ const searchPatient = debounce((val) => {
         </Modal>
 
         <HealthForm v-if="isHealthFormShown" :data="form.healthFormData" @emit-close="toggleHealthForm" @emit-save-appointment="initiateMethod"/>
-        <HealthForm view-only v-if="isViewHealthFormShown" :data="selectedAppointment.healthFormData" @emit-close="toggleViewHealthForm"/>
+        <HealthForm view-only scrollable v-if="isViewHealthFormShown" :data="selectedAppointment.healthFormData" @emit-close="toggleViewHealthForm"/>
     </BreezeAuthenticatedLayout>
 </template>

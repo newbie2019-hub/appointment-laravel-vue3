@@ -369,7 +369,7 @@
                             {{ $invoice->calculateChange($invoice->total_amount)}}
                         </td>
                     </tr>
-                  
+
             </tbody>
         </table>
 
@@ -382,7 +382,7 @@
         <p>
             {{ trans('invoices::invoice.amount_in_words') }}: {{ $invoice->getTotalAmountInWords() }}
         </p>
-      
+
         <script type="text/php">
             if (isset($pdf) && $PAGE_COUNT > 1) {
                 $text = "Page {PAGE_NUM} / {PAGE_COUNT}";

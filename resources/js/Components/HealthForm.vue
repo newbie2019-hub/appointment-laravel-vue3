@@ -16,6 +16,14 @@ const props = defineProps({
         type: Boolean,
         default: false,
     },
+    scrollable: {
+        type: Boolean,
+        default: false,
+    },
+    maxWidth: {
+        type: [Number, String],
+        default: 400,
+    },
 });
 
 const emits = defineEmits(["emitClose", "saveAppointment"]);
@@ -80,7 +88,9 @@ const emitSaveAppointment = () => emits("emitSaveAppointment");
                                         name="q1"
                                     />
                                 </div>
-                                <p v-else class="text-gray-600">{{ data.q1 }}</p>
+                                <p v-else class="text-gray-600">
+                                    {{ data.q1 }}
+                                </p>
                             </td>
                         </tr>
                         <tr class="hover:bg-gray-50">
@@ -114,7 +124,9 @@ const emitSaveAppointment = () => emits("emitSaveAppointment");
                                         name="q2"
                                     />
                                 </div>
-                                <p v-else class="text-gray-600">{{ data.q2 }}</p>
+                                <p v-else class="text-gray-600">
+                                    {{ data.q2 }}
+                                </p>
                             </td>
                         </tr>
                         <tr class="hover:bg-gray-50">
@@ -148,7 +160,9 @@ const emitSaveAppointment = () => emits("emitSaveAppointment");
                                         name="q3"
                                     />
                                 </div>
-                                <p v-else class="text-gray-600">{{ data.q3 }}</p>
+                                <p v-else class="text-gray-600">
+                                    {{ data.q3 }}
+                                </p>
                             </td>
                         </tr>
                         <tr class="hover:bg-gray-50">
@@ -182,7 +196,9 @@ const emitSaveAppointment = () => emits("emitSaveAppointment");
                                         name="q4"
                                     />
                                 </div>
-                                <p v-else class="text-gray-600">{{ data.q4 }}</p>
+                                <p v-else class="text-gray-600">
+                                    {{ data.q4 }}
+                                </p>
                             </td>
                         </tr>
                         <tr class="hover:bg-gray-50">
@@ -215,7 +231,9 @@ const emitSaveAppointment = () => emits("emitSaveAppointment");
                                         name="q5"
                                     />
                                 </div>
-                                <p v-else class="text-gray-600">{{ data.q5 }}</p>
+                                <p v-else class="text-gray-600">
+                                    {{ data.q5 }}
+                                </p>
                             </td>
                         </tr>
                     </tbody>

@@ -318,7 +318,7 @@
     </div>
   </div>
 
-  <HealthForm v-if="isHealthFormShown" :data="form.healthFormData" @emit-close="toggleHealthForm" @emit-save-appointment="createAppointment"/>
+  <HealthForm :max-width="600" scrollable v-if="isHealthFormShown" :data="form.healthFormData" @emit-close="toggleHealthForm" @emit-save-appointment="createAppointment"/>
 </template>
 
 <style>
