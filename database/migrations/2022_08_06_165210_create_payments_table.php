@@ -23,6 +23,7 @@ return new class extends Migration
             $table->foreignId('appointment_id')->constrained()->cascadeOnDelete();
             $table->string('payment_type');
             $table->string('receipt_url');
+            $table->boolean('is_installment');
             $table->string('change')->nullable();
             $table->timestamps();
         });

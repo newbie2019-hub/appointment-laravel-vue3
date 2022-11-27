@@ -32,7 +32,7 @@ class PatientController extends Controller
             $request->trashed,
             fn ($query, $filter)
             => $filter === "only" ? $query->onlyTrashed() : $query->withTrashed()
-        )->paginate(10)->withQueryString();
+        )->latest()->paginate(10)->withQueryString();
 
         $filters = $request->only(['search', 'trashed']);
         $trashedPatientsCount = User::notAdmin()->onlyTrashed()->count();
@@ -55,7 +55,7 @@ class PatientController extends Controller
         $user->load(['appointments' => function($query) use($request){
             $query->when($request->trashed, fn($query, $filter)
             => $filter === "only" ? $query->onlyTrashed() : $query->withTrashed());
-        }, 'appointments.patient', 'appointments.services.service', 'appointments.prescription']);
+        }, 'appointments.patient', 'appointments.services.service', 'appointments.prescription', 'appointments.payments']);
         return Inertia::render('ViewUsers', compact(['user', 'filters']));
     }
 

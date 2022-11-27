@@ -13,7 +13,7 @@ const props = defineProps({
     maxWidth: {
         type: [Number, String],
         default: 400
-    }
+    },
 });
 
 const emitClose = () => {

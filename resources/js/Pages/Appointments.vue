@@ -39,40 +39,60 @@ let cardElement, stripe;
 
 let isBtnLoading = ref(false);
 
-onMounted(async () => {
-    stripe = await loadStripe(usePage().props.value.stripe.public_key);
-    const elements = stripe.elements();
-    cardElement = elements.create("card", {
-        classes: { base: "p-2 border-gray-500" },
-    });
-});
+// onMounted(async () => {
+//     stripe = await loadStripe(usePage().props.value.stripe.public_key);
+//     const elements = stripe.elements();
+//     cardElement = elements.create("card", {
+//         classes: { base: "p-2 border-gray-500" },
+//     });
+// });
 
-const toggleHealthForm = () => isHealthFormShown.value = !isHealthFormShown.value
-const toggleViewHealthForm = () => isViewHealthFormShown.value = !isViewHealthFormShown.value
+const appointmentPaid = () => {
+    /**
+     *  Check if the appointment's payment
+     *  is fully paid.
+     */
+};
+
+const paymentRecordsShown = ref(false);
+const togglePaymentsModal = () =>
+    (paymentRecordsShown.value = !paymentRecordsShown.value);
+
+const toggleHealthForm = () =>
+    (isHealthFormShown.value = !isHealthFormShown.value);
+
+const toggleViewHealthForm = () =>
+    (isViewHealthFormShown.value = !isViewHealthFormShown.value);
 
 const processBranchPayment = async () => {
     paymentForm.subtotal = selectedAppointment.value.subtotal;
     paymentForm.appointment_id = selectedAppointment.value.id;
 
-    if (parseFloat(selectedAppointment.value.subtotal) + parseFloat(paymentForm.addons_amount ?? 0) > paymentForm.amount_tendered) {
-        toast.error("Insufficient amount is received");
-    } else {
-        isBtnLoading.value = true;
-        paymentForm
-            .transform((data) => ({
-                ...data,
-                change: data.amount_tendered - data.subtotal,
-            }))
-            .post(route("payment-branch.store"), {
-                onError: () => {
-                    toast.error("Something went wrong");
-                },
-                onSuccess: () => {
-                    toast.success(successMessage.value);
-                    toggleBranchPaymentModal();
-                },
-            });
+    if (
+        !parseInt(paymentForm.is_installment) &&
+        parseFloat(selectedAppointment.value.subtotal) +
+            parseFloat(paymentForm.addons_amount ?? 0) >
+            paymentForm.amount_tendered
+    ) {
+        return toast.error("Insufficient amount is received");
     }
+
+    isBtnLoading.value = true;
+
+    paymentForm
+        .transform((data) => ({
+            ...data,
+            change: data.amount_tendered - data.subtotal,
+        }))
+        .post(route("payment-branch.store"), {
+            onError: () => {
+                toast.error("Something went wrong");
+            },
+            onSuccess: () => {
+                toast.success(successMessage.value);
+                toggleBranchPaymentModal();
+            },
+        });
 
     isBtnLoading.value = false;
 };
@@ -127,7 +147,8 @@ const paymentForm = useForm({
     appointment_id: null,
     amount_tendered: 0,
     addons_amount: 0,
-    addons_note: '',
+    addons_note: "",
+    is_installment: 0,
 });
 
 let form = useForm({
@@ -145,7 +166,7 @@ let form = useForm({
         q3: null,
         q4: null,
         q5: null,
-    }
+    },
 });
 
 const selectedAppointment = ref({
@@ -159,7 +180,7 @@ const selectedAppointment = ref({
         q3: null,
         q4: null,
         q5: null,
-    }
+    },
 });
 
 const isCreating = ref(false);
@@ -177,8 +198,13 @@ const isViewHealthFormShown = ref(false);
 const selectedService = toRef(form, "selected_services");
 
 const totalPayment = computed(() => {
-    return parseFloat(selectedAppointment.value.subtotal) + parseFloat(paymentForm.addons_amount === '' ? 0 : paymentForm.addons_amount)
-})
+    return (
+        parseFloat(selectedAppointment.value.subtotal) +
+        parseFloat(
+            paymentForm.addons_amount === "" ? 0 : paymentForm.addons_amount
+        )
+    );
+});
 const togglePaymentModal = (isadmin) => {
     initializePaymentModal.value = true;
     if (!isadmin) {
@@ -315,17 +341,26 @@ const finishedAppointment = () => {
 };
 
 const saveAppointment = () => {
+    if (
+        form.healthFormData.q1 == null ||
+        form.healthFormData.q2 == null ||
+        form.healthFormData.q3 == null ||
+        form.healthFormData.q4 == null ||
+        form.healthFormData.q5 == null
+    )
+        return toast.error("Please answer all the questions");
+
     form.transform((data) => ({ ...data, user_id: data?.user_id?.id })).post(
         "/appointments",
         {
             preserveState: true,
             onError: (err) => {
                 toast.error(`${errorMessage.value}`);
-                toggleHealthForm()
+                toggleHealthForm();
             },
             onSuccess: () => {
                 toast.success("Appointment created successfully!");
-                toggleHealthForm()
+                toggleHealthForm();
                 toggleCreateModal();
                 form.reset();
             },
@@ -691,7 +726,7 @@ const searchPatient = debounce((val) => {
                                                 />
                                             </td>
                                             <td
-                                                class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6"
+                                                class="py-4 pl-4 pr-3 text-sm text-gray-900 whitespace-nowrap sm:pl-6"
                                             >
                                                 {{
                                                     appointment.patient
@@ -699,17 +734,17 @@ const searchPatient = debounce((val) => {
                                                 }}
                                             </td>
                                             <td
-                                                class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6"
+                                                class="py-4 pl-4 pr-3 text-sm text-gray-900 whitespace-nowrap sm:pl-6"
                                             >
                                                 {{ appointment.patient.email }}
                                             </td>
                                             <td
-                                                class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6"
+                                                class="py-4 pl-4 pr-3 text-sm text-gray-900 whitespace-nowrap sm:pl-6"
                                             >
                                                 {{ appointment.schedule }}
                                             </td>
                                             <td
-                                                class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
+                                                class="py-4 pl-4 pr-3 text-sm text-gray-900 sm:pl-6"
                                             >
                                                 {{
                                                     stringLimit(
@@ -718,7 +753,7 @@ const searchPatient = debounce((val) => {
                                                 }}
                                             </td>
                                             <td
-                                                class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6"
+                                                class="py-4 pl-4 pr-3 text-sm text-gray-900 whitespace-nowrap sm:pl-6"
                                             >
                                                 {{
                                                     formatCurrency(
@@ -727,15 +762,16 @@ const searchPatient = debounce((val) => {
                                                 }}
                                             </td>
                                             <td
-                                                class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6"
+                                                class="py-4 pl-4 pr-3 text-sm text-gray-900 whitespace-nowrap sm:pl-6"
                                             >
                                                 {{
-                                                    appointment.payment
-                                                        ?.payment_type ?? "N/A"
+                                                    appointment.payments
+                                                        ? "On-Branch"
+                                                        : "N/A"
                                                 }}
                                             </td>
                                             <td
-                                                class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6"
+                                                class="py-4 pl-4 pr-3 text-sm text-gray-900 whitespace-nowrap sm:pl-6"
                                             >
                                                 <Chip
                                                     :label="
@@ -749,12 +785,12 @@ const searchPatient = debounce((val) => {
                                                 />
                                             </td>
                                             <td
-                                                class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6"
+                                                class="py-4 pl-4 pr-3 text-sm text-gray-900 whitespace-nowrap sm:pl-6"
                                             >
                                                 {{ appointment.created_at }}
                                             </td>
                                             <td
-                                                class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6"
+                                                class="py-4 pl-4 pr-3 text-sm text-gray-900 whitespace-nowrap sm:pl-6"
                                             >
                                                 {{ appointment.deleted_at }}
                                             </td>
@@ -777,7 +813,13 @@ const searchPatient = debounce((val) => {
                                                     @click="
                                                         toggleViewHealthForm();
                                                         selectedAppointment.healthFormData =
-                                                            {q1: appointment.q1, q2: appointment.q2, q3: appointment.q3, q4: appointment.q4, q5: appointment.q5};
+                                                            {
+                                                                q1: appointment.q1,
+                                                                q2: appointment.q2,
+                                                                q3: appointment.q3,
+                                                                q4: appointment.q4,
+                                                                q5: appointment.q5,
+                                                            };
                                                     "
                                                     >Health Form</Button
                                                 >
@@ -833,7 +875,11 @@ const searchPatient = debounce((val) => {
                                                     "
                                                     v-if="
                                                         $page.props.auth.user
-                                                            .is_admin
+                                                            .is_admin &&
+                                                        appointment.prescription ==
+                                                            null &&
+                                                        appointment.appointment_status !=
+                                                            'Pending'
                                                     "
                                                     text
                                                     size="sm"
@@ -843,8 +889,6 @@ const searchPatient = debounce((val) => {
                                                 <Button
                                                     is-link
                                                     v-if="
-                                                        !$page.props.auth.user
-                                                            .is_admin &&
                                                         appointment.payment_status ==
                                                             'Paid' &&
                                                         appointment.prescription !=
@@ -881,24 +925,23 @@ const searchPatient = debounce((val) => {
                                                     >View Receipt</Button
                                                 >
                                                 <Button
-                                                    is-link
                                                     v-if="
-                                                        appointment.payment
-                                                            ?.payment_type ==
-                                                            'On-Branch' &&
-                                                        appointment.payment_status ==
-                                                            'Paid'
+                                                        appointment.payments &&
+                                                        (appointment.payment_status ==
+                                                            'Paid' ||
+                                                            appointment.payment_status ==
+                                                                'Semi-Paid')
                                                     "
-                                                    :href="
-                                                        route(
-                                                            'invoice.generate',
-                                                            appointment.id
-                                                        )
+                                                    @click.prevent="
+                                                        togglePaymentsModal();
+                                                        selectedAppointment = {
+                                                            ...appointment,
+                                                        };
                                                     "
                                                     text
                                                     size="sm"
                                                     color="success"
-                                                    >View Receipt</Button
+                                                    >View Payments</Button
                                                 >
 
                                                 <Button
@@ -909,7 +952,9 @@ const searchPatient = debounce((val) => {
                                                         (appointment.appointment_status ==
                                                             'Approved' ||
                                                             appointment.appointment_status ==
-                                                                'Finished')
+                                                                'Finished') &&
+                                                        $page.props.auth.user
+                                                            .is_admin
                                                     "
                                                     @click.prevent="
                                                         togglePaymentModal(
@@ -975,7 +1020,7 @@ const searchPatient = debounce((val) => {
                 </p>
             </template>
             <template v-slot:body>
-                <p class="mt-3 mb-2">Patient Information</p>
+                <p class="mt-3 mb-2 font-medium">Patient Information</p>
                 <p class="text-sm">
                     Full Name: {{ selectedAppointment.patient.full_name }}
                 </p>
@@ -985,7 +1030,7 @@ const searchPatient = debounce((val) => {
                 <p class="text-sm">
                     Gender: {{ selectedAppointment.patient.gender }}
                 </p>
-                <p class="mt-4 mb-2">Appointment Information</p>
+                <p class="mt-4 mb-2 font-medium">Appointment Information</p>
                 <p class="text-sm">
                     Schedule: {{ selectedAppointment.schedule }}
                 </p>
@@ -995,7 +1040,7 @@ const searchPatient = debounce((val) => {
                 <p class="text-sm">
                     Created: {{ selectedAppointment.created_at }}
                 </p>
-                <p class="mt-4 mb-2">Services Selected</p>
+                <p class="mt-4 mb-2 font-medium">Services Selected</p>
                 <p
                     class="text-sm"
                     v-for="services in selectedAppointment.services"
@@ -1038,6 +1083,43 @@ const searchPatient = debounce((val) => {
                     size="sm"
                     color="success"
                     >Approve</Button
+                >
+            </template>
+        </Modal>
+
+        <Modal v-if="paymentRecordsShown" @close="togglePaymentsModal">
+            <template v-slot:title>
+                <p class="text-xl font-bold">Payment Records</p>
+                <p class="text-sm text-gray-600">
+                    Here are the payment records for this transaction
+                </p>
+            </template>
+            <template v-slot:body>
+                <ul class="mt-1">
+                    <li
+                        v-for="payment in selectedAppointment.payments"
+                        :key="`payment-id-${payment.id}`"
+                        class="flex justify-between items-center"
+                    >
+                        <p>{{ payment.created_at }}</p>
+                        <Button
+                            is-link
+                            text
+                            size="sm"
+                            :href="route('invoice.generate', payment.id)"
+                            target="_"
+                            >View Receipt</Button
+                        >
+                    </li>
+                </ul>
+            </template>
+            <template v-slot:footer>
+                <Button
+                    @click.prevent="togglePaymentsModal"
+                    text
+                    size="sm"
+                    color="gray"
+                    >Close</Button
                 >
             </template>
         </Modal>
@@ -1206,6 +1288,12 @@ const searchPatient = debounce((val) => {
                 </p>
             </template>
             <template v-slot:body>
+                <form-input label="Payment Type" class="w-full mt-3">
+                    <floating-select v-model="paymentForm.is_installment">
+                        <option value="0">Full Payment</option>
+                        <option value="1">Partial Payment</option>
+                    </floating-select>
+                </form-input>
                 <form-input
                     for="payment_fname"
                     :error="errors.schedule"
@@ -1279,7 +1367,11 @@ const searchPatient = debounce((val) => {
             </template>
         </Modal>
 
-        <Modal v-if="isCreateModalShown" @close="toggleCreateModal">
+        <Modal
+            v-if="isCreateModalShown"
+            @close="toggleCreateModal"
+            :scrollable="false"
+        >
             <template v-slot:title>
                 <p class="text-xl font-bold">
                     {{ isCreating ? "New Appointment" : "Update Appointment" }}
@@ -1295,26 +1387,17 @@ const searchPatient = debounce((val) => {
                         class="mt-3"
                     >
                         <Datepicker
+                            noMinutesOverlay
                             label="Select Schedule"
                             v-model="form.schedule"
                             :is24="false"
                             weekStart="0"
                             :disabledWeekDays="[0]"
-                            minutesIncrement="30"
-                            :startTime="{ hours: '10', minutes: '00'}"
-                            noMinutesOverlay
-                            :min-date="
-                                moment()
-                                    .add(1, 'day')
-                                    .format('YYYY-MM-DDT00:00')
-                            "
-                            :max-date="
-                                moment()
-                                    .add(2, 'month')
-                                    .format('YYYY-MM-DDT00:00')
-                            "
+                            minutesIncrement="00"
+                            :startTime="{ hours: '10', minutes: '00' }"
+                            :minTime="{ hours: 10, minutes: '00' }"
+                            :maxTime="{ hours: 16, minutes: '00' }"
                         />
-                        <!-- <floating-input type="datetime-local" id="appointment" v-model="form.schedule" /> -->
                     </form-input>
                     <form-input
                         for="message"
@@ -1332,7 +1415,7 @@ const searchPatient = debounce((val) => {
                         v-model="form.selected_services"
                         :options="services"
                         :multiple="true"
-                        class="border-2 border-gray-500 rounded-lg"
+                        class="border-1 border-gray-400 rounded-lg"
                         selectLabel="Select"
                         deselectLabel="Deselect"
                         label="service"
@@ -1362,11 +1445,12 @@ const searchPatient = debounce((val) => {
                             @search-change="searchPatient"
                             :options="users"
                             :multiple="false"
-                            class="border-2 border-gray-500 rounded-lg"
+                            class="border-1 border-gray-400 rounded-lg"
                             selectLabel="Select"
                             deselectLabel="Deselect"
                             label="full_name"
                             track-by="id"
+                            open-direction="bottom"
                             :disabled="!isCreating"
                         >
                         </VueMultiselect>
@@ -1428,7 +1512,18 @@ const searchPatient = debounce((val) => {
             </template>
         </Modal>
 
-        <HealthForm v-if="isHealthFormShown" :data="form.healthFormData" @emit-close="toggleHealthForm" @emit-save-appointment="initiateMethod"/>
-        <HealthForm view-only scrollable v-if="isViewHealthFormShown" :data="selectedAppointment.healthFormData" @emit-close="toggleViewHealthForm"/>
+        <HealthForm
+            v-if="isHealthFormShown"
+            :data="form.healthFormData"
+            @emit-close="toggleHealthForm"
+            @emit-save-appointment="initiateMethod"
+        />
+        <HealthForm
+            view-only
+            scrollable
+            v-if="isViewHealthFormShown"
+            :data="selectedAppointment.healthFormData"
+            @emit-close="toggleViewHealthForm"
+        />
     </BreezeAuthenticatedLayout>
 </template>

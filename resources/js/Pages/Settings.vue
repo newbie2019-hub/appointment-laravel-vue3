@@ -122,7 +122,7 @@
   <BreezeAuthenticatedLayout>
     <div class="py-12 mx-auto max-w-8xl sm:px-6 lg:px-8">
       <div class="px-6 mx-auto max-w-8xl lg:px-8">
-        <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg">
+        <div class="overflow-hidden bg-white sm:rounded-lg">
           <p class="text-xl font-medium">Account Settings</p>
           <p class="text-sm">Please make sure all of your informations are correct.</p>
         </div>
@@ -235,7 +235,7 @@
           </div>
         </div>
 
-        <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg mt-14">
+        <div class="overflow-hidden bg-white sm:rounded-lg mt-14">
           <p class="text-xl font-medium">Profile Image</p>
           <p class="text-sm">Please choose a decent photo as this will be displayed publicly</p>
         </div>
@@ -262,7 +262,7 @@
             <!-- <progress :value="form.progress?.percentage" max="100" class="w-full h-6">{{ form.progress?.percentage }}%</progress> -->
         </div>
 
-        <div class="overflow-hidden bg-white shadow-sm sm:rounded-lg mt-14">
+        <div class="overflow-hidden bg-white sm:rounded-lg mt-14">
           <p class="text-xl font-medium">Login Credentials</p>
           <p class="text-sm">Please make sure to have a unique password.</p>
         </div>

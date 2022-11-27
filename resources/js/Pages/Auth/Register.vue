@@ -21,6 +21,7 @@
     gender: '',
     email: '',
     address: '',
+    contact_number: '',
     password: '',
     birthday: '',
     password_confirmation: '',
@@ -76,6 +77,11 @@
                         <floating-input type="text" id="lastname" v-model="form.last_name" autofocus autocomplete="name" />
                       </form-input>
                     </div>
+                  </div>
+                  <div class="w-full">
+                    <form-input for="contact_number" :error="errors.contact_number" label="Contact Number" class="mt-3">
+                      <floating-input type="text" id="contact_number" v-model="form.contact_number" autofocus />
+                    </form-input>
                   </div>
                   <div class="w-full">
                     <form-input for="address" :error="errors.address" label="Address" class="mt-3">

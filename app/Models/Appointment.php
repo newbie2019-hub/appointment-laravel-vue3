@@ -27,9 +27,9 @@ class Appointment extends Model
         return $date->format('F j, Y h:i A');
     }
 
-    public function payment()
+    public function payments()
     {
-        return $this->hasOne(Payment::class, 'appointment_id', 'id');
+        return $this->hasMany(Payment::class, 'appointment_id', 'id');
     }
 
     public function prescription()

@@ -22,7 +22,7 @@ class AppointmentController extends Controller
         $users = [];
 
         if(auth()->user()->is_admin) {
-            $appointments = Appointment::with(['patient:id,first_name,last_name,email,gender,address','services.service','payment:id,appointment_id,receipt_url,payment_type','prescription'])
+            $appointments = Appointment::with(['patient:id,first_name,last_name,email,gender,address','services.service','payments:id,appointment_id,receipt_url,payment_type,created_at','prescription'])
             ->withCount('prescription')
             ->when($request->search, fn($query, $search) =>
                 $query->whereRelation('patient', 'first_name', 'like', '%'.$search.'%')
@@ -46,7 +46,7 @@ class AppointmentController extends Controller
             $users = $this->search($request);
         }
         else {
-            $appointments = Appointment::where('user_id', auth()->id())->with(['patient:id,first_name,last_name,address,email,gender','services.service','payment:id,appointment_id,receipt_url,payment_type','prescription'])->withCount('prescription')->when($request->search, fn($query, $search) =>
+            $appointments = Appointment::where('user_id', auth()->id())->with(['patient:id,first_name,last_name,address,email,gender','services.service','payments:id,appointment_id,receipt_url,payment_type,created_at','prescription'])->withCount('prescription')->when($request->search, fn($query, $search) =>
                 $query->whereRelation('patient', 'first_name', 'like', '%'.$search.'%')
                 ->orWhereRelation('patient', 'last_name', 'like', '%'.$search.'%')
             )->when($request->trashed, fn($query, $filter)

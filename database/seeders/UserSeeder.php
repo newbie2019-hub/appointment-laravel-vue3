@@ -21,6 +21,6 @@ class UserSeeder extends Seeder
             'is_approved' => 1
         ]);
 
-        User::factory(40)->create();
+        User::factory(10)->create();
     }
 }

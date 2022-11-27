@@ -76,23 +76,30 @@ class PaymentController extends Controller
 
     public function branchPayment(Request $request)
     {
-        $payment = Payment::create([
+        Payment::create([
             'addons_note' => $request->addons_note,
             'addons_amount' => $request->addons_amount,
             'amount_tendered' => $request->amount_tendered,
             'sub_total' => $request->subtotal,
             'total' => $request->subtotal + $request->addons_amount,
-            'change' => $request->change,
+            'change' => $request->is_installment ? 0 : $request->change,
             'appointment_id' => $request->appointment_id,
             'payment_type' => 'On-Branch',
+            'is_installment' => $request->is_installment,
             'receipt_url' => 'N/A'
         ]);
 
         $appointment = Appointment::where('id', $request->appointment_id)->first();
 
-        $appointment->update([
-            'payment_status' => 'Paid'
-        ]);
+        if($request->is_installment) {
+            $appointment->update([
+                'payment_status' => 'Semi-Paid'
+            ]);
+        } else {
+            $appointment->update([
+                'payment_status' => 'Paid'
+            ]);
+        }
 
         return back()->with('message', 'Payment transaction is successful!');
     }

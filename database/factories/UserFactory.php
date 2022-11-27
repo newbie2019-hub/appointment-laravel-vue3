@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 
@@ -33,6 +34,7 @@ class UserFactory extends Factory
             'password' => 'password',
             'is_approved' => 1,
             'remember_token' => Str::random(10),
+            'created_at' => Carbon::now()->subDays(rand(0, 7))->format('Y-m-d')
         ];
     }
 
