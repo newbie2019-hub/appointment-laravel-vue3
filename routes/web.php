@@ -11,6 +11,7 @@ use App\Http\Controllers\User\PaymentController;
 use App\Http\Controllers\User\ServiceController;
 use App\Http\Controllers\User\SettingsController;
 use App\Http\Controllers\PrescriptionController;
+use App\Http\Controllers\User\SalesController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -37,6 +38,8 @@ Route::middleware(['auth', 'verified'])->group(function() {
 
     Route::get('/generate/prescription/{appointment}', [PrescriptionController::class, 'generate'])->name('prescription.generate');
     Route::apiResource('/prescription', PrescriptionController::class)->only(['index', 'store']);
+
+    Route::apiResource('/sales', SalesController::class);
 
     Route::put('/appointments/restore/{appointment}', [AppointmentController::class, 'restore'])->withTrashed();
     Route::put('/appointments/finished/{appointment}', [AppointmentController::class, 'finished']);

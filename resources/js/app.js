@@ -8,6 +8,7 @@ import { resolvePageComponent } from 'laravel-vite-plugin/inertia-helpers';
 import { ZiggyVue } from '../../vendor/tightenco/ziggy/dist/vue.m';
 import VueApexCharts from "vue3-apexcharts";
 import Toast from "vue-toastification";
+import VueEasyLightbox from 'vue-easy-lightbox'
 
 import "vue-toastification/dist/index.css";
 import 'vue-multiselect/dist/vue-multiselect.css';
@@ -22,6 +23,7 @@ createInertiaApp({
             .use(plugin)
             .use(ZiggyVue, Ziggy)
             .use(Toast)
+            .use(VueEasyLightbox)
             .use(VueApexCharts)
             .mount(el);
     },

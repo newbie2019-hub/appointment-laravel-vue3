@@ -25,7 +25,7 @@ class DashboardController extends Controller
          $appointments = Appointment::with([
             'patient:id,first_name,last_name,email,gender',
             'services.service'
-            ])->when($request->trashed, fn($query, $filter) 
+            ])->when($request->trashed, fn($query, $filter)
                   => $filter === "only" ? $query->onlyTrashed() : $query->withTrashed()
             )->latest()->take(10)->get();
       }
@@ -33,7 +33,7 @@ class DashboardController extends Controller
          $appointments = Appointment::where('user_id', auth()->id())->with([
             'patient:id,first_name,last_name,email,gender',
             'services.service'
-            ])->when($request->trashed, fn($query, $filter) 
+            ])->when($request->trashed, fn($query, $filter)
                   => $filter === "only" ? $query->onlyTrashed() : $query->withTrashed()
             )->latest()->take(10)->get();
       }
@@ -42,7 +42,7 @@ class DashboardController extends Controller
       ->select(DB::raw('SUM(subtotal) as subtotal'), DB::raw('DATE(schedule) as date'))
       ->groupBy('date')
       ->get();
-      // dd($appointmentsIncome);
+
       $chartServices = Service::withCount(['monthly_appointments'])->get(['id','service','price']);
 
       $filters = $request->only(['search', 'trashed']);

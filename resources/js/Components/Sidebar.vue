@@ -76,6 +76,28 @@ const closeSidebar = () => {
                 </li>
                 <li>
                     <Link
+                        :href="route('sales.index')"
+                        :class="isCurrentRoute('sales.index')"
+                        class="flex items-center pl-9 pr-4 py-3 text-sm font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
+                    >
+                        <svg
+                            class="h-5 w-5 text-gray-400 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                            fill="currentColor"
+                            viewBox="0 0 48 48"
+
+
+                        >
+                            <path
+                                d="M6 42v-3.8l3-3V42Zm8.25 0V30.2l3-3V42Zm8.25 0V27.2l3 3.05V42Zm8.25 0V30.25l3-3V42ZM39 42V22.2l3-3V42ZM6 30.2v-4.25l14-13.9 8 8L42 6v4.25L28 24.3l-8-8Z"
+                            />
+                        </svg>
+
+                        <span class="flex-1 ml-3 whitespace-nowrap">Sales</span>
+                        <!-- <span class="inline-flex justify-center items-center px-2 ml-3 text-sm font-medium text-gray-800 bg-gray-200 rounded-full dark:bg-gray-700 dark:text-gray-300">Pro</span> -->
+                    </Link>
+                </li>
+                <li>
+                    <Link
                         :href="route('appointments.index')"
                         :class="isCurrentRoute('appointments.index')"
                         class="flex items-center pl-9 pr-4 py-3 text-sm font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
@@ -128,7 +150,10 @@ const closeSidebar = () => {
                     <Link
                         v-if="authenticatedUser.is_admin"
                         :href="route('patients.index')"
-                        :class="isCurrentRoute('patients.index') || isCurrentRoute('patients.show')"
+                        :class="
+                            isCurrentRoute('patients.index') ||
+                            isCurrentRoute('patients.show')
+                        "
                         class="flex items-center pl-9 pr-4 py-3 text-sm font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
                     >
                         <svg
@@ -203,7 +228,7 @@ const closeSidebar = () => {
                         class="flex items-center pl-9 pr-4 py-3 text-sm font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
                     >
                         <svg
-                            class="flex-shrink-0 w-5  h-5 text-gray-400 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                            class="flex-shrink-0 w-5 h-5 text-gray-400 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
                             viewBox="0 0 24 24"
                         >
                             <path

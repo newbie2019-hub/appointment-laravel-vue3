@@ -27,9 +27,11 @@ class PaymentController extends Controller
     {
         $payments = Payment::with([
             'appointment', 'appointment.patient'
-            ])->when($request->search, fn($query, $search)
-                => $query->whereLike('payment_tye', $search)
-            )->paginate(10)->withQueryString();
+        ])->when(
+            $request->search,
+            fn ($query, $search)
+            => $query->whereLike('payment_tye', $search)
+        )->paginate(10)->withQueryString();
 
         $paymentsCount = Payment::count();
         $monthlyPaymentsCount = Payment::whereDate('created_at', '>=', now()->startOfMonth())->count();
@@ -69,7 +71,7 @@ class PaymentController extends Controller
             ]);
 
             return back()->with('message', 'Payment transaction is successful!');
-        } catch(\Exception $e) {
+        } catch (\Exception $e) {
             return back()->withErrors(['message' => $e->getMessage()]);
         }
     }
@@ -91,7 +93,7 @@ class PaymentController extends Controller
 
         $appointment = Appointment::where('id', $request->appointment_id)->first();
 
-        if($request->is_installment) {
+        if ($request->is_installment) {
             $appointment->update([
                 'payment_status' => 'Semi-Paid'
             ]);
@@ -128,11 +130,11 @@ class PaymentController extends Controller
         ]);
 
         $items = [];
-        foreach($appointment->services as $service) {
+        foreach ($appointment->services as $service) {
             $items[] = (new InvoiceItem())->title($service->service->service)->pricePerUnit($service->service->price);
         }
 
-        if($payment->addons_note){
+        if ($payment->addons_note && $payment->addons_amount > 0) {
             $items[] = (new InvoiceItem())->title($payment->addons_note)->pricePerUnit($payment->addons_amount);
         }
 
@@ -156,10 +158,9 @@ class PaymentController extends Controller
             ->notes($notes)
             ->currencyFormat('{SYMBOL}{VALUE}')
             ->amountReceived($payment->amount_tendered);
-            // ->save('public');
+        // ->save('public');
 
         // $link = $invoice->url();
         return $invoice->stream();
     }
-
 }

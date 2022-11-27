@@ -37,13 +37,20 @@ class RegisteredUserController extends Controller
      */
     public function store(RegisterUserRequest $request)
     {
-        $user = User::create($request->validated());
+
+        $fileName = '';
+
+        if ($request->hasFile('valid_id')) {
+            $fileName = 'valid_id' . time() . '.' . $request->valid_id->extension();
+            $request->file('valid_id')->move(public_path('images'), $fileName);
+        }
+
+        $user = User::create($request->safe()->except(['valid_id']) + ['valid_id' => $fileName]);
+
 
         Mail::to($user->email)->send(new PendingAccount($user));
 
         event(new Registered($user));
-
-        // Auth::login($user);
 
         return redirect('/login');
     }

@@ -81,7 +81,7 @@
   const createAppointment = () => {
     if (authenticatedUser.value) {
       form
-        // .transform((data) => ({ ...data, schedule: moment(data.schedule).format('YYYY-MM-DD HH:mm') }))
+        .transform((data) => ({ ...data, fixed_schedule: moment(data.schedule).format() }))
         .post('/appointments', {
           preserveState: true,
           onError: (err) => {

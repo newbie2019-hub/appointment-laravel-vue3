@@ -160,6 +160,7 @@ let form = useForm({
     user_id: null,
     message: "",
     schedule: "",
+    date: "",
     healthFormData: {
         q1: null,
         q2: null,
@@ -168,6 +169,27 @@ let form = useForm({
         q5: null,
     },
 });
+
+const validateDate = (date) => {
+    form.schedule = date;
+    const format = "hh:mm:ss";
+
+    const beforeTime = moment("10:00", format);
+    const afterTime = moment("05:00", format);
+    const currentTime = moment(date).format(format);
+
+    if (
+        moment(currentTime).isBetween(
+            moment(beforeTime),
+            moment(afterTime),
+            "time"
+        )
+    ) {
+        console.log("Valid Time");
+    } else {
+        console.log("Invalid Time");
+    }
+};
 
 const selectedAppointment = ref({
     id: null,
@@ -350,22 +372,24 @@ const saveAppointment = () => {
     )
         return toast.error("Please answer all the questions");
 
-    form.transform((data) => ({ ...data, user_id: data?.user_id?.id })).post(
-        "/appointments",
-        {
-            preserveState: true,
-            onError: (err) => {
-                toast.error(`${errorMessage.value}`);
-                toggleHealthForm();
-            },
-            onSuccess: () => {
-                toast.success("Appointment created successfully!");
-                toggleHealthForm();
-                toggleCreateModal();
-                form.reset();
-            },
-        }
-    );
+    console.log("Submitted Schedule: ", form.schedule);
+    form.transform((data) => ({
+        ...data,
+        fixed_schedule: moment(data.schedule).format(),
+        user_id: data?.user_id?.id,
+    })).post("/appointments", {
+        preserveState: true,
+        onError: (err) => {
+            toast.error(`${errorMessage.value}`);
+            toggleHealthForm();
+        },
+        onSuccess: () => {
+            toast.success("Appointment created successfully!");
+            toggleHealthForm();
+            toggleCreateModal();
+            form.reset();
+        },
+    });
 };
 
 const updateAppointment = () => {
@@ -1389,14 +1413,24 @@ const searchPatient = debounce((val) => {
                         <Datepicker
                             noMinutesOverlay
                             label="Select Schedule"
-                            v-model="form.schedule"
+                            :modelValue="form.schedule"
+                            @update:model-value="validateDate"
                             :is24="false"
                             weekStart="0"
+                            utc
                             :disabledWeekDays="[0]"
                             minutesIncrement="00"
                             :startTime="{ hours: '10', minutes: '00' }"
-                            :minTime="{ hours: 10, minutes: '00' }"
-                            :maxTime="{ hours: 16, minutes: '00' }"
+                            :min-date="
+                                moment()
+                                    .add(1, 'day')
+                                    .format('YYYY-MM-DDT00:00')
+                            "
+                            :max-date="
+                                moment()
+                                    .add(2, 'month')
+                                    .format('YYYY-MM-DDT00:00')
+                            "
                         />
                     </form-input>
                     <form-input

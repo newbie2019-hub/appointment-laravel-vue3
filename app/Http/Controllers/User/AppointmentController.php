@@ -73,9 +73,10 @@ class AppointmentController extends Controller
         }
         if($this->isAppointmentAvailable($request)){
             $appointment = Appointment::create(
-                $request->safe()->except(['selected_services', 'healthFormData']) +
+                $request->safe()->except(['selected_services', 'healthFormData', 'schedule']) +
                 [
                     'user_id' => auth()->id(),
+                    'schedule' => $request->fixed_schedule,
                     'q1' => $request->healthFormData["q1"],
                     'q2' => $request->healthFormData["q2"],
                     'q3' => $request->healthFormData["q3"],
