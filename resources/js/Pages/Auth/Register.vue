@@ -8,11 +8,13 @@ import FloatingInput from "@/Components/FloatingInput/FloatingInput.vue";
 import FloatingSelect from "@/Components/FloatingInput/FloatingSelect.vue";
 import FormInput from "@/Components/FloatingInput/FormInput.vue";
 import { useToast } from "vue-toastification";
+import MedicalForm from "@/Components/MedicalForm.vue";
 
 import { Head, Link, useForm } from "@inertiajs/inertia-vue3";
 import { ref } from "vue";
 
 const toast = useToast();
+const medFormShown = ref(false);
 
 const form = useForm({
     first_name: "",
@@ -28,7 +30,41 @@ const form = useForm({
     birthday: "",
     password_confirmation: "",
     terms: false,
+    medFormData: {
+        question_1: '',
+        question_2: '',
+        question_3: '',
+        question_4: '',
+        question_5: '',
+        question_6: '',
+        question_7: '',
+        question_8: '',
+        question_9: '',
+        question_10: '',
+        question_11: '',
+        question_12: '',
+        question_13: '',
+        question_14: '',
+        question_15: '',
+        question_16: '',
+    }
 });
+
+const toggleMedForm = () => {
+    medFormShown.value = !medFormShown.value
+}
+
+const initiateMethod = () => {
+    let hasUnanswered = false;
+
+    form.medFormData.map((q) => {
+        if(q == '') {
+            if(!hasUnanswered) {
+                hasUnanswered = true
+            }
+        }
+    })
+}
 
 const imageSelected = (event) => {
     form.valid_id = event.target.files[0];
@@ -340,18 +376,22 @@ let registrationSteps = ref({ currentStep: 1, totalSteps: 3 });
                                 </button>
                                 <button
                                     v-if="registrationSteps.currentStep == 3"
-                                    type="submit"
+                                    @click.prevent="medFormShown = true"
                                     class="text-blue-500 hover:text-blue-700 hover:bg-blue-100 px-4 py-2 duration-200 ease-in-out rounded-lg text-sm"
                                 >
                                     Register
                                 </button>
                             </div>
-                            <!-- <div class="flex items-center justify-between mt-4 gap-x-4" v-if="registrationSteps.currentStep == 3">
-        </div> -->
                         </form>
                     </div>
                 </div>
             </div>
+            <MedicalForm
+                v-if="medFormShown"
+                :data="form.medFormData"
+                @emit-close="toggleMedForm"
+                @emit-save-appointment="initiateMethod"
+            />
             <div class="hidden md:block flex-1 w-96">
                 <img
                     src="images/alwayssmile.jpg"

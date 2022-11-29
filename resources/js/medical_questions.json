@@ -1,0 +1,104 @@
+[
+    {
+        "question": "Heart surgery, disease, attack?"
+    },
+    {
+        "question": "Blood transfusion?"
+    },
+    {
+        "question": "Heart murmur?"
+    },
+    {
+        "question": "Hemophilia or blood disorder?"
+    },
+    {
+        "question": "Mitral valve prolapse?"
+    },
+    {
+        "question": "Hepatitis A, B?"
+    },
+    {
+        "question": "Heart attack or strokes?"
+    },
+    {
+        "question": "Tuberculosis or lung disease?"
+    },
+    {
+        "question": "Artificial heart valve?"
+    },
+    {
+        "question": "Tumors?"
+    },
+    {
+        "question": "Heart pacemaker?"
+    },
+    {
+        "question": "Headaches or migraines?"
+    },
+    {
+        "question": "Artificial joints (hip, knee, etc)?"
+    },
+    {
+        "question": "Convulsions or epilepsy?"
+    },
+    {
+        "question": "Neurological disorders?"
+    },
+    {
+        "question": "Dizzy spells or fainting?"
+    },
+    {
+        "question": "Rheumatic fever?"
+    },
+    {
+        "question": "Cold sores or fever blisters?"
+    },
+    {
+        "question": "Diabetes?"
+    },
+    {
+        "question": "Thyroid disorder?"
+    },
+    {
+        "question": "Kidney disease?"
+    },
+    {
+        "question": "Stomach, intestinal, or colon disorders?"
+    },
+    {
+        "question": "Jaundice or liver disease?"
+    },
+    {
+        "question": "Cortisone or steroid therapy?"
+    },
+    {
+        "question": "High blood pressure?"
+    },
+    {
+        "question": "Possess the HIV or AIDS antibody?"
+    },
+    {
+        "question": "Low blood pressure?"
+    },
+    {
+        "question": "Psychiatric or psychological care?"
+    },
+    {
+        "question": "Cancer?"
+    },
+    {
+        "question": "Hay fever or airborne allergies?"
+    },
+    {
+        "question": "Radiation or Chemotherapy?"
+    },
+    {
+        "question": "Bruise easily?"
+    },
+    {
+        "question": "Emphysema or asthma?"
+    },
+    {
+        "question": "Venereal disease?"
+    }
+]

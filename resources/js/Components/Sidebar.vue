@@ -76,6 +76,7 @@ const closeSidebar = () => {
                 </li>
                 <li>
                     <Link
+                        v-if="authenticatedUser.is_admin"
                         :href="route('sales.index')"
                         :class="isCurrentRoute('sales.index')"
                         class="flex items-center pl-9 pr-4 py-3 text-sm font-normal text-gray-900 rounded-lg dark:text-white hover:bg-gray-200 dark:hover:bg-gray-700"
@@ -84,8 +85,6 @@ const closeSidebar = () => {
                             class="h-5 w-5 text-gray-400 transition duration-75 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
                             fill="currentColor"
                             viewBox="0 0 48 48"
-
-
                         >
                             <path
                                 d="M6 42v-3.8l3-3V42Zm8.25 0V30.2l3-3V42Zm8.25 0V27.2l3 3.05V42Zm8.25 0V30.25l3-3V42ZM39 42V22.2l3-3V42ZM6 30.2v-4.25l14-13.9 8 8L42 6v4.25L28 24.3l-8-8Z"
