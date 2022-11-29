@@ -393,7 +393,7 @@ const saveAppointment = () => {
 };
 
 const updateAppointment = () => {
-    form.transform((data) => ({ ...data, user_id: data?.user_id?.id })).put(
+    form.transform((data) => ({ ...data, user_id: data?.user_id?.id, fixed_schedule: moment(data.schedule).format() })).put(
         `/appointments/${form.id}`,
         {
             preserveState: true,
@@ -1509,11 +1509,20 @@ const searchPatient = debounce((val) => {
                     >Close</Button
                 >
                 <Button
+                    v-if="isCreating"
                     @click.prevent="toggleHealthForm"
                     text
                     size="sm"
                     color="success"
                     >Save Appointment</Button
+                >
+                <Button
+                    v-else
+                    @click.prevent="initiateMethod"
+                    text
+                    size="sm"
+                    color="success"
+                    >Update Appointment</Button
                 >
             </template>
         </Modal>

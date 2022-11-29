@@ -129,7 +129,7 @@
     </div>
   </nav>
   <div class="container mt-12 sm:mt-4 px-6 sm:px-8 md:px-6 mx-auto md:max-w-6xl">
-    <div id="home" class="relative flex-wrap md:flex md:flex-nowrap w-full h-[80vh] z-10 items-center top-0">
+    <div id="home" class="relative flex-wrap md:flex md:flex-nowrap w-full md:h-[80vh] z-10 items-center top-0">
       <div class="w-full sm:w-full md:w-1/2">
         <div class="">
           <p>Welcome to</p>
@@ -143,7 +143,7 @@
           Make Appointment
         </button>
       </div>
-      <div class="w-full md:w-1/2 flex items-center justify-center">
+      <div class="w-full hidden md:flex md:w-1/2 items-center justify-center">
         <div class="rounded-full w-96 h-96 relative overflow-hidden">
             <img src="/images/hero.jpg" class="object-cover w-full h-full" alt="">
         </div>
@@ -218,7 +218,7 @@
         <CalendarIcon class="absolute h-96 top-0 z-[-1] text-gray-50" />
       </div>
       <div class="w-full md:w-1/2">
-        <div class="bg-white drop-shadow-md px-10 py-10">
+        <div class="bg-white drop-shadow-md px-5 md:px-10 py-10">
           <p class="text-xl font-medium">Appointment Form</p>
           <p class="text-sm mt-1 mb-2">
             Please create an account if you do not have one. It will be used for the monitoring of your appointment status. Creating an account is free and will always be.

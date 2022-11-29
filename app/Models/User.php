@@ -55,6 +55,11 @@ class User extends Authenticatable
         return $this->hasMany(Appointment::class, 'user_id', 'id');
     }
 
+    public function medical_record()
+    {
+        return $this->hasOne(MedicalRecord::class, 'user_id', 'id');
+    }
+
     public function scopeNotAdmin($query)
     {
         return $query->where('is_admin', '<>', 1);

@@ -99,7 +99,7 @@ class AppointmentController extends Controller
             return back()->withErrors(['error' => 'Current signed-in account is admin']);
         }
 
-        $appointment->update($request->safe()->except(['selected_services']));
+        $appointment->update($request->safe()->except(['selected_services', 'healthFormData', 'schedule'] + ['schedule' => $request->fixed_schedule]));
         $this->storeSelectedServices($request->validated(), $appointment->id);
         return back()->with('success', 'Appointment has been created successfully!');
 

@@ -637,7 +637,7 @@ const searchPatient = debounce(() => {
                 <Link
                     :href="route('patients.show', selectedUser.value.id)"
                     class="text-xs text-blue-600 px-4 py-2 hover:text-blue-700 flex justify-center items-center hover:bg-blue-100 uppercase font-medium rounded-sm"
-                    >View Transactions</Link
+                    >View Records</Link
                 >
             </template>
         </Modal>

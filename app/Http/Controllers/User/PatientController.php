@@ -21,7 +21,7 @@ class PatientController extends Controller
 
     public function index(Request $request)
     {
-        $patients = User::notAdmin()->when(
+        $patients = User::notAdmin()->with(['medical_record'])->when(
             $request->search,
             fn ($query)
             => $query->whereLike('first_name', $request->search)
@@ -55,7 +55,7 @@ class PatientController extends Controller
         $user->load(['appointments' => function($query) use($request){
             $query->when($request->trashed, fn($query, $filter)
             => $filter === "only" ? $query->onlyTrashed() : $query->withTrashed());
-        }, 'appointments.patient', 'appointments.services.service', 'appointments.prescription', 'appointments.payments']);
+        }, 'appointments.patient', 'appointments.services.service', 'appointments.prescription', 'appointments.payments', 'medical_record']);
         return Inertia::render('ViewUsers', compact(['user', 'filters']));
     }
 

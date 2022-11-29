@@ -23,6 +23,17 @@ class AppointmentRequest extends FormRequest
      */
     public function rules()
     {
+        if(request()->routeIs('appointments.store')){
+           return $this->storeRules();
+        }
+
+        if(request()->routeIs('appointments.update')){
+           return $this->updateRules();
+        }
+    }
+
+    public function storeRules()
+    {
         return [
             'schedule' => 'required',
             'selected_services' => 'required',
@@ -34,6 +45,17 @@ class AppointmentRequest extends FormRequest
             'healthFormData.q3' => 'required',
             'healthFormData.q4' => 'required',
             'healthFormData.q5' => 'required',
+        ];
+    }
+
+    public function updateRules()
+    {
+        return [
+            'schedule' => 'required',
+            'selected_services' => 'required',
+            'subtotal' => 'required',
+            'user_id' => 'sometimes|exists:users,id',
+            'message' => 'required|max:255',
         ];
     }
 

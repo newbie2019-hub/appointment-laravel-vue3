@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Auth;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\RegisterUserRequest;
 use App\Mail\PendingAccount;
+use App\Models\MedicalRecord;
 use App\Models\User;
 use App\Providers\RouteServiceProvider;
 use Illuminate\Auth\Events\Registered;
@@ -47,6 +48,17 @@ class RegisteredUserController extends Controller
 
         $user = User::create($request->safe()->except(['valid_id']) + ['valid_id' => $fileName]);
 
+        if($user) {
+            MedicalRecord::create([
+                'user_id' => $user->id,
+                'medical_questions' => $request->medFormData["medical_questions"],
+                'dental_questions' => $request->medFormData["dental_questions"],
+                'previous_dentist' => $request->medFormData["previous_dentist"],
+                'last_visit' => $request->medFormData["last_visit"],
+                'last_cleaning' => $request->medFormData["last_cleaning"],
+                'other_conditions' => $request->medFormData["other_conditions"],
+            ]);
+        }
 
         Mail::to($user->email)->send(new PendingAccount($user));
 

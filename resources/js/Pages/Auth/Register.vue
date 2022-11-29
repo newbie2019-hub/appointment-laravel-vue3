@@ -31,40 +31,41 @@ const form = useForm({
     password_confirmation: "",
     terms: false,
     medFormData: {
-        question_1: '',
-        question_2: '',
-        question_3: '',
-        question_4: '',
-        question_5: '',
-        question_6: '',
-        question_7: '',
-        question_8: '',
-        question_9: '',
-        question_10: '',
-        question_11: '',
-        question_12: '',
-        question_13: '',
-        question_14: '',
-        question_15: '',
-        question_16: '',
-    }
+        dental_questions: ['','','','','','','','','','','','','','','','','','',''],
+        medical_questions: ['','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','']
+    },
 });
 
 const toggleMedForm = () => {
-    medFormShown.value = !medFormShown.value
-}
+    medFormShown.value = !medFormShown.value;
+};
 
-const initiateMethod = () => {
-    let hasUnanswered = false;
+const initiateMethod = async() => {
+    let medUnanswered = false;
+    let dentalUnanswered = false;
 
-    form.medFormData.map((q) => {
-        if(q == '') {
-            if(!hasUnanswered) {
-                hasUnanswered = true
+    form.medFormData.medical_questions.map((q) => {
+        console.log('Data: ', q)
+        if (q == "" || q == undefined) {
+            if (!medUnanswered) {
+                medUnanswered = true;
             }
         }
-    })
-}
+    });
+
+    form.medFormData.dental_questions.map((q) => {
+        if (q == "" || q == undefined) {
+            if (!dentalUnanswered) {
+                dentalUnanswered = true;
+            }
+        }
+    });
+
+    if(medUnanswered || dentalUnanswered) return toast.error('All fiends are required for your records')
+
+    toggleMedForm()
+    submit()
+};
 
 const imageSelected = (event) => {
     form.valid_id = event.target.files[0];
@@ -390,7 +391,7 @@ let registrationSteps = ref({ currentStep: 1, totalSteps: 3 });
                 v-if="medFormShown"
                 :data="form.medFormData"
                 @emit-close="toggleMedForm"
-                @emit-save-appointment="initiateMethod"
+                @register-account="initiateMethod"
             />
             <div class="hidden md:block flex-1 w-96">
                 <img

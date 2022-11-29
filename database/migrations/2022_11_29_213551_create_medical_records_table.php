@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('previous_dentist')->nullable();
             $table->string('last_visit')->nullable();
             $table->string('last_cleaning')->nullable();
-            $table->text('other_disease_condition')->nullable();
+            $table->text('other_conditions')->nullable();
             $table->timestamps();
         });
     }

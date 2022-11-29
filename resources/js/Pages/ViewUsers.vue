@@ -8,6 +8,7 @@ import FormInput from "@/Components/FloatingInput/FormInput.vue";
 import FloatingSelect from "@/Components/FloatingInput/FloatingSelect.vue";
 import Chip from "@/Components/Chip.vue";
 import Pagination from "@/Shared/Pagination.vue";
+import MedicalForm from "@/Components/MedicalForm.vue";
 import Modal from "@/Components/Modal/Modal.vue";
 import { debounce } from "lodash";
 import { ref, computed, toRef, onMounted } from "vue";
@@ -34,6 +35,21 @@ const errorMessage = computed(() => {
 const successMessage = computed(() => {
     return usePage().props.value.flash.success ?? "Success";
 });
+
+const imgsRef = ref([]);
+const visibleRef = ref(false);
+const indexRef = ref(0);
+const medFormShown = ref(false)
+
+const toggleMedForm = () => {
+    medFormShown.value = !medFormShown.value
+}
+
+const onShow = () => {
+    visibleRef.value = true;
+};
+
+const onHide = () => (visibleRef.value = false);
 
 let isBtnLoading = ref(false);
 
@@ -323,7 +339,7 @@ const searchAppointment = debounce(() => {
                             <p class="text-gray-400">No Image</p>
                         </div>
                     </div>
-                    <div>
+                    <div class="ml-3 md:ml-0">
                         <div>
                             <p class="text-gray-500">Patient's Name</p>
                             <p class="font-semibold">
@@ -364,11 +380,25 @@ const searchAppointment = debounce(() => {
                         </div>
                     </div>
 
-                    <div class="mt-4 lg:mt-0">
-                        <p class="text-gray-500">Address</p>
-                        <p class="font-semibold">
-                            {{ user.address }}
-                        </p>
+                    <div>
+                        <div class="mt-4 lg:mt-0">
+                            <p class="text-gray-500">Address</p>
+                            <p class="font-semibold">
+                                {{ user.address }}
+                            </p>
+                        </div>
+                        <div class="mt-4 lg:mt-0">
+                            <p class="text-gray-500 mt-2">Valid ID</p>
+                            <a type="button" href="" @click.prevent="onShow(); imgsRef = `/images/${user.valid_id}`;" class="font-semibold text-blue-500 hover:text-blue-600">
+                                {{ user.valid_id }}
+                            </a>
+                        </div>
+                        <div class="mt-4 lg:mt-0">
+                            <p class="text-gray-500 mt-2">Medical Record</p>
+                            <a type="button" href="" @click.prevent="medFormShown = true" class="font-semibold text-blue-500 hover:text-blue-600">
+                                Medical Form
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -1178,5 +1208,19 @@ const searchAppointment = debounce(() => {
                 >
             </template>
         </Modal>
+
+        <vue-easy-lightbox
+            :visible="visibleRef"
+            :imgs="imgsRef"
+            :index="indexRef"
+            @hide="onHide"
+        ></vue-easy-lightbox>
+
+        <MedicalForm
+                v-if="medFormShown"
+                view-only
+                :data="user.medical_record"
+                @emit-close="toggleMedForm"
+            />
     </BreezeAuthenticatedLayout>
 </template>

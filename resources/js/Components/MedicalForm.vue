@@ -30,18 +30,21 @@ const props = defineProps({
     },
 });
 
-const emits = defineEmits(["emitClose", "saveAppointment"]);
+const emits = defineEmits(["emitClose", "registerAccount"]);
 
 const emitCloseModal = () => emits("emitClose");
-const emitSaveAppointment = () => emits("emitSaveAppointment");
+const emitRegister = () => emits("registerAccount");
 </script>
 <template>
     <Modal v-bind="$attrs" @close="emitCloseModal">
         <template v-slot:title>
             <p class="text-xl font-bold">Dental History</p>
-            <p class="text-sm font-regular mt-2">
+            <p class="text-sm font-regular mt-2" v-if="!viewOnly">
                 To keep track of our patients, we are requiring every new
                 patient to fill-up this form.
+            </p>
+            <p v-else class="text-sm font-regular mt-1">
+                Here is the record for this user's dental and medical history
             </p>
         </template>
         <template #body>
@@ -80,24 +83,24 @@ const emitSaveAppointment = () => emits("emitSaveAppointment");
                             >
                                 <div class="flex gap-x-4 ml-4" v-if="!viewOnly">
                                     <Radio
-                                        v-model="data.q1"
-                                        for="q1yes"
-                                        id="q1yes"
+                                        v-model="data.dental_questions[i]"
+                                        :for="`dental-yes-${i + 1}`"
+                                        :id="`dental-yes-${i + 1}`"
                                         label="Yes"
                                         value="Yes"
-                                        name="q1"
+                                        :name="`d-q-${i + 1}`"
                                     />
                                     <Radio
-                                        v-model="data.q1"
-                                        for="q1no"
-                                        id="q1no"
+                                        v-model="data.dental_questions[i]"
+                                        :for="`dental-no-${i + 1}`"
+                                        :id="`dental-no-${i + 1}`"
                                         label="No"
                                         value="No"
-                                        name="q1"
+                                        :name="`d-q-${i + 1}`"
                                     />
                                 </div>
                                 <p v-else class="text-gray-600">
-                                    {{ data.q1 }}
+                                    {{ data.dental_questions[i] }}
                                 </p>
                             </td>
                         </tr>
@@ -126,8 +129,8 @@ const emitSaveAppointment = () => emits("emitSaveAppointment");
                     <tbody class="bg-white divide-y divide-gray-200">
                         <tr
                             class="hover:bg-gray-50"
-                            v-for="(question, i) in medicalquestions"
-                            :key="`medical-q-${i}`"
+                            v-for="(question, j) in medicalquestions"
+                            :key="`medical-q-${j}`"
                         >
                             <td
                                 class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6"
@@ -139,24 +142,24 @@ const emitSaveAppointment = () => emits("emitSaveAppointment");
                             >
                                 <div class="flex gap-x-4 ml-4" v-if="!viewOnly">
                                     <Radio
-                                        v-model="data.q1"
-                                        for="q1yes"
-                                        id="q1yes"
+                                        v-model="data.medical_questions[j]"
+                                        :for="`medical-yes-${j + 1}`"
+                                        :id="`medical-yes-${j + 1}`"
                                         label="Yes"
                                         value="Yes"
-                                        name="q1"
+                                        :name="`m-q-${j + 1}`"
                                     />
                                     <Radio
-                                        v-model="data.q1"
-                                        for="q1no"
-                                        id="q1no"
+                                        v-model="data.medical_questions[j]"
+                                        :for="`medical-no-${j + 1}`"
+                                        :id="`medical-no-${j + 1}`"
                                         label="No"
                                         value="No"
-                                        name="q1"
+                                        :name="`m-q-${j + 1}`"
                                     />
                                 </div>
                                 <p v-else class="text-gray-600">
-                                    {{ data.q1 }}
+                                    {{ data.medical_questions[j] }}
                                 </p>
                             </td>
                         </tr>
@@ -170,9 +173,10 @@ const emitSaveAppointment = () => emits("emitSaveAppointment");
                 class="mt-3"
             >
                 <floating-input
-                    type="password"
+                    type="text"
                     id="previous_dentist"
                     v-model="data.previous_dentist"
+                    :disabled="viewOnly"
                 />
             </form-input>
             <form-input
@@ -183,6 +187,7 @@ const emitSaveAppointment = () => emits("emitSaveAppointment");
                 <floating-text-area
                     id="other_conditions"
                     v-model="data.other_conditions"
+                    :disabled="viewOnly"
                 />
             </form-input>
             <form-input
@@ -190,38 +195,40 @@ const emitSaveAppointment = () => emits("emitSaveAppointment");
                 label="Last Cleaning"
                 class="mt-3"
             >
-                <floating-input type="date" v-model="data.last_cleaning" />
+                <floating-input type="date" v-model="data.last_cleaning" :disabled="viewOnly"/>
             </form-input>
             <form-input
                 for="last_visit"
                 label="Last Visit"
                 class="mt-3"
             >
-                <floating-input type="date" v-model="data.last_visit" />
+                <floating-input type="date" v-model="data.last_visit" :disabled="viewOnly"/>
             </form-input>
             <hr class="my-4"/>
 
-            <p class="font-medium pl-2 mt-4 mb-2">Please read carefully</p>
-            <p class="text-sm px-2 text-justify mb-3">
-                By clicking register account, I, the registering patient,
-                understand the above information is necessary to provide me with
-                dental care in a safe and efficient manner. I have answered all
-                questions to the best of my knowledge. Manabat Dental-Flores has
-                my permission to ask the respective health care provider or
-                agency, who may release such information. I will notify this
-                dental care facility of any and all changes in my health or
-                medications. I consent to the performing of dental procedures
-                agreed to be necessary or advisable, including the use of local
-                anesthetics.
-            </p>
+            <div v-if="!viewOnly">
+                <p class="font-medium pl-2 mt-4 mb-2">Please read carefully</p>
+                <p class="text-sm px-2 text-justify mb-3">
+                    By clicking register account, I, the registering patient,
+                    understand the above information is necessary to provide me with
+                    dental care in a safe and efficient manner. I have answered all
+                    questions to the best of my knowledge. Manabat Dental-Flores has
+                    my permission to ask the respective health care provider or
+                    agency, who may release such information. I will notify this
+                    dental care facility of any and all changes in my health or
+                    medications. I consent to the performing of dental procedures
+                    agreed to be necessary or advisable, including the use of local
+                    anesthetics.
+                </p>
+            </div>
         </template>
         <template v-slot:footer>
             <Button @click.prevent="emitCloseModal" text size="sm" color="gray"
-                >Cancel</Button
+                >Close</Button
             >
             <Button
                 v-if="!viewOnly"
-                @click.prevent="emitSaveAppointment"
+                @click.prevent="emitRegister"
                 text
                 size="sm"
                 color="success"
