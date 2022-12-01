@@ -221,10 +221,8 @@ const selectedService = toRef(form, "selected_services");
 
 const totalPayment = computed(() => {
     return (
-        parseFloat(selectedAppointment.value.subtotal) +
-        parseFloat(
-            paymentForm.addons_amount === "" ? 0 : paymentForm.addons_amount
-        )
+        parseFloat(selectedAppointment.value.subtotal) -
+        parseFloat(selectedAppointment.value.payments_sum_amount_tendered)
     );
 });
 const togglePaymentModal = (isadmin) => {
@@ -291,6 +289,14 @@ const toggleCreateModal = (data = null) => {
         form.schedule = moment(data.schedule).format("YYYY-MM-DDThh:mm");
     }
     isCreateModalShown.value = !isCreateModalShown.value;
+};
+
+const hasBalance = (appointment) => {
+    if (appointment.payments_sum_amount_tendered < appointment.subtotal) {
+        return true;
+    } else {
+        return false;
+    }
 };
 
 const initiateMethod = () => {
@@ -393,20 +399,21 @@ const saveAppointment = () => {
 };
 
 const updateAppointment = () => {
-    form.transform((data) => ({ ...data, user_id: data?.user_id?.id, fixed_schedule: moment(data.schedule).format() })).put(
-        `/appointments/${form.id}`,
-        {
-            preserveState: true,
-            onError: (err) => {
-                toast.error(`${errorMessage.value}`);
-            },
-            onSuccess: () => {
-                toast.success("Appointment update successfully!");
-                toggleCreateModal();
-                form.reset();
-            },
-        }
-    );
+    form.transform((data) => ({
+        ...data,
+        user_id: data?.user_id?.id,
+        fixed_schedule: moment(data.schedule).format(),
+    })).put(`/appointments/${form.id}`, {
+        preserveState: true,
+        onError: (err) => {
+            toast.error(`${errorMessage.value}`);
+        },
+        onSuccess: () => {
+            toast.success("Appointment update successfully!");
+            toggleCreateModal();
+            form.reset();
+        },
+    });
 };
 
 const props = defineProps({
@@ -949,27 +956,31 @@ const searchPatient = debounce((val) => {
                                                     >View Receipt</Button
                                                 >
                                                 <Button
+                                                    is-link
                                                     v-if="
                                                         appointment.payments &&
                                                         (appointment.payment_status ==
                                                             'Paid' ||
                                                             appointment.payment_status ==
-                                                                'Semi-Paid')
+                                                                'Partially-Paid')
                                                     "
-                                                    @click.prevent="
-                                                        togglePaymentsModal();
-                                                        selectedAppointment = {
-                                                            ...appointment,
-                                                        };
+                                                    :href="
+                                                        route(
+                                                            'invoice.generate',
+                                                            appointment.id
+                                                        )
                                                     "
                                                     text
                                                     size="sm"
                                                     color="success"
-                                                    >View Payments</Button
+                                                    >View Invoice</Button
                                                 >
 
                                                 <Button
                                                     v-if="
+                                                        hasBalance(
+                                                            appointment
+                                                        ) &&
                                                         !appointment.deleted_at &&
                                                         appointment.payment_status !=
                                                             'Paid' &&
@@ -1110,7 +1121,7 @@ const searchPatient = debounce((val) => {
                 >
             </template>
         </Modal>
-
+        <!--
         <Modal v-if="paymentRecordsShown" @close="togglePaymentsModal">
             <template v-slot:title>
                 <p class="text-xl font-bold">Payment Records</p>
@@ -1146,7 +1157,7 @@ const searchPatient = debounce((val) => {
                     >Close</Button
                 >
             </template>
-        </Modal>
+        </Modal> -->
 
         <Modal v-if="isDeleteModalShown" @close="toggleDeleteModal">
             <template v-slot:title>

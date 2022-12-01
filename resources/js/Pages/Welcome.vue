@@ -280,7 +280,7 @@
             Manabat-Flores <br />
             Dental Clinic
           </p>
-          <p class="mt-4">We are currently located at 2000 MacArthur Hwy, San Fernando, 2000 Pampanga. You can visit our clinic for a walk-in reservation</p>
+          <p class="mt-4">We are currently located at Purok 2 Sergio bayan, Calumpit, Bulacan. You can visit our clinic for a walk-in reservation</p>
           <p>{{ form.first_name }}</p>
         </div>
         <MapIcon class="absolute -top-20 w-96 -right-8 z-[-1] text-gray-50" />
@@ -292,10 +292,9 @@
     <div class="container gap-x-6 mx-auto gap-y-10 flex flex-col md:flex-row px-6 sm:px-8 md:px-6 md:max-w-6xl">
       <div class="w-full md:w-1/2 text-white">
         <p class="font-medium text-xl">GET IN TOUCH</p>
-
-        <p class="mt-3">Address: 2000 MacArthur Hwy, San Fernando, 2000 Pampanga, Philippines</p>
-        <p>Contact Number: (+63) 935 123 4567</p>
-        <p>Email Address: no-reply@manabat-dental.com</p>
+        <p class="mt-3">Address: Purok 2 Sergio bayan, Calumpit, Bulacan, Philippines</p>
+        <p>Contact Number: (+63) 927 531 6736</p>
+        <p>Email Address: manabatfloresdentalclinic@gmail.com</p>
       </div>
       <div class="w-full md:w-1/2 text-white">
         <p class="font-medium text-xl">FOLLOW US ON:</p>

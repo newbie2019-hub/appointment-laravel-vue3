@@ -91,25 +91,21 @@ class PaymentController extends Controller
             'receipt_url' => 'N/A'
         ]);
 
-        $appointment = Appointment::where('id', $request->appointment_id)->first();
+        $appointment = Appointment::withSum('payments', 'amount_tendered')->where('id', $request->appointment_id)->first();
 
-        if ($request->is_installment) {
-            $appointment->update([
-                'payment_status' => 'Semi-Paid'
-            ]);
-        } else {
-            $appointment->update([
-                'payment_status' => 'Paid'
-            ]);
-        }
+        $isPaid = $appointment->payments_sum_amount_tendered <= $appointment->subtotal ? true : false;
+        $appointment->update([
+            'subtotal' => $request->addons_amount + $appointment->subtotal,
+            'payment_status' => $isPaid ? 'Paid' : 'Partially-Paid'
+        ]);
 
         return back()->with('message', 'Payment transaction is successful!');
     }
 
     public function generateInvoice(Request $request, $id)
     {
-        $appointment = Appointment::with(['services.service:id,service,price', 'patient'])->where('id', $id)->first();
-        $payment = Payment::where('appointment_id', $id)->first();
+        $payment = Payment::where('id', $id)->first();
+        $appointment = Appointment::with(['services.service:id,service,price', 'patient', 'payments'])->where('id', $id)->first();
 
         $owner = User::where('id', 1)->first();
 
@@ -134,8 +130,15 @@ class PaymentController extends Controller
             $items[] = (new InvoiceItem())->title($service->service->service)->pricePerUnit($service->service->price);
         }
 
-        if ($payment->addons_note && $payment->addons_amount > 0) {
-            $items[] = (new InvoiceItem())->title($payment->addons_note)->pricePerUnit($payment->addons_amount);
+        $amount_tendered = 0;
+        foreach ($appointment->payments as $payment) {
+            if ($payment->addons_amount > 0) {
+                $items[] = (new InvoiceItem())->title('Additional')->pricePerUnit($payment->addons_amount);
+            }
+
+            $amount_tendered = $amount_tendered + $payment->amount_tendered;
+            // $items[] = (new InvoiceItem())->title('Payment')->pricePerUnit($payment->amount_tendered);
+
         }
 
         $notes = [
@@ -147,8 +150,7 @@ class PaymentController extends Controller
 
         $invoice = ExtendedInvoice::make('receipt')
             ->buyer($customer)
-            ->status(__('invoices::invoice.paid'))
-            ->date($payment->created_at)
+            ->date(now())
             ->dateFormat('Y/m/d h:i A')
             ->seller($owner)
             ->currencySymbol('₱')
@@ -157,7 +159,7 @@ class PaymentController extends Controller
             ->addItems($items)
             ->notes($notes)
             ->currencyFormat('{SYMBOL}{VALUE}')
-            ->amountReceived($payment->amount_tendered);
+            ->amountReceived($amount_tendered);
         // ->save('public');
 
         // $link = $invoice->url();
