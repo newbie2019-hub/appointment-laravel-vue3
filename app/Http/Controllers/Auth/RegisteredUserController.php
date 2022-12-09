@@ -53,10 +53,10 @@ class RegisteredUserController extends Controller
                 'user_id' => $user->id,
                 'medical_questions' => $request->medFormData["medical_questions"],
                 'dental_questions' => $request->medFormData["dental_questions"],
-                'previous_dentist' => $request->medFormData["previous_dentist"],
-                'last_visit' => $request->medFormData["last_visit"],
-                'last_cleaning' => $request->medFormData["last_cleaning"],
-                'other_conditions' => $request->medFormData["other_conditions"],
+                'previous_dentist' => $request->medFormData["previous_dentist"] ?? null,
+                'last_visit' => $request->medFormData["last_visit"] ?? null,
+                'last_cleaning' => $request->medFormData["last_cleaning"] ?? null,
+                'other_conditions' => $request->medFormData["other_conditions"] ?? null,
             ]);
         }
 

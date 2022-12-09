@@ -33,11 +33,8 @@
 <template>
   <BreezeGuestLayout>
     <Head title="Log in" />
-
-    <!-- <BreezeValidationErrors class="mb-4" /> -->
-
-    <div v-if="status" class="mb-4 font-medium text-sm text-green-600">
-      {{ status }}
+    <div v-if="status" class="fixed top-0 left-0 w-full bg-white py-2 font-medium text-sm text-green-600 ">
+      <p>{{ status }}</p>
     </div>
     <div class="flex w-full">
       <div class="flex flex-col flex-1 h-screen items-center justify-center bg-white w-full text-left md:max-w-xl">

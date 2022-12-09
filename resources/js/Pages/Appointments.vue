@@ -220,9 +220,10 @@ const isViewHealthFormShown = ref(false);
 const selectedService = toRef(form, "selected_services");
 
 const totalPayment = computed(() => {
+    console.log(selectedAppointment.value.payments_sum_amount_tendered)
     return (
         parseFloat(selectedAppointment.value.subtotal) -
-        parseFloat(selectedAppointment.value.payments_sum_amount_tendered)
+        parseFloat(selectedAppointment.value.payments_sum_amount_tendered ?? 0)
     );
 });
 const togglePaymentModal = (isadmin) => {
@@ -689,7 +690,7 @@ const searchPatient = debounce((val) => {
                                                 scope="col"
                                                 class="py-3.5 pl-4 pr-3 text-left sm:pl-6 whitespace-nowrap"
                                             >
-                                                Sub Total
+                                                Total
                                             </th>
                                             <th
                                                 scope="col"

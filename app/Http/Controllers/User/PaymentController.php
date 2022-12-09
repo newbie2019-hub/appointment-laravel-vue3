@@ -93,7 +93,8 @@ class PaymentController extends Controller
 
         $appointment = Appointment::withSum('payments', 'amount_tendered')->where('id', $request->appointment_id)->first();
 
-        $isPaid = $appointment->payments_sum_amount_tendered <= $appointment->subtotal ? true : false;
+        $isPaid = $appointment->payments_sum_amount_tendered >= $appointment->subtotal ? true : false;
+
         $appointment->update([
             'subtotal' => $request->addons_amount + $appointment->subtotal,
             'payment_status' => $isPaid ? 'Paid' : 'Partially-Paid'

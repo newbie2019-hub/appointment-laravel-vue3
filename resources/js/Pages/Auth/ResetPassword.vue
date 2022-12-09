@@ -29,7 +29,6 @@ const submit = () => {
     <BreezeGuestLayout>
         <Head title="Reset Password" />
 
-        <BreezeValidationErrors class="mb-4" />
 
         <div class="flex h-screen items-center justify-center">
             <div class="bg-white shadow-sm px-8 py-6 rounded-lg max-w-md">
@@ -39,6 +38,7 @@ const submit = () => {
                         Please enter and confirm your new password.
                     </p>
                 </div>
+                <BreezeValidationErrors class="mb-4" />
                 <form @submit.prevent="submit">
                     <div>
                         <BreezeLabel for="email" value="Email" />
