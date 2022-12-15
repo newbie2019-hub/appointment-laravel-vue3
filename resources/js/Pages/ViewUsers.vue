@@ -39,11 +39,11 @@ const successMessage = computed(() => {
 const imgsRef = ref([]);
 const visibleRef = ref(false);
 const indexRef = ref(0);
-const medFormShown = ref(false)
+const medFormShown = ref(false);
 
 const toggleMedForm = () => {
-    medFormShown.value = !medFormShown.value
-}
+    medFormShown.value = !medFormShown.value;
+};
 
 const onShow = () => {
     visibleRef.value = true;
@@ -329,14 +329,20 @@ const searchAppointment = debounce(() => {
                 <p>Profile Information</p>
                 <div class="grid grid-cols-2 lg:grid-cols-4 mt-4">
                     <div class="w-full h-full flex items-center">
-                        <div class="w-48 h-48 rounded-md" :class="{'bg-gray-100 flex items-center justify-center' : !user.image}">
+                        <div
+                            class="w-48 h-48 rounded-md"
+                            :class="{
+                                'bg-gray-100 flex items-center justify-center':
+                                    !user?.image,
+                            }"
+                        >
                             <img
                                 v-if="user.image"
-                                :src="`/images/profile/${user.image}`"
+                                :src="`/images/profile/${user?.image}`"
                                 class="object-fit h-full"
                                 alt=""
                             />
-                            <p class="text-gray-400">No Image</p>
+                            <p v-else class="text-gray-400">No Image</p>
                         </div>
                     </div>
                     <div class="ml-3 md:ml-0">
@@ -389,13 +395,26 @@ const searchAppointment = debounce(() => {
                         </div>
                         <div class="mt-4 lg:mt-0">
                             <p class="text-gray-500 mt-2">Valid ID</p>
-                            <a type="button" href="" @click.prevent="onShow(); imgsRef = `/images/${user.valid_id}`;" class="font-semibold text-blue-500 hover:text-blue-600">
+                            <a
+                                type="button"
+                                href=""
+                                @click.prevent="
+                                    onShow();
+                                    imgsRef = `/images/${user.valid_id}`;
+                                "
+                                class="font-semibold text-blue-500 hover:text-blue-600"
+                            >
                                 {{ user.valid_id }}
                             </a>
                         </div>
                         <div class="mt-4 lg:mt-0">
                             <p class="text-gray-500 mt-2">Medical Record</p>
-                            <a type="button" href="" @click.prevent="medFormShown = true" class="font-semibold text-blue-500 hover:text-blue-600">
+                            <a
+                                type="button"
+                                href=""
+                                @click.prevent="medFormShown = true"
+                                class="font-semibold text-blue-500 hover:text-blue-600"
+                            >
                                 Medical Form
                             </a>
                         </div>
@@ -661,12 +680,35 @@ const searchAppointment = debounce(() => {
                                                     "
                                                     v-if="
                                                         $page.props.auth.user
-                                                            .is_admin
+                                                            .is_admin &&
+                                                        appointment.prescription ==
+                                                            null &&
+                                                        appointment.appointment_status !=
+                                                            'Pending'
                                                     "
                                                     text
                                                     size="sm"
                                                     color="success"
                                                     >Prescription</Button
+                                                >
+                                                <Button
+                                                    is-link
+                                                    v-if="
+                                                        appointment.payment_status ==
+                                                            'Paid' &&
+                                                        appointment.prescription !=
+                                                            null
+                                                    "
+                                                    :href="
+                                                        route(
+                                                            'prescription.generate',
+                                                            appointment.id
+                                                        )
+                                                    "
+                                                    text
+                                                    size="sm"
+                                                    color="success"
+                                                    >View Prescription</Button
                                                 >
                                                 <Button
                                                     is-link
@@ -1217,10 +1259,10 @@ const searchAppointment = debounce(() => {
         ></vue-easy-lightbox>
 
         <MedicalForm
-                v-if="medFormShown"
-                view-only
-                :data="user.medical_record"
-                @emit-close="toggleMedForm"
-            />
+            v-if="medFormShown"
+            view-only
+            :data="user.medical_record"
+            @emit-close="toggleMedForm"
+        />
     </BreezeAuthenticatedLayout>
 </template>

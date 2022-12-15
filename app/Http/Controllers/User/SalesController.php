@@ -30,7 +30,8 @@ class SalesController extends Controller
         ])->when(
             $request->search,
             fn ($query, $search)
-            => $query->whereLike('payment_tye', $search)
+            => $query->whereRelation('appointment.patient', 'last_name', 'like', '%'.$search.'%')
+                ->orWhereRelation('appointment.patient', 'first_name', 'like', '%'.$search.'%')
         )->paginate(10)->withQueryString();
 
         $chartServices = Service::withCount(['monthly_appointments'])->get(['id', 'service', 'price']);

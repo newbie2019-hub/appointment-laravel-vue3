@@ -25,7 +25,11 @@ class DashboardController extends Controller
          $appointments = Appointment::with([
             'patient:id,first_name,last_name,email,gender',
             'services.service'
-            ])->when($request->trashed, fn($query, $filter)
+            ])->when($request->search, fn($query, $search)
+               => $query->whereRelation('patient', 'email', 'like', '%'.$search.'%')
+               ->orWhereRelation('patient', 'first_name', 'like', '%'.$search.'%')
+               ->orWhereRelation('patient', 'last_name', 'like', '%'.$search.'%')
+            )->when($request->trashed, fn($query, $filter)
                   => $filter === "only" ? $query->onlyTrashed() : $query->withTrashed()
             )->latest()->take(10)->get();
       }

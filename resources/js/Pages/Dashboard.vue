@@ -232,14 +232,14 @@
                 <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6 gap-x-2">
                   <div class="flex items-center gap-x-2">
                     <div class="flex items-center justify-center w-8 h-8 bg-blue-500 border-gray-100 rounded-full">
-                      <svg v-if="!appointment.patient.image" xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-white" viewBox="0 0 20 20" fill="currentColor">
+                      <svg v-if="!appointment.patient?.image" xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 text-white" viewBox="0 0 20 20" fill="currentColor">
                         <path
                           fill-rule="evenodd"
                           d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-6-3a2 2 0 11-4 0 2 2 0 014 0zm-2 4a5 5 0 00-4.546 2.916A5.986 5.986 0 0010 16a5.986 5.986 0 004.546-2.084A5 5 0 0010 11z"
                           clip-rule="evenodd"
                         />
                       </svg>
-                      <img :src="`images/profile/${appointment.patient.image}`" class="h-full rounded-full object-fit" alt="" />
+                      <img :src="`images/profile/${appointment.patient?.image}`" class="h-full rounded-full object-fit" alt="" />
                     </div>
                     {{ appointment.patient.full_name }}
                   </div>

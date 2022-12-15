@@ -11,6 +11,8 @@ import Pagination from "@/Shared/Pagination.vue";
 import Modal from "@/Components/Modal/Modal.vue";
 import { debounce } from "lodash";
 import { ref, watch, computed, toRef, onMounted } from "vue";
+import { Inertia } from '@inertiajs/inertia';
+
 import {
     formatCurrency,
     formatNumeric,
@@ -49,6 +51,19 @@ const areaChartSeries = [
         ),
     },
 ];
+
+let search = ref(props.filters.search);
+
+const searchPayment = debounce(() => {
+    Inertia.get(
+      '/sales',
+      { search: search.value  },
+      {
+        preserveState: true,
+        only: ['payments'],
+      },
+    );
+  }, 300);
 </script>
 <template>
     <Head title="Patient Appointments" />
@@ -325,7 +340,7 @@ const areaChartSeries = [
                                                 <td
                                                     class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6"
                                                 >
-                                                    {{ payment.payment_type }}
+                                                    {{ payment.is_installment ? 'Partial Payment' : 'Full Payment' }}
                                                 </td>
                                                 <td
                                                     class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6"

@@ -30,8 +30,9 @@ class PaymentController extends Controller
         ])->when(
             $request->search,
             fn ($query, $search)
-            => $query->whereLike('payment_tye', $search)
-        )->paginate(10)->withQueryString();
+            => $query->whereRelation('appointment.patient', 'last_name', 'like', '%' . $search . '%')
+                ->orWhereRelation('appointment.patient', 'first_name', 'like', '%' . $search . '%')
+        )->latest()->paginate(10)->withQueryString();
 
         $paymentsCount = Payment::count();
         $monthlyPaymentsCount = Payment::whereDate('created_at', '>=', now()->startOfMonth())->count();

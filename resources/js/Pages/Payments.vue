@@ -36,7 +36,7 @@
   };
 
   const searchPayment = debounce(() => {
-    Inertia.get('/patients', { search: search.value }, { replace: true, preserveState: true });
+    Inertia.get('/payments', { search: search.value }, { replace: true, preserveState: true });
   }, 300);
 </script>
 
@@ -110,7 +110,7 @@
                         <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ payment.appointment.id }}</td>
                         <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ payment.appointment.patient.full_name }}</td>
                         <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ payment.appointment.schedule }}</td>
-                        <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ payment.payment_type }}</td>
+                        <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ payment.is_installment ? 'Partial Payment' : 'Full Payment' }}</td>
                         <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ formatCurrency(payment.total) }}</td>
                         <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ formatCurrency(payment.amount_tendered) }}</td>
                         <td class="py-4 pl-4 pr-3 text-sm font-medium text-gray-900 whitespace-nowrap sm:pl-6">{{ formatCurrency(payment.change) }}</td>
