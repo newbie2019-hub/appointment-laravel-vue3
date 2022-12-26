@@ -10,7 +10,6 @@
     },
     color: {
       type: String,
-      default: 'primary',
     },
     text: {
       type: Boolean,
@@ -56,6 +55,9 @@
 
   const coloredButton = () => {
     switch (props.color) {
+      case 'accent-1':
+        cssClass = 'bg-violet-600 hover:bg-violet-500 ring-violet-500 disabled:bg-violet-300 disabled:hover:bg-violet-300';
+        break;
       case 'warning':
         cssClass = 'bg-orange-500 hover:bg-orange-400 ring-orange-500 disabled:bg-orange-300 disabled:hover:bg-orange-300';
         break;
@@ -73,13 +75,13 @@
   const buttonSize = () => {
     switch (props.size) {
       case 'lg':
-        cssClass += ' px-7 py-3 text-sm';
+        cssClass += ' px-8 py-4 text-sm';
         break;
       case 'sm':
         cssClass += ' px-4 py-2 text-xs';
         break;
       default:
-        cssClass += ' px-4 py-2';
+        cssClass += ' px-6 py-2.5 text-sm';
         break;
     }
   };
@@ -93,7 +95,7 @@
     v-if="!isLink"
     :type="type"
     :disabled="disabled"
-    class="inline-flex items-center ml-2 font-medium tracking-wider text-white uppercase duration-200 ease-in-out rounded focus:ring-2 ring-offset-2 disabled:cursor-not-allowed"
+    class=" items-center text-center tracking-wider text-white duration-200 whitespace-nowrap ease-in-out rounded focus:ring-2 ring-offset-2 disabled:cursor-not-allowed"
     :class="cssClass"
   >
     <slot />
@@ -103,7 +105,7 @@
     v-else
     :type="type"
     :disabled="disabled"
-    class="inline-flex items-center ml-2 font-medium tracking-wider text-white uppercase duration-200 ease-in-out rounded focus:ring-2 ring-offset-2 disabled:cursor-not-allowed"
+    class=" items-center tracking-wider text-white duration-200 ease-in-out rounded focus:ring-2 ring-offset-2 disabled:cursor-not-allowed"
     :class="cssClass"
   >
     <slot />

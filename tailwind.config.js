@@ -12,7 +12,7 @@ module.exports = {
     theme: {
         extend: {
             fontFamily: {
-                sans: ['Space Grotesk', ...defaultTheme.fontFamily.sans],
+                sans: ['Inter', ...defaultTheme.fontFamily.sans],
             },
         },
     },
@@ -33,6 +33,9 @@ module.exports = {
         'bg-green-400',
         'bg-green-500',
         'bg-green-600',
+        'bg-violet-600',
+        'bg-violet-500',
+        'bg-violet-400'
     ],
 
     plugins: [require('@tailwindcss/forms')],

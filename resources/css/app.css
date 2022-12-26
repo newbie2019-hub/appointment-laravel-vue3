@@ -1,12 +1,17 @@
-@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer components {
- .navigation-link {
-  @apply hover:text-blue-500 ease-in-out duration-200 hover:font-medium hover:-translate-x-6
- }
-}
+    .navigation-link {
+        @apply hover:text-violet-500 ease-in-out duration-200 text-sm outline-none hover:-translate-x-6;
+    }
 
+    .section-container {
+        @apply flex items-center px-6 sm:px-8 md:px-6 md:max-w-7xl mx-auto;
+    }
+
+    .max-h-container {
+        @apply min-h-[680px] max-h-[680px];
+    }
+}
