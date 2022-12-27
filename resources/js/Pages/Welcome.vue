@@ -918,7 +918,7 @@ const createAppointment = () => {
     background-image: linear-gradient(
             to right,
             #f5f3ff,
-            rgba(245, 243, 255, 0.4)
+            rgba(245, 243, 255, 0.3)
         ),
         url("images/bg-hero.png");
     background-position: right;
