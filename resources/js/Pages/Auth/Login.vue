@@ -64,7 +64,7 @@
               <Link v-if="canResetPassword" :href="route('password.request')" class="hover:underline text-sm text-blue-400 hover:text-blue-700"> Forgot your password? </Link>
             </div>
             <div class="flex items-center justify-end mt-12 mb-4">
-              <button :disabled="form.processing" type="submit" class="bg-blue-500 hover:bg-blue-700 text-white px-4 py-2 duration-200 ease-in-out rounded-lg w-full disabled:bg-blue-400 disabled:cursor-progress">Log-in Account</button>
+              <button :disabled="form.processing" type="submit" class="bg-violet-600 hover:bg-violet-700 text-white px-4 py-2 duration-200 ease-in-out rounded-lg w-full disabled:bg-blue-400 disabled:cursor-progress">Log-in Account</button>
             </div>
           </form>
 

@@ -36,6 +36,7 @@ class User extends Authenticatable
         'address',
         'email',
         'is_approved',
+        'is_declined',
         'password',
         'valid_id'
     ];

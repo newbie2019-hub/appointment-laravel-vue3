@@ -31,8 +31,8 @@ const form = useForm({
     password_confirmation: "",
     terms: false,
     medFormData: {
-        dental_questions: ['','','','','','','','','','','','','','','','','','',''],
-        medical_questions: ['','','','','','','','','','','','','','','','','','','','','','','','','','','','','','','']
+        dental_questions: Array(19).fill("No"),
+        medical_questions: Array(36).fill("No"),
     },
 });
 
@@ -40,12 +40,62 @@ const toggleMedForm = () => {
     medFormShown.value = !medFormShown.value;
 };
 
-const initiateMethod = async() => {
+const setDentalSelected = () => {
+    console.log("HIIII")
+    form.medFormData.dental_questions = Array(19).fill("No")
+}
+
+const validateFields = () => {
+    if (registrationSteps.value.currentStep == 1) {
+        if (form.first_name.trim() == "") {
+            return toast.error("First Name is required!");
+        }
+        if (form.last_name.trim() == "") {
+            return toast.error("Last Name is required!");
+        }
+        if (form.contact_number.trim() == "") {
+            return toast.error("Contact Number is required!");
+        }
+        if (form.contact_number.length < 11) {
+            return toast.error("Contact Number min length is 11");
+        }
+        if (form.address.trim() == "") {
+            return toast.error("Address is required!");
+        }
+        if (form.gender == "") {
+            return toast.error("Gender is required!");
+        }
+        if (form.birthday == "") {
+            return toast.error("Date of birth is required!");
+        }
+    }
+
+    if (registrationSteps.value.currentStep == 2) {
+        if (form.email == "") {
+            return toast.error("Email Address is required");
+        }
+        if (form.password == "") {
+            return toast.error("Password is required");
+        }
+        if (form.password_confirmation == "") {
+            return toast.error("Password confirmation is required");
+        }
+        if (form.password !== form.password_confirmation) {
+            return toast.error("Password doesn't match");
+        }
+        if (form.valid_id == '') {
+            return toast.error("Valid ID is required");
+        }
+    }
+    registrationSteps.value.currentStep =
+        registrationSteps.value.currentStep + 1;
+};
+
+const initiateMethod = async () => {
     let medUnanswered = false;
     let dentalUnanswered = false;
 
     form.medFormData.medical_questions.map((q) => {
-        console.log('Data: ', q)
         if (q == "" || q == undefined) {
             if (!medUnanswered) {
                 medUnanswered = true;
@@ -61,10 +111,11 @@ const initiateMethod = async() => {
         }
     });
 
-    if(medUnanswered || dentalUnanswered) return toast.error('All fiends are required for your records')
+    if (medUnanswered || dentalUnanswered)
+        return toast.error("All fiends are required for your records");
 
-    toggleMedForm()
-    submit()
+    toggleMedForm();
+    submit();
 };
 
 const imageSelected = (event) => {
@@ -152,7 +203,7 @@ let registrationSteps = ref({ currentStep: 1, totalSteps: 3 });
                                             <form-input
                                                 for="middlename"
                                                 :error="errors.middle_name"
-                                                label="Middle Name "
+                                                label="Middle Name (Optional)"
                                                 class="mt-3"
                                             >
                                                 <floating-input
@@ -367,11 +418,8 @@ let registrationSteps = ref({ currentStep: 1, totalSteps: 3 });
                                     :disabled="
                                         registrationSteps.currentStep == 3
                                     "
-                                    @click.prevent="
-                                        registrationSteps.currentStep =
-                                            registrationSteps.currentStep + 1
-                                    "
-                                    class="text-blue-500 hover:text-blue-700 hover:bg-blue-100 px-4 py-2 duration-200 ease-in-out rounded-lg text-sm disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-neutral-900"
+                                    @click.prevent="validateFields"
+                                    class="text-violet-600 hover:text-violet-700 hover:bg-blue-100 px-4 py-2 duration-200 ease-in-out rounded-lg text-sm disabled:bg-gray-100 disabled:cursor-not-allowed disabled:text-neutral-900"
                                 >
                                     Next
                                 </button>
@@ -392,6 +440,7 @@ let registrationSteps = ref({ currentStep: 1, totalSteps: 3 });
                 :data="form.medFormData"
                 @emit-close="toggleMedForm"
                 @register-account="initiateMethod"
+                @set-dental-selected="setDentalSelected"
             />
             <div class="hidden md:block flex-1 w-96">
                 <img

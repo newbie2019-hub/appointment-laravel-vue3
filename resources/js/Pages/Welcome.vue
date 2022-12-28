@@ -2,16 +2,12 @@
 import { Head, useForm, usePage } from "@inertiajs/inertia-vue3";
 import Button from "@/Components/Button/Button.vue";
 import FloatingInput from "@/Components/FloatingInput/FloatingInput.vue";
-import FloatingSelect from "@/Components/FloatingInput/FloatingSelect.vue";
 import AccordionItem from "@/Components/Accordion/AccordionItem.vue";
 import Accordion from "@/Components/Accordion/Accordion.vue";
 import HealthForm from "@/Components/HealthForm.vue";
 import FormInput from "@/Components/FloatingInput/FormInput.vue";
-import FloatingTextArea from "@/Components/FloatingInput/FloatingTextArea.vue";
 import { ref, computed, watch, toRef, onMounted } from "vue";
-import Checkbox from "@/Components/Checkbox.vue";
 import { formatCurrency } from "@/Composables/Utilities";
-import { MapIcon, CalendarIcon } from "@heroicons/vue/solid";
 import { useToast } from "vue-toastification";
 import VueMultiselect from "vue-multiselect";
 import Datepicker from "@vuepic/vue-datepicker";
@@ -37,6 +33,21 @@ const errorMessage = computed(() => {
 
 const isHealthFormShown = ref(false);
 
+const validateFields = () => {
+    if(form.schedule == null || form.schedule == '') {
+        return toast.error('Please select a schedule!')
+    }
+
+    if(form.selected_services == null || form.selected_services == '' || form.selected_services.length == 0) {
+        return toast.error('Please select atleast 1 service')
+    }
+
+    if(form.message == null || form.message == '') {
+        return toast.error('Message is empty!')
+    }
+
+    toggleHealthForm()
+}
 const toggleHealthForm = () =>
     (isHealthFormShown.value = !isHealthFormShown.value);
 
@@ -208,7 +219,7 @@ const createAppointment = () => {
                 <div class="hidden md:flex">
                     <Button
                         type="button"
-                        @click.prevent="toggleHealthForm"
+                        @click.prevent="validateFields"
                         color="accent-1"
                         >Book Now</Button
                     >
@@ -238,7 +249,7 @@ const createAppointment = () => {
                         :options="services"
                         :multiple="true"
                         selectLabel="Select"
-                        class="border-1 border-blue-500 rounded-lg"
+                        class="rounded-lg z-50"
                         deselectLabel="Deselect"
                         label="service"
                         track-by="id"
@@ -281,7 +292,7 @@ const createAppointment = () => {
             </div>
             <p class="text-gray-500">
                 Please make sure to read our
-                <span class="text-blue-600 cursor-pointer">policies</span>
+                <a href="#faqs" class="text-blue-600 cursor-pointer">policies</a>
                 before making an appointment.
             </p>
         </div>
@@ -512,7 +523,7 @@ const createAppointment = () => {
         ></iframe>
     </section>
 
-    <section class="mx-auto relative my-12 mt-24">
+    <section id="faqs" class="mx-auto relative my-12 mt-24">
         <div class="section-container items-center justify-center">
             <div class="flex md:flex-nowrap flex-wrap w-full gap-x-6 gap-y-2">
                 <div class="md:w-1/2 mt-4">
@@ -688,192 +699,6 @@ const createAppointment = () => {
         </div>
     </section>
 
-    <!-- <div id="appointment" class="relative pt-15 pb-20 mb-15">
-        <div
-            class="container gap-y-4 gap-x-6 mx-auto flex flex-col md:flex-row px-6 sm:px-8 md:px-6 md:max-w-6xl"
-        >
-            <div class="w-full md:w-1/2 relative">
-                <div class="mx-auto sm:mt-20">
-                    <p class="text-blue-500 font-medium">Online Appointment</p>
-                    <p class="text-5xl font-medium mt-2">
-                        Schedule for an Appointment
-                    </p>
-                    <p class="mt-4 w-3/4">
-                        Fill-up the form to check the availability of your
-                        desired date for your appointment. If it is available we
-                        will then reserve it just for you.
-                    </p>
-                    <p>{{ form.first_name }}</p>
-                </div>
-                <CalendarIcon class="absolute h-96 top-0 z-[-1] text-gray-50" />
-            </div>
-            <div class="w-full md:w-1/2">
-                <div class="bg-white drop-shadow-md px-5 md:px-10 py-10">
-                    <p class="text-xl font-medium">Appointment Form</p>
-                    <p class="text-sm mt-1 mb-2">
-                        Please create an account if you do not have one. It will
-                        be used for the monitoring of your appointment status.
-                        Creating an account is free and will always be.
-                    </p>
-                    <form class="flex flex-col">
-                        <Datepicker
-                            placeholder="Select Schedule"
-                            v-model="form.schedule"
-                            :is24="false"
-                            weekStart="0"
-                            :disabledWeekDays="[0]"
-                            minutesIncrement="30"
-                            noMinutesOverlay
-                            :startTime="{ hours: '10', minutes: '00' }"
-                            :min-date="
-                                moment()
-                                    .add(2, 'day')
-                                    .format('YYYY-MM-DDT00:00')
-                            "
-                            :max-date="
-                                moment()
-                                    .add(2, 'month')
-                                    .format('YYYY-MM-DDT00:00')
-                            "
-                        />
-                        <form-input
-                            for="message"
-                            :error="errors.message"
-                            label="Message"
-                            class="mt-3"
-                        >
-                            <floating-text-area
-                                id="message"
-                                v-model="form.message"
-                            />
-                        </form-input>
-                        <p class="mt-2 font-medium">Select Service</p>
-                        <div class="flex flex-wrap">
-                            <VueMultiselect
-                                v-model="form.selected_services"
-                                :options="services"
-                                :multiple="true"
-                                selectLabel="Select"
-                                class="border-2 border-gray-500 rounded-lg"
-                                deselectLabel="Deselect"
-                                label="service"
-                                track-by="id"
-                            >
-                                <template #option="props">
-                                    <div class="option__desc flex flex-col">
-                                        <span class="option__title">{{
-                                            props.option.service
-                                        }}</span>
-                                        <span class="text-sm">{{
-                                            formatCurrency(props.option.price)
-                                        }}</span>
-                                    </div>
-                                </template>
-                            </VueMultiselect>
-                            <p
-                                v-if="errors.selected_services"
-                                class="mt-1 text-sm text-red-500"
-                            >
-                                {{ errors.selected_services }}
-                            </p>
-                        </div>
-                        <p class="mt-2">
-                            Subtotal: {{ formatCurrency(form.subtotal) }}
-                        </p>
-                        <a
-                            v-if="!authenticatedUser"
-                            :href="route('login')"
-                            class="text-sm mt-6"
-                            >Already have an
-                            <span
-                                class="underline decoration-wavy hover:text-blue-500"
-                                >account?</span
-                            ></a
-                        >
-                        <div class="justify-end flex mt-6">
-                            <Button
-                                type="button"
-                                @click.prevent="toggleHealthForm"
-                                size="sm"
-                                >Make Appointment</Button
-                            >
-                        </div>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div> -->
-
-    <!-- <div id="about" class="relative pt-12 pb-15 mb-20">
-        <div
-            class="container gap-x-6 mx-auto flex gap-y-8 flex-col-reverse md:flex-row px-6 items-center sm:px-8 md:px-6 md:max-w-6xl"
-        >
-            <div class="w-full md:w-1/2">
-                <iframe
-                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3853.0602543030805!2d120.67080431437381!3d15.044783170071193!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3396f71be8895741%3A0x28fb6d6849ab6d25!2sManabat%20Dental%20Clinic!5e0!3m2!1sen!2sph!4v1658401388093!5m2!1sen!2sph"
-                    style="border: 0"
-                    allowfullscreen=""
-                    loading="lazy"
-                    height="320"
-                    class="z-[-1] w-full"
-                    referrerpolicy="no-referrer-when-downgrade"
-                ></iframe>
-            </div>
-            <div class="w-full md:w-1/2 relative">
-                <div class="mx-auto z-20 md:text-right">
-                    <p class="text-blue-500 font-medium">Our Location</p>
-                    <p class="text-5xl font-medium mt-2">
-                        Manabat-Flores <br />
-                        Dental Clinic
-                    </p>
-                    <p class="mt-4">
-                        We are currently located at Purok 2 Sergio bayan,
-                        Calumpit, Bulacan. You can visit our clinic for a
-                        walk-in reservation
-                    </p>
-                    <p>{{ form.first_name }}</p>
-                </div>
-                <MapIcon
-                    class="absolute -top-20 w-96 -right-8 z-[-1] text-gray-50"
-                />
-            </div>
-        </div>
-    </div> -->
-
-    <!-- <div id="contact" class="relative w-full bg-blue-500 p-12 mt-36">
-        <div
-            class="container gap-x-6 mx-auto gap-y-10 flex flex-col md:flex-row px-6 sm:px-8 md:px-6 md:max-w-6xl"
-        >
-            <div class="w-full md:w-1/2 text-white">
-                <p class="font-medium text-xl">GET IN TOUCH</p>
-                <p class="mt-3">
-                    Address: Purok 2 Sergio bayan, Calumpit, Bulacan,
-                    Philippines
-                </p>
-                <p>Contact Number: (+63) 927 531 6736</p>
-                <p>Email Address: manabatfloresdentalclinic@gmail.com</p>
-            </div>
-            <div class="w-full md:w-1/2 text-white">
-                <p class="font-medium text-xl">FOLLOW US ON:</p>
-            </div>
-            <div class="w-full md:w-1/2 text-white">
-                <p class="font-medium text-xl">PAGE LINKS</p>
-                <div class="mt-3 hover:translate-x-2 duration-200 ease-in-out">
-                    <a href="#home" class="">Home</a>
-                </div>
-                <div class="hover:translate-x-2 duration-200 ease-in-out">
-                    <a href="#appointments" class="">Appointments</a>
-                </div>
-                <div class="hover:translate-x-2 duration-200 ease-in-out">
-                    <a href="#services" class="">Services</a>
-                </div>
-                <div class="hover:translate-x-2 duration-200 ease-in-out">
-                    <a href="#contact" class="">Contact</a>
-                </div>
-            </div>
-        </div>
-    </div> -->
-
     <HealthForm
         :max-width="600"
         scrollable
@@ -917,8 +742,8 @@ const createAppointment = () => {
     height: 100%;
     background-image: linear-gradient(
             to right,
-            #f5f3ff,
-            rgba(245, 243, 255, 0.3)
+            #d9d2ff,
+            rgba(245, 243, 255, 0.25)
         ),
         url("images/bg-hero.png");
     background-position: right;

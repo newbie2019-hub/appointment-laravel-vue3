@@ -28,6 +28,7 @@ return new class extends Migration
             $table->string('valid_id')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->boolean('is_approved')->default(false);
+            $table->boolean('is_declined')->default(false);
             $table->string('signature')->nullable();
             $table->string('password');
             $table->softDeletes();

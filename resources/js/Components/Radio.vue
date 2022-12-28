@@ -26,7 +26,11 @@
 
 
 </script>
-
+<script>
+export default {
+    inheritAttrs: false
+}
+</script>
 <template>
   <div class="inline-flex items-center gap-x-1">
     <input
@@ -34,7 +38,9 @@
       type="radio"
       :value="value"
       :name="name"
+      checked
       @change="emit('update:modelValue', value)"
+      v-bind="$attrs"
     />
     <label :for="props.for">{{ label }}</label>
   </div>

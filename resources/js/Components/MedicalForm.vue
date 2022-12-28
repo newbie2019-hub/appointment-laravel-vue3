@@ -30,10 +30,18 @@ const props = defineProps({
     },
 });
 
-const emits = defineEmits(["emitClose", "registerAccount"]);
+const emits = defineEmits([
+    "emitClose",
+    "registerAccount",
+    "setDentalSelected",
+]);
 
 const emitCloseModal = () => emits("emitClose");
 const emitRegister = () => emits("registerAccount");
+
+const setDentalSelected = () => {
+    emits("setDentalSelected");
+};
 </script>
 <template>
     <Modal v-bind="$attrs" @close="emitCloseModal">
@@ -49,7 +57,16 @@ const emitRegister = () => emits("registerAccount");
         </template>
         <template #body>
             <div class="overflow-x-auto w-full">
-                <p class="font-medium mb-2 mt-4">Dental Questionnaire</p>
+                <div class="flex justify-between items-center mb-2 mt-4">
+                    <p class="font-medium">Dental Questionnaire</p>
+                    <a
+                        @click.prevent="setDentalSelected"
+                        href="#"
+                        type="button"
+                        class="text-violet-600 hover:text-violet-700 uppercase text-xs"
+                        >Select No</a
+                    >
+                </div>
                 <table class="w-full divide-y divide-gray-300">
                     <thead class="bg-gray-50">
                         <tr
@@ -96,6 +113,7 @@ const emitRegister = () => emits("registerAccount");
                                         :id="`dental-no-${i + 1}`"
                                         label="No"
                                         value="No"
+                                        checked
                                         :name="`d-q-${i + 1}`"
                                     />
                                 </div>
@@ -108,7 +126,15 @@ const emitRegister = () => emits("registerAccount");
                 </table>
             </div>
             <div class="overflow-x-auto w-full">
-                <p class="font-medium mb-2 mt-4">Medical Questionnaire</p>
+                <div class="flex justify-between items-center mb-2 mt-4">
+                    <p class="font-medium">Medical Questionnaire</p>
+                    <a
+                        href="#"
+                        type="button"
+                        class="text-violet-600 hover:text-violet-700 uppercase text-xs"
+                        >Select No</a
+                    >
+                </div>
                 <table class="w-full divide-y divide-gray-300">
                     <thead class="bg-gray-50">
                         <tr
@@ -166,7 +192,9 @@ const emitRegister = () => emits("registerAccount");
                     </tbody>
                 </table>
             </div>
-            <hr class="my-4"/>
+            <hr class="my-4" />
+            <p class="mt-2">Dental Record</p>
+            <p class="text-sm text-gray-600">All fields below are optional. Please fill-in if you have any of those fields.</p>
             <form-input
                 for="previous_dentist"
                 label="Previous Dentist"
@@ -190,35 +218,35 @@ const emitRegister = () => emits("registerAccount");
                     :disabled="viewOnly"
                 />
             </form-input>
-            <form-input
-                for="last_cleaning"
-                label="Last Cleaning"
-                class="mt-3"
-            >
-                <floating-input type="date" v-model="data.last_cleaning" :disabled="viewOnly"/>
+            <form-input for="last_cleaning" label="Last Cleaning" class="mt-3">
+                <floating-input
+                    type="date"
+                    v-model="data.last_cleaning"
+                    :disabled="viewOnly"
+                />
             </form-input>
-            <form-input
-                for="last_visit"
-                label="Last Visit"
-                class="mt-3"
-            >
-                <floating-input type="date" v-model="data.last_visit" :disabled="viewOnly"/>
+            <form-input for="last_visit" label="Last Visit" class="mt-3">
+                <floating-input
+                    type="date"
+                    v-model="data.last_visit"
+                    :disabled="viewOnly"
+                />
             </form-input>
-            <hr class="my-4"/>
+            <hr class="my-4" />
 
             <div v-if="!viewOnly">
                 <p class="font-medium pl-2 mt-4 mb-2">Please read carefully</p>
                 <p class="text-sm px-2 text-justify mb-3">
                     By clicking register account, I, the registering patient,
-                    understand the above information is necessary to provide me with
-                    dental care in a safe and efficient manner. I have answered all
-                    questions to the best of my knowledge. Manabat Dental-Flores has
-                    my permission to ask the respective health care provider or
-                    agency, who may release such information. I will notify this
-                    dental care facility of any and all changes in my health or
-                    medications. I consent to the performing of dental procedures
-                    agreed to be necessary or advisable, including the use of local
-                    anesthetics.
+                    understand the above information is necessary to provide me
+                    with dental care in a safe and efficient manner. I have
+                    answered all questions to the best of my knowledge. Manabat
+                    Dental-Flores has my permission to ask the respective health
+                    care provider or agency, who may release such information. I
+                    will notify this dental care facility of any and all changes
+                    in my health or medications. I consent to the performing of
+                    dental procedures agreed to be necessary or advisable,
+                    including the use of local anesthetics.
                 </p>
             </div>
         </template>

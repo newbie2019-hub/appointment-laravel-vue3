@@ -47,10 +47,17 @@ class LoginRequest extends FormRequest
         $this->ensureIsNotRateLimited();
 
         $user = User::whereEmail($this->email)->where('is_approved', false)->first();
+        $declinedUser = User::whereEmail($this->email)->where('is_declined', true)->first();
 
         if ($user) {
             throw ValidationException::withMessages([
                 'auth' => 'Account has not been approved yet',
+            ]);
+        }
+
+        if ($declinedUser) {
+            throw ValidationException::withMessages([
+                'auth' => 'Your account has been declined!',
             ]);
         }
 

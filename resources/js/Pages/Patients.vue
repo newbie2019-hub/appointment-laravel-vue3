@@ -29,6 +29,7 @@ let search = ref(props.filters.search);
 let trashed = ref(props.filters.trashed);
 
 const approveModalShown = ref(false);
+const declineModalShown = ref(false);
 const imgsRef = ref([]);
 const indexRef = ref(0);
 const isRestoreModalShown = ref(false);
@@ -84,6 +85,21 @@ const approveUser = () => {
         },
         onSuccess: () => {
             toast.success("Account has been approved successfully!");
+        },
+        onError: () => {
+            toast.error("Something went wrong!");
+        },
+    });
+};
+
+const declineUser = () => {
+    selectedUser.put(`/decline/${selectedUser.value.id}`, {
+        preserveState: true,
+        onFinish: () => {
+            declineModalShown.value = false;
+        },
+        onSuccess: () => {
+            toast.success("Account has been declined!");
         },
         onError: () => {
             toast.error("Something went wrong!");
@@ -316,7 +332,7 @@ const searchPatient = debounce(() => {
                                                     scope="col"
                                                     class="py-3.5 pl-4 pr-3 text-left sm:pl-6"
                                                 >
-                                                    Approved
+                                                    Approval
                                                 </th>
                                                 <th
                                                     scope="col"
@@ -365,7 +381,12 @@ const searchPatient = debounce(() => {
                                                         class="rounded-md cursor-pointer"
                                                         alt="Valid ID"
                                                     />
-                                                    <p v-else class="text-gray-400 text-xs">No Valid ID</p>
+                                                    <p
+                                                        v-else
+                                                        class="text-gray-400 text-xs"
+                                                    >
+                                                        No Valid ID
+                                                    </p>
                                                 </td>
                                                 <td
                                                     class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6 flex items-center gap-x-2"
@@ -438,6 +459,10 @@ const searchPatient = debounce(() => {
                                                                 patient.is_approved
                                                             )
                                                                 ? "Approved"
+                                                                : parseInt(
+                                                                      patient.is_declined
+                                                                  )
+                                                                ? "Declined"
                                                                 : "Pending"
                                                         }}
                                                     </div>
@@ -470,6 +495,22 @@ const searchPatient = debounce(() => {
                                                         size="sm"
                                                         color="success"
                                                         >Approve</Button
+                                                    >
+                                                    <Button
+                                                        v-if="
+                                                            !parseInt(
+                                                                patient.is_declined
+                                                            )
+                                                        "
+                                                        @click.prevent="
+                                                            declineModalShown = true;
+                                                            selectedUser.value =
+                                                                { ...patient };
+                                                        "
+                                                        text
+                                                        size="sm"
+                                                        color="error"
+                                                        >Decline</Button
                                                     >
                                                     <Button
                                                         @click.prevent="
@@ -547,6 +588,32 @@ const searchPatient = debounce(() => {
                 </div>
             </div>
         </div>
+
+        <Modal v-if="declineModalShown" @close="declineModalShown = false">
+            <template #title>
+                <p class="font-bold text-xl">Decline Account</p>
+                <p class="text-sm mt-2">
+                    Are you sure you want to decline this account? User wont be
+                    able to login and set an appointment
+                </p>
+            </template>
+            <template #footer>
+                <Button
+                    @click.prevent="declineModalShown = false"
+                    text
+                    size="sm"
+                    color=""
+                    >Cancel</Button
+                >
+                <Button
+                    @click.prevent="declineUser"
+                    text
+                    size="sm"
+                    color="error"
+                    >Decline</Button
+                >
+            </template>
+        </Modal>
 
         <Modal v-if="approveModalShown" @close="approveModalShown = false">
             <template #title>

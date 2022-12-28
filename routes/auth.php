@@ -56,4 +56,6 @@ Route::middleware('auth')->group(function () {
 
     Route::put('approve/{user}', [AuthenticatedSessionController::class, 'approve'])
                 ->name('approve');
+    Route::put('decline/{user}', [AuthenticatedSessionController::class, 'decline'])
+                ->name('approve');
 });
