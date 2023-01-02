@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\AppointmentRequest;
 use App\Mail\AppointmentApproved;
+use App\Mail\AppointmentDeclined;
 use App\Models\Appointment;
 use App\Models\AppointmentService;
 use App\Models\Service;
@@ -139,6 +140,7 @@ class AppointmentController extends Controller
             fn ($query) =>
             $query->where('appointment_status', '<>', 'Finished')
                 ->where('appointment_status', '<>', 'Cancelled')
+                ->where('appointment_status', '<>', 'Approved')
         )->where(function ($query) use ($data) {
             $query->where('schedule', '>=', Carbon::parse($data['fixed_schedule'])->format('Y-m-d H:i'))
                 ->where('schedule', '<=', Carbon::parse($data['fixed_schedule'])->addHour()->format('Y-m-d H:i'));
@@ -170,8 +172,35 @@ class AppointmentController extends Controller
         $appointment->update([
             'appointment_status' => 'Approved'
         ]);
+
         Mail::to($appointment->patient->email)->send(new AppointmentApproved($appointment));
+        $msg = 'Hi! This is from Manabat-Flores Dental Clinic and we would like to inform you that your appointment has been approved!';
+
+        $regexNum = "/^(639)\d{9}$/";
+        if(preg_match($regexNum, $appointment->patient->contact_number)) {
+            $this->send_sms('M. Dental', $appointment->patient->contact_number, $msg);
+        } else {
+            return back()->with('error', 'Error sending to patient\'s mobile number!');
+        }
         return back()->with('success', 'Appointment has been approved successfully!');
+    }
+
+    public function decline(Appointment $appointment)
+    {
+        $appointment->load(['patient']);
+        $appointment->update([
+            'appointment_status' => 'Declined'
+        ]);
+        Mail::to($appointment->patient->email)->send(new AppointmentDeclined($appointment));
+        $msg = 'Hi! This is from Manabat-Flores Dental Clinic and we\'re sorry to inform you that your appointment has been declined!';
+
+        $regexNum = "/^(639)\d{9}$/";
+        if(preg_match($regexNum, $appointment->patient->contact_number)) {
+            $this->send_sms('M. Dental', $appointment->patient->contact_number, $msg);
+        } else {
+            return back()->with('error', 'Error sending to patient\'s mobile number!');
+        }
+        return back()->with('success', 'Appointment has been declined!');
     }
 
     public function finished(Appointment $appointment)

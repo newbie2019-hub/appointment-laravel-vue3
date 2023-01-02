@@ -34,20 +34,24 @@ const errorMessage = computed(() => {
 const isHealthFormShown = ref(false);
 
 const validateFields = () => {
-    if(form.schedule == null || form.schedule == '') {
-        return toast.error('Please select a schedule!')
+    if (form.schedule == null || form.schedule == "") {
+        return toast.error("Please select a schedule!");
     }
 
-    if(form.selected_services == null || form.selected_services == '' || form.selected_services.length == 0) {
-        return toast.error('Please select atleast 1 service')
+    if (
+        form.selected_services == null ||
+        form.selected_services == "" ||
+        form.selected_services.length == 0
+    ) {
+        return toast.error("Please select atleast 1 service");
     }
 
-    if(form.message == null || form.message == '') {
-        return toast.error('Message is empty!')
+    if (form.message == null || form.message == "") {
+        return toast.error("Message is empty!");
     }
 
-    toggleHealthForm()
-}
+    toggleHealthForm();
+};
 const toggleHealthForm = () =>
     (isHealthFormShown.value = !isHealthFormShown.value);
 
@@ -292,7 +296,9 @@ const createAppointment = () => {
             </div>
             <p class="text-gray-500">
                 Please make sure to read our
-                <a href="#faqs" class="text-blue-600 cursor-pointer">policies</a>
+                <a href="#faqs" class="text-blue-600 cursor-pointer"
+                    >policies</a
+                >
                 before making an appointment.
             </p>
         </div>
@@ -412,9 +418,9 @@ const createAppointment = () => {
                         your needs
                     </p>
                 </div>
-                <div class="flex flex-nowrap mt-8 gap-2">
+                <div class="inline-flex gap-2 flex-wrap mt-8 justify-center">
                     <div
-                        class="md:w-1/3 border-2 border-gray-100 cursor-pointer rounded-md p-6 w-1/2 hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out"
+                        class="w-[200px] md:w-[380px] border-2 border-gray-100 cursor-pointer rounded-md p-6 hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out"
                     >
                         <p class="text-xl font-medium">Dentures</p>
                         <p class="mt-2 text-gray-500">
@@ -423,7 +429,7 @@ const createAppointment = () => {
                         </p>
                     </div>
                     <div
-                        class="md:w-1/3 border-2 border-gray-100 cursor-pointer rounded-md p-6 w-1/2 hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out"
+                        class="w-[200px] md:w-[380px] border-2 border-gray-100 cursor-pointer rounded-md p-6 hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out"
                     >
                         <p class="text-xl font-medium">Extraction</p>
                         <p class="mt-2 text-gray-500">
@@ -432,7 +438,7 @@ const createAppointment = () => {
                         </p>
                     </div>
                     <div
-                        class="md:w-1/3 border-2 border-gray-100 cursor-pointer rounded-md p-6 w-1/2 hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out"
+                        class="w-[200px] md:w-[380px] border-2 border-gray-100 cursor-pointer rounded-md p-6 hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out"
                     >
                         <p class="text-xl font-medium">Cleaning</p>
                         <p class="mt-2 text-gray-500">
@@ -440,10 +446,8 @@ const createAppointment = () => {
                             optimum oral health.
                         </p>
                     </div>
-                </div>
-                <div class="flex flex-nowrap mt-2 gap-2">
                     <div
-                        class="md:w-1/3 border-2 border-gray-100 cursor-pointer rounded-md p-6 w-1/2 hover:shadow-md hover:shadow-violet-100 duration-200 ease-in-out"
+                        class="w-[200px] md:w-[380px] border-2 border-gray-100 cursor-pointer rounded-md p-6 hover:shadow-md hover:shadow-violet-100 duration-200 ease-in-out"
                     >
                         <p class="text-xl font-medium">Teeth Whitening</p>
                         <p class="mt-2 text-gray-500">
@@ -452,7 +456,7 @@ const createAppointment = () => {
                         </p>
                     </div>
                     <div
-                        class="md:w-1/3 border-2 border-gray-100 cursor-pointer rounded-md p-6 w-1/2 hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out"
+                        class="w-[200px] md:w-[380px] border-2 border-gray-100 cursor-pointer rounded-md p-6 hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out"
                     >
                         <p class="text-xl font-medium">Braces</p>
                         <p class="mt-2 text-gray-500">
@@ -462,7 +466,7 @@ const createAppointment = () => {
                         </p>
                     </div>
                     <div
-                        class="md:w-1/3 border-2 border-gray-100 cursor-pointer rounded-md p-6 w-1/2 hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out"
+                        class="w-[200px] md:w-[380px] border-2 border-gray-100 cursor-pointer rounded-md p-6 hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out"
                     >
                         <p class="text-xl font-medium">FPO/Jacket</p>
                         <p class="mt-2 text-gray-500">
@@ -470,10 +474,8 @@ const createAppointment = () => {
                             further damage and replacing it the same time.
                         </p>
                     </div>
-                </div>
-                <div class="flex flex-nowrap mt-2 gap-2">
                     <div
-                        class="md:w-1/2 hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out border-2 border-gray-100 cursor-pointer rounded-md p-6"
+                        class="w-[200px] md:w-[380px] hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out border-2 border-gray-100 cursor-pointer rounded-md p-6"
                     >
                         <p class="text-xl font-medium">Cleaning</p>
                         <p class="mt-2 text-gray-500">
@@ -482,7 +484,7 @@ const createAppointment = () => {
                         </p>
                     </div>
                     <div
-                        class="md:w-1/2 hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out border-2 border-gray-100 cursor-pointer rounded-md p-6"
+                        class="w-[200px] md:w-[380px] hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out border-2 border-gray-100 cursor-pointer rounded-md p-6"
                     >
                         <p class="text-xl font-medium">Surgery</p>
                         <p class="mt-2 text-gray-500">

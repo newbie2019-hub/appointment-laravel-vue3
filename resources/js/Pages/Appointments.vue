@@ -162,11 +162,11 @@ let form = useForm({
     schedule: "",
     date: "",
     healthFormData: {
-        q1: null,
-        q2: null,
-        q3: null,
-        q4: null,
-        q5: null,
+        q1: "No",
+        q2: "No",
+        q3: "No",
+        q4: "No",
+        q5: "No",
     },
 });
 
@@ -197,16 +197,17 @@ const selectedAppointment = ref({
     schedule: null,
     patient: { first_name: null, last_name: null },
     healthFormData: {
-        q1: null,
-        q2: null,
-        q3: null,
-        q4: null,
-        q5: null,
+        q1: "No",
+        q2: "No",
+        q3: "No",
+        q4: "No",
+        q5: "No",
     },
 });
 
 const isCreating = ref(false);
 const isCreateModalShown = ref(false);
+const isDeclineModal = ref(false);
 const isDeleteModalShown = ref(false);
 const isRestoreModalShown = ref(false);
 const isPaymentModalShown = ref(false);
@@ -220,7 +221,7 @@ const isViewHealthFormShown = ref(false);
 const selectedService = toRef(form, "selected_services");
 
 const totalPayment = computed(() => {
-    console.log(selectedAppointment.value.payments_sum_amount_tendered)
+    console.log(selectedAppointment.value.payments_sum_amount_tendered);
     return (
         parseFloat(selectedAppointment.value.subtotal) -
         parseFloat(selectedAppointment.value.payments_sum_amount_tendered ?? 0)
@@ -244,6 +245,10 @@ const togglePaymentModal = (isadmin) => {
 
 const toggleAppointmentModal = () => {
     isAppointmentModalShown.value = !isAppointmentModalShown.value;
+};
+
+const toggleDeclineModal = () => {
+    isDeclineModal.value = !isDeclineModal.value;
 };
 
 const togglePrescriptionModal = (
@@ -352,6 +357,19 @@ const approveAppointment = () => {
         onSuccess: () => {
             toast.success("Appointment has been approved successfully!");
             toggleAppointmentModal();
+        },
+    });
+};
+
+const declineAppointment = () => {
+    form.put(`/appointments/decline/${selectedAppointment.value.id}`, {
+        preserveState: true,
+        onError: () => {
+            toast.error("Something went wrong");
+        },
+        onSuccess: () => {
+            toast.success("Appointment has been declined!");
+            toggleDeclineModal();
         },
     });
 };
@@ -840,6 +858,18 @@ const searchPatient = debounce((val) => {
                                                     >Details</Button
                                                 >
                                                 <Button
+                                                    v-if="appointment.appointment_status == 'Pending'"
+                                                    text
+                                                    size="sm"
+                                                    color="error"
+                                                    @click="
+                                                        toggleDeclineModal();
+                                                        selectedAppointment =
+                                                            appointment;
+                                                    "
+                                                    >Decline</Button
+                                                >
+                                                <Button
                                                     text
                                                     size="sm"
                                                     @click="
@@ -862,6 +892,8 @@ const searchPatient = debounce((val) => {
                                                             'Finished' &&
                                                         appointment.appointment_status !=
                                                             'Approved' &&
+                                                        appointment.appointment_status !=
+                                                            'Declined' &&
                                                         !$page.props.auth.user
                                                             .is_admin
                                                     "
@@ -1159,6 +1191,35 @@ const searchPatient = debounce((val) => {
                 >
             </template>
         </Modal> -->
+
+        <Modal v-if="isDeclineModal" @close="toggleDeclineModal">
+            <template v-slot:title>
+                <p class="text-xl font-bold">Confirm Decline</p>
+            </template>
+            <template v-slot:body>
+                <p class="text-sm text-gray-600">
+                    Are you sure you want to decline this appointment? The
+                    patient will be notified that his/her appointment was
+                    declined.
+                </p>
+            </template>
+            <template v-slot:footer>
+                <Button
+                    @click.prevent="toggleDeclineModal"
+                    text
+                    size="sm"
+                    color="gray"
+                    >Close</Button
+                >
+                <Button
+                    @click.prevent="declineAppointment"
+                    text
+                    size="sm"
+                    color="error"
+                    >Decline</Button
+                >
+            </template>
+        </Modal>
 
         <Modal v-if="isDeleteModalShown" @close="toggleDeleteModal">
             <template v-slot:title>
