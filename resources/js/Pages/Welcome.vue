@@ -5,6 +5,7 @@ import FloatingInput from "@/Components/FloatingInput/FloatingInput.vue";
 import AccordionItem from "@/Components/Accordion/AccordionItem.vue";
 import Accordion from "@/Components/Accordion/Accordion.vue";
 import HealthForm from "@/Components/HealthForm.vue";
+import Modal from "@/Components/Modal/Modal.vue";
 import FormInput from "@/Components/FloatingInput/FormInput.vue";
 import { ref, computed, watch, toRef, onMounted } from "vue";
 import { formatCurrency } from "@/Composables/Utilities";
@@ -32,6 +33,7 @@ const errorMessage = computed(() => {
 });
 
 const isHealthFormShown = ref(false);
+const scheduleShown = ref(false);
 
 const validateFields = () => {
     if (form.schedule == null || form.schedule == "") {
@@ -55,17 +57,21 @@ const validateFields = () => {
 const toggleHealthForm = () =>
     (isHealthFormShown.value = !isHealthFormShown.value);
 
+const toggleSchedules = () => (scheduleShown.value = !scheduleShown.value);
+
 const form = useForm({
     schedule: "",
+    schedule_date: "",
+    schedule_time: "",
     selected_services: [],
     subtotal: 0,
     message: "",
     healthFormData: {
-        q1: null,
-        q2: null,
-        q3: null,
-        q4: null,
-        q5: null,
+        q1: "No",
+        q2: "No",
+        q3: "No",
+        q4: "No",
+        q5: "No",
     },
 });
 
@@ -83,6 +89,7 @@ watch(selectedService, setSubtotalValue);
 const props = defineProps({
     errors: Object,
     services: Object,
+    appointments: Object,
 });
 
 const isOptionSelected = (id) => {
@@ -220,10 +227,18 @@ const createAppointment = () => {
                         if your appointment is successful.
                     </p>
                 </div>
-                <div class="hidden md:flex">
+                <div class="hidden md:flex gap-2">
+                    <Button
+                        type="button"
+                        @click.prevent="toggleSchedules"
+                        color="accent-1"
+                        class="w-1/2"
+                        >Schedules</Button
+                    >
                     <Button
                         type="button"
                         @click.prevent="validateFields"
+                        class="w-full"
                         color="accent-1"
                         >Book Now</Button
                     >
@@ -232,22 +247,20 @@ const createAppointment = () => {
             <div class="my-5">
                 <form class="flex gap-2 flex-wrap md:flex-nowrap">
                     <Datepicker
-                        placeholder="Select Schedule"
+                        placeholder="Select Date"
                         class="w-full"
                         v-model="form.schedule"
                         :is24="false"
                         weekStart="0"
                         :disabledWeekDays="[0]"
-                        minutesIncrement="30"
-                        noMinutesOverlay
-                        :startTime="{ hours: '10', minutes: '00' }"
                         :min-date="
-                            moment().add(2, 'day').format('YYYY-MM-DDT00:00')
+                            moment().add(2, 'day').format('YYYY-MM-DDT10:00')
                         "
                         :max-date="
-                            moment().add(2, 'month').format('YYYY-MM-DDT00:00')
+                            moment().add(2, 'month').format('YYYY-MM-DDT05:00')
                         "
                     />
+
                     <VueMultiselect
                         v-model="form.selected_services"
                         :options="services"
@@ -283,6 +296,7 @@ const createAppointment = () => {
                     >
                         <floating-input id="message" v-model="form.message" />
                     </form-input>
+
                     <div class="block w-full md:hidden">
                         <Button
                             type="button"
@@ -420,7 +434,7 @@ const createAppointment = () => {
                 </div>
                 <div class="inline-flex gap-2 flex-wrap mt-8 justify-center">
                     <div
-                        class="w-[200px] md:w-[380px] border-2 border-gray-100 cursor-pointer rounded-md p-6 hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out"
+                        class="w-[340px] sm:w-[280px] md:w-[380px] border-2 border-gray-100 cursor-pointer rounded-md p-6 hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out"
                     >
                         <p class="text-xl font-medium">Dentures</p>
                         <p class="mt-2 text-gray-500">
@@ -429,7 +443,7 @@ const createAppointment = () => {
                         </p>
                     </div>
                     <div
-                        class="w-[200px] md:w-[380px] border-2 border-gray-100 cursor-pointer rounded-md p-6 hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out"
+                        class="w-[340px] sm:w-[280px] md:w-[380px] border-2 border-gray-100 cursor-pointer rounded-md p-6 hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out"
                     >
                         <p class="text-xl font-medium">Extraction</p>
                         <p class="mt-2 text-gray-500">
@@ -438,7 +452,7 @@ const createAppointment = () => {
                         </p>
                     </div>
                     <div
-                        class="w-[200px] md:w-[380px] border-2 border-gray-100 cursor-pointer rounded-md p-6 hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out"
+                        class="w-[340px] sm:w-[280px] md:w-[380px] border-2 border-gray-100 cursor-pointer rounded-md p-6 hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out"
                     >
                         <p class="text-xl font-medium">Cleaning</p>
                         <p class="mt-2 text-gray-500">
@@ -447,7 +461,7 @@ const createAppointment = () => {
                         </p>
                     </div>
                     <div
-                        class="w-[200px] md:w-[380px] border-2 border-gray-100 cursor-pointer rounded-md p-6 hover:shadow-md hover:shadow-violet-100 duration-200 ease-in-out"
+                        class="w-[340px] sm:w-[280px] md:w-[380px] border-2 border-gray-100 cursor-pointer rounded-md p-6 hover:shadow-md hover:shadow-violet-100 duration-200 ease-in-out"
                     >
                         <p class="text-xl font-medium">Teeth Whitening</p>
                         <p class="mt-2 text-gray-500">
@@ -456,7 +470,7 @@ const createAppointment = () => {
                         </p>
                     </div>
                     <div
-                        class="w-[200px] md:w-[380px] border-2 border-gray-100 cursor-pointer rounded-md p-6 hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out"
+                        class="w-[340px] sm:w-[280px] md:w-[380px] border-2 border-gray-100 cursor-pointer rounded-md p-6 hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out"
                     >
                         <p class="text-xl font-medium">Braces</p>
                         <p class="mt-2 text-gray-500">
@@ -466,7 +480,7 @@ const createAppointment = () => {
                         </p>
                     </div>
                     <div
-                        class="w-[200px] md:w-[380px] border-2 border-gray-100 cursor-pointer rounded-md p-6 hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out"
+                        class="w-[340px] sm:w-[280px] md:w-[380px] border-2 border-gray-100 cursor-pointer rounded-md p-6 hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out"
                     >
                         <p class="text-xl font-medium">FPO/Jacket</p>
                         <p class="mt-2 text-gray-500">
@@ -475,7 +489,7 @@ const createAppointment = () => {
                         </p>
                     </div>
                     <div
-                        class="w-[200px] md:w-[380px] hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out border-2 border-gray-100 cursor-pointer rounded-md p-6"
+                        class="w-[340px] sm:w-[280px] md:w-[380px] hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out border-2 border-gray-100 cursor-pointer rounded-md p-6"
                     >
                         <p class="text-xl font-medium">Cleaning</p>
                         <p class="mt-2 text-gray-500">
@@ -484,7 +498,7 @@ const createAppointment = () => {
                         </p>
                     </div>
                     <div
-                        class="w-[200px] md:w-[380px] hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out border-2 border-gray-100 cursor-pointer rounded-md p-6"
+                        class="w-[340px] sm:w-[280px] md:w-[380px] hover:shadow-violet-100 hover:shadow-md duration-200 ease-in-out border-2 border-gray-100 cursor-pointer rounded-md p-6"
                     >
                         <p class="text-xl font-medium">Surgery</p>
                         <p class="mt-2 text-gray-500">
@@ -709,6 +723,27 @@ const createAppointment = () => {
         @emit-close="toggleHealthForm"
         @emit-save-appointment="createAppointment"
     />
+
+    <Modal v-if="scheduleShown" @close="toggleSchedules">
+        <template v-slot:title>
+            <p class="text-xl font-bold">Appointment Schedules</p>
+            <p class="text-sm text-gray-600 mt-2">
+                Appointments reserved by the other patients are shown
+            </p>
+        </template>
+        <template v-slot:body>
+            <p>Current Schedules</p>
+            <div v-for="(sched, i) in appointments" :key="i" class="">
+                {{ sched.schedule }}
+            </div>
+            <p class="mt-4 text-sm text-gray-600">
+                You may select any schedules from Mon-Fri 10:00 AM until 4:00 PM
+                for the last booking as our clinic closes at 5:00 PM. Please
+                take note that we have a break at 12 - 1 for Lunch.
+            </p>
+        </template>
+        <template v-slot:footer> </template>
+    </Modal>
 </template>
 
 <style>

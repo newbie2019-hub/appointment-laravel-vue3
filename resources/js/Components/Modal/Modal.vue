@@ -35,7 +35,7 @@ const emitClose = () => {
             <div class="flex w-full px-4 sm:px-0">
                 <Transition>
                     <div
-                        class="mx-auto min-w-full sm:min-w-[426px] max-w-[460px] bg-white box-shadow-lg rounded-lg min-w-2xl z-[999] inset-0"
+                        class="mx-auto min-w-full sm:min-w-[426px] max-w-[500px] bg-white box-shadow-lg rounded-lg min-w-2xl z-[999] inset-0"
                     >
                         <div class="px-5 pt-5 pb-3">
                             <slot name="title" />

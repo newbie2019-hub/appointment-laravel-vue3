@@ -15,3 +15,9 @@
         @apply min-h-[680px] max-h-[680px];
     }
 }
+
+.business-hours {
+    background-color: rgba(101, 255, 98, 0.15);
+    border: solid rgba(22, 145, 20, 0.3);
+    border-width: 2px 0;
+}

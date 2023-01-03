@@ -139,8 +139,7 @@ class AppointmentController extends Controller
         $doesExist = Appointment::where(
             fn ($query) =>
             $query->where('appointment_status', '<>', 'Finished')
-                ->where('appointment_status', '<>', 'Cancelled')
-                ->where('appointment_status', '<>', 'Approved')
+                ->orWhere('appointment_status', '<>', 'Approved')
         )->where(function ($query) use ($data) {
             $query->where('schedule', '>=', Carbon::parse($data['fixed_schedule'])->format('Y-m-d H:i'))
                 ->where('schedule', '<=', Carbon::parse($data['fixed_schedule'])->addHour()->format('Y-m-d H:i'));
