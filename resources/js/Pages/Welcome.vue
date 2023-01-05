@@ -61,8 +61,6 @@ const toggleSchedules = () => (scheduleShown.value = !scheduleShown.value);
 
 const form = useForm({
     schedule: "",
-    schedule_date: "",
-    schedule_time: "",
     selected_services: [],
     subtotal: 0,
     message: "",
@@ -104,6 +102,14 @@ const isOptionSelected = (id) => {
 };
 
 const createAppointment = () => {
+
+    const hour = new Date(form.schedule).getHours()
+
+    if(hour == 12 || hour > 16) {
+        toggleHealthForm()
+        return toast.error('Schedule selected is not part of our working hours!')
+    }
+
     if (authenticatedUser.value) {
         form.transform((data) => ({
             ...data,
@@ -736,6 +742,9 @@ const createAppointment = () => {
             <div v-for="(sched, i) in appointments" :key="i" class="">
                 {{ sched.schedule }}
             </div>
+            <p v-if="appointments.length == 0" class="text-gray-600 text-sm">
+                No schedules were reserved.
+            </p>
             <p class="mt-4 text-sm text-gray-600">
                 You may select any schedules from Mon-Fri 10:00 AM until 4:00 PM
                 for the last booking as our clinic closes at 5:00 PM. Please

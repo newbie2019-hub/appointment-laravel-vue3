@@ -8,6 +8,7 @@ import FloatingSelect from "@/Components/FloatingInput/FloatingSelect.vue";
 import FloatingTextArea from "@/Components/FloatingInput/FloatingTextArea.vue";
 import Chip from "@/Components/Chip.vue";
 import Pagination from "@/Shared/Pagination.vue";
+import Calendar from "@/Components/Calendar.vue";
 import Modal from "@/Components/Modal/Modal.vue";
 import HealthForm from "@/Components/HealthForm.vue";
 import { loadStripe } from "@stripe/stripe-js/pure";
@@ -21,7 +22,6 @@ import {
     chipColor,
 } from "@/Composables/Utilities";
 import { useToast } from "vue-toastification";
-import Calendar from "@/Components/Calendar.vue";
 import VueMultiselect from "vue-multiselect";
 import Datepicker from "@vuepic/vue-datepicker";
 import "@vuepic/vue-datepicker/dist/main.css";
@@ -437,6 +437,7 @@ const updateAppointment = () => {
 
 const props = defineProps({
     appointments: Object,
+    appointmentCalendar: Object,
     errors: Object,
     filters: Object,
     trashedAppointmentsCount: Number,
@@ -591,7 +592,7 @@ const searchPatient = debounce((val) => {
             <div class="py-8 mx-auto max-w-8xl sm:px-6 lg:px-8 md:flex gap-x-4">
                 <div class="flex-1 w-full">
                     <Calendar
-                        :data="appointments.data"
+                        :data="appointmentCalendar"
                         @emit-event="openEventModal"
                     />
                 </div>
@@ -632,6 +633,9 @@ const searchPatient = debounce((val) => {
                                         </option>
                                         <option value="approved">
                                             Approved Appointments
+                                        </option>
+                                        <option value="declined">
+                                            Declined Appointments
                                         </option>
                                         <option value="finished">
                                             Finished Appointments
@@ -858,7 +862,10 @@ const searchPatient = debounce((val) => {
                                                     >Details</Button
                                                 >
                                                 <Button
-                                                    v-if="appointment.appointment_status == 'Pending'"
+                                                    v-if="
+                                                        appointment.appointment_status ==
+                                                        'Pending'
+                                                    "
                                                     text
                                                     size="sm"
                                                     color="error"
@@ -953,8 +960,10 @@ const searchPatient = debounce((val) => {
                                                 <Button
                                                     is-link
                                                     v-if="
-                                                        appointment.payment_status ==
-                                                            'Paid' &&
+                                                        (appointment.payment_status ==
+                                                            'Paid' ||
+                                                            appointment.payment_status ==
+                                                                'Partially-Paid') &&
                                                         appointment.prescription !=
                                                             null
                                                     "

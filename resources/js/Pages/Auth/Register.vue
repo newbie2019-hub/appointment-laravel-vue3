@@ -25,7 +25,7 @@ const form = useForm({
     image_preview: "",
     valid_id: "",
     address: "",
-    contact_number: "",
+    contact_number: "63",
     password: "",
     birthday: "",
     password_confirmation: "",
@@ -41,12 +41,12 @@ const toggleMedForm = () => {
 };
 
 const setDentalSelected = () => {
-    console.log("HIIII")
     form.medFormData.dental_questions = Array(19).fill("No")
 }
 
 const validateFields = () => {
     if (registrationSteps.value.currentStep == 1) {
+        const regex = /^(63)/
         if (form.first_name.trim() == "") {
             return toast.error("First Name is required!");
         }
@@ -56,8 +56,11 @@ const validateFields = () => {
         if (form.contact_number.trim() == "") {
             return toast.error("Contact Number is required!");
         }
-        if (form.contact_number.length < 11) {
-            return toast.error("Contact Number min length is 11");
+        if (form.contact_number.length < 12 || form.contact_number.length > 12) {
+            return toast.error("Contact Number min-max length is 12 and a prefix of 63");
+        }
+        if (!regex.test(form.contact_number)) {
+            return toast.error("Contact Number must have a prefix of 63");
         }
         if (form.address.trim() == "") {
             return toast.error("Address is required!");

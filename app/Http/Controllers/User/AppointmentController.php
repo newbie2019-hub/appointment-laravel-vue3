@@ -23,6 +23,7 @@ class AppointmentController extends Controller
         $users = [];
 
         if (auth()->user()->is_admin) {
+            $appointmentCalendar = Appointment::with(['patient:id,first_name,last_name,address,email,gender'])->where('appointment_status', '<>', 'Declined')->where('appointment_status', '<>', 'Finished')->latest()->get();
             $appointments = Appointment::with(['patient:id,first_name,last_name,email,gender,address', 'services.service', 'payments', 'prescription'])
                 ->withCount('prescription')
                 ->withSum('payments', 'amount_tendered')
@@ -38,6 +39,8 @@ class AppointmentController extends Controller
                         $query->where('appointment_status', 'Finished');
                     } else if ($request->trashed === 'approved') {
                         $query->where('appointment_status', 'Approved');
+                    } else if ($request->trashed === 'declined') {
+                        $query->where('appointment_status', 'Declined');
                     } else if ($request->trashed === 'only') {
                         $query->onlyTrashed();
                     } else {
@@ -49,6 +52,7 @@ class AppointmentController extends Controller
             $todaysAppointment = Appointment::whereDate('schedule', now())->count();
             $users = $this->search($request);
         } else {
+            $appointmentCalendar = Appointment::with(['patient:id,first_name,last_name,address,email,gender'])->where('user_id', auth()->id())->where('appointment_status', '<>', 'Declined')->where('appointment_status', '<>', 'Finished')->latest()->get();
             $appointments = Appointment::where('user_id', auth()->id())->with(['patient:id,first_name,last_name,address,email,gender', 'services.service', 'payments', 'prescription'])->withCount('prescription')->when(
                 $request->search,
                 fn ($query, $search) =>
@@ -70,7 +74,7 @@ class AppointmentController extends Controller
         *  data
         */
         $filters = $request->only(['search', 'trashed']);
-        return Inertia::render('Appointments', compact('users', 'services', 'appointments', 'filters', 'trashedAppointmentsCount', 'todaysAppointment'));
+        return Inertia::render('Appointments', compact('users', 'services', 'appointments', 'filters', 'trashedAppointmentsCount', 'todaysAppointment', 'appointmentCalendar'));
     }
 
     public function store(AppointmentRequest $request)
