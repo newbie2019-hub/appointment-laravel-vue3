@@ -60,7 +60,7 @@ const toggleHealthForm = () =>
 const toggleSchedules = () => (scheduleShown.value = !scheduleShown.value);
 
 const form = useForm({
-    schedule: "",
+    schedule: moment().add(1, 'days').set("hour", 10).set('minute', 0),
     selected_services: [],
     subtotal: 0,
     message: "",
@@ -102,12 +102,13 @@ const isOptionSelected = (id) => {
 };
 
 const createAppointment = () => {
+    const hour = new Date(form.schedule).getHours();
 
-    const hour = new Date(form.schedule).getHours()
-
-    if(hour == 12 || hour > 16) {
-        toggleHealthForm()
-        return toast.error('Schedule selected is not part of our working hours!')
+    if (hour == 12 || hour > 16) {
+        toggleHealthForm();
+        return toast.error(
+            "Schedule selected is not part of our working hours!"
+        );
     }
 
     if (authenticatedUser.value) {
@@ -259,8 +260,11 @@ const createAppointment = () => {
                         :is24="false"
                         weekStart="0"
                         :disabledWeekDays="[0]"
+                        minutes-grid-increment="60"
+                        no-minutes-overlay
+                        minutes-increment="00"
                         :min-date="
-                            moment().add(2, 'day').format('YYYY-MM-DDT10:00')
+                            moment().add(1, 'day').format('YYYY-MM-DDT10:00')
                         "
                         :max-date="
                             moment().add(2, 'month').format('YYYY-MM-DDT05:00')
@@ -304,6 +308,13 @@ const createAppointment = () => {
                     </form-input>
 
                     <div class="block w-full md:hidden">
+                        <Button
+                            type="button"
+                            @click.prevent="toggleSchedules"
+                            color="accent-1"
+                            class="w-full mb-2"
+                            >Schedules</Button
+                        >
                         <Button
                             type="button"
                             @click.prevent="toggleHealthForm"

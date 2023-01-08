@@ -159,7 +159,7 @@ let form = useForm({
     selected_services: [],
     user_id: null,
     message: "",
-    schedule: "",
+    schedule: moment().add(1, 'days').toDate().setMinutes(0),
     date: "",
     healthFormData: {
         q1: "No",
@@ -306,6 +306,15 @@ const hasBalance = (appointment) => {
 };
 
 const initiateMethod = () => {
+    const hour = new Date(form.schedule).getHours();
+
+    if (hour == 12 || hour > 16) {
+        toggleHealthForm();
+        return toast.error(
+            "Schedule selected is not part of our working hours!"
+        );
+    }
+
     if (isCreating.value) {
         saveAppointment();
     } else {
@@ -1493,25 +1502,23 @@ const searchPatient = debounce((val) => {
                         class="mt-3"
                     >
                         <Datepicker
-                            noMinutesOverlay
                             label="Select Schedule"
                             :modelValue="form.schedule"
-                            @update:model-value="validateDate"
                             :is24="false"
                             weekStart="0"
-                            utc
                             :disabledWeekDays="[0]"
-                            minutesIncrement="00"
-                            :startTime="{ hours: '10', minutes: '00' }"
+                            minutes-grid-increment="60"
+                            no-minutes-overlay
+                            minutes-increment="00"
                             :min-date="
                                 moment()
                                     .add(1, 'day')
-                                    .format('YYYY-MM-DDT00:00')
+                                    .format('YYYY-MM-DDT10:00')
                             "
                             :max-date="
                                 moment()
                                     .add(2, 'month')
-                                    .format('YYYY-MM-DDT00:00')
+                                    .format('YYYY-MM-DDT05:00')
                             "
                         />
                     </form-input>

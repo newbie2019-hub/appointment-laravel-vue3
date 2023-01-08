@@ -1,5 +1,5 @@
 <template>
-    <div class="h-[420px]">
+    <div class="h-[500px]">
         <vue-cal
             ref="vuecal"
             class="vuecal--blue-theme"
@@ -44,7 +44,8 @@ const props = defineProps({
 
 const dailyHours = [
     { from: 9 * 60, to: 12 * 60, class: "business-hours" },
-    { from: 14 * 60, to: 18 * 60, class: "business-hours" },
+    { from: 12 * 60, to: 13 * 60, class: "bg-red-100"},
+    { from: 13 * 60, to: 18 * 60, class: "business-hours" },
 ];
 const specialHours = ref({
     1: dailyHours,

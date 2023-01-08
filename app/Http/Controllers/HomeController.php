@@ -13,7 +13,7 @@ class HomeController extends Controller
     {
         $appointments = [];
         $appointments = Appointment::where('appointment_status', '<>', 'Cancelled')
-            ->where('schedule', '>=', Carbon::now()->addDay()->format('Y-m-d H:i'))->get(['id', 'schedule']);
+            ->where('appointment_status', '<>', 'Declined')->where('schedule', '>=', Carbon::now()->addDay()->format('Y-m-d H:i'))->get(['id', 'schedule']);
 
         $services = Service::get();
         return inertia('Welcome', compact('services', 'appointments'));
