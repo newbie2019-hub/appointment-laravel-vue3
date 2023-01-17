@@ -60,7 +60,7 @@ const toggleHealthForm = () =>
 const toggleSchedules = () => (scheduleShown.value = !scheduleShown.value);
 
 const form = useForm({
-    schedule: moment().add(1, 'days').set("hour", 10).set('minute', 0),
+    schedule: moment().add(1, "days").set("hour", 10).set("minute", 0),
     selected_services: [],
     subtotal: 0,
     message: "",
@@ -164,7 +164,7 @@ const createAppointment = () => {
                     </li>
                     <li>
                         <a
-                            href="#appointment"
+                            href="#home"
                             class="navigation-link font-regular"
                             >Appointment</a
                         >
@@ -219,7 +219,10 @@ const createAppointment = () => {
             </div>
         </div>
     </section>
-    <div class="bottom-32 mx-auto relative section-container">
+    <div
+        id="book-appointment"
+        class="bottom-32 mx-auto relative section-container"
+    >
         <div class="px-6 py-8 bg-white drop-shadow-md rounded-md w-full">
             <div class="flex justify-between items-center">
                 <div>
@@ -436,7 +439,7 @@ const createAppointment = () => {
         </div>
     </section>
 
-    <section class="mx-auto relative my-12 mt-32">
+    <section id="services" class="mx-auto relative my-12 mt-32">
         <div class="section-container items-center justify-center">
             <div class="">
                 <div class="text-center">
@@ -529,7 +532,7 @@ const createAppointment = () => {
         </div>
     </section>
 
-    <section class="my-24 relative h-[540px]">
+    <section id="location" class="my-24 relative h-[540px]">
         <div
             class="hidden md:block absolute top-6 right-6 max-w-lg bg-white p-6 rounded-sm"
         >
@@ -658,7 +661,10 @@ const createAppointment = () => {
         </div>
     </section>
 
-    <section class="bg-violet-100 w-full h-full relative py-10 mt-32">
+    <section
+        id="contact"
+        class="bg-violet-100 w-full h-full relative py-10 mt-32"
+    >
         <div class="section-container items-center flex-wrap">
             <div class="flex flex-wrap items-center justify-between w-full">
                 <div class="mb-4">
@@ -671,7 +677,9 @@ const createAppointment = () => {
                         now!
                     </p>
                 </div>
-                <Button is-link href="#home" color="accent-1">Book Now!</Button>
+                <Button is-link href="#book-appointment" color="accent-1"
+                    >Book Now!</Button
+                >
             </div>
             <div
                 class="w-full mt-12 flex md:flex-nowrap flex-wrap justify-between"
@@ -704,7 +712,7 @@ const createAppointment = () => {
                             >Services</a
                         >
                         <a
-                            href="#appointment"
+                            href="#home"
                             class="hover:text-violet-600 block text-gray-600 font-medium"
                             >Appointment</a
                         >
