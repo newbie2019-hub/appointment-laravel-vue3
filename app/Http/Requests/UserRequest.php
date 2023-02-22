@@ -30,9 +30,9 @@ class UserRequest extends FormRequest
             'email' => 'required|email|unique:services,service,'.$this->id.',id',
             'address' => 'required|max:255',
             'gender' => 'required|max:20',
-            'contact_number' => 'required|min:11|max:25',
+            'contact_number' => 'required|min:12|max:25',
             'birthday' => 'required',
-            'current_password' => 'sometimes|current_password'         
+            'current_password' => 'sometimes|current_password'
         ];
     }
 }

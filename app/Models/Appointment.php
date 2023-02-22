@@ -14,7 +14,7 @@ class Appointment extends Model
 
     public function patient()
     {
-        return $this->belongsTo(User::class, 'user_id', 'id');
+        return $this->belongsTo(User::class, 'user_id', 'id')->withTrashed();
     }
 
     public function services()

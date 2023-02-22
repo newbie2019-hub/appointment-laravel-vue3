@@ -104,7 +104,8 @@ const isOptionSelected = (id) => {
 const createAppointment = () => {
     const hour = new Date(form.schedule).getHours();
 
-    if (hour == 12 || hour > 16) {
+    console.log('Hour: ', hour)
+    if (hour < 10 || hour == 12 || hour > 16) {
         toggleHealthForm();
         return toast.error(
             "Schedule selected is not part of our working hours!"

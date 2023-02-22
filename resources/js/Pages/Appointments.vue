@@ -159,7 +159,7 @@ let form = useForm({
     selected_services: [],
     user_id: null,
     message: "",
-    schedule: moment().add(1, 'days').toDate().setMinutes(0),
+    schedule: moment().add(1, "days").toDate().setMinutes(0),
     date: "",
     healthFormData: {
         q1: "No",
@@ -308,7 +308,7 @@ const hasBalance = (appointment) => {
 const initiateMethod = () => {
     const hour = new Date(form.schedule).getHours();
 
-    if (hour == 12 || hour > 16) {
+    if (hour < 10 || hour == 12 || hour > 16) {
         toggleHealthForm();
         return toast.error(
             "Schedule selected is not part of our working hours!"
@@ -1502,8 +1502,9 @@ const searchPatient = debounce((val) => {
                         class="mt-3"
                     >
                         <Datepicker
-                            label="Select Schedule"
-                            :modelValue="form.schedule"
+                            placeholder="Select Date"
+                            class="w-full"
+                            v-model="form.schedule"
                             :is24="false"
                             weekStart="0"
                             :disabledWeekDays="[0]"
