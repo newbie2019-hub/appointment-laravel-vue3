@@ -21,17 +21,17 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
     <BreezeGuestLayout>
         <Head title="Email Verification" />
 
-        <div class="mb-4 text-sm text-gray-600">
+        <div class="mb-4 text-lg text-gray-600 max-w-xl text-center">
             Thanks for signing up! Before getting started, could you verify your email address by clicking on the link we just emailed to you? If you didn't receive the email, we will gladly send you another.
         </div>
 
-        <div class="mb-4 font-medium text-sm text-green-600" v-if="verificationLinkSent" >
+        <div class="mb-4 font-medium text-sm text-center text-green-600" v-if="verificationLinkSent" >
             A new verification link has been sent to the email address you provided during registration.
         </div>
 
         <form @submit.prevent="submit">
             <div class="mt-4 flex items-center justify-between">
-                <BreezeButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing">
+                <BreezeButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing" class="mr-5">
                     Resend Verification Email
                 </BreezeButton>
 

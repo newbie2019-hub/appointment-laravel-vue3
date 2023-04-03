@@ -14,7 +14,7 @@ use Laravel\Sanctum\HasApiTokens;
 use Laravel\Cashier\Billable;
 use App\Enums\AccountStatus;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     use HasApiTokens, HasFactory, Notifiable, SoftDeletes, Billable;
 

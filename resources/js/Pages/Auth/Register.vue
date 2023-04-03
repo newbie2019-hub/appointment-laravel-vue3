@@ -1,20 +1,19 @@
 <script setup>
 import Button from "@/Components/Button/Button.vue";
 import BreezeGuestLayout from "@/Layouts/Guest.vue";
-import BreezeInput from "@/Components/Input.vue";
-import BreezeLabel from "@/Components/Label.vue";
-import BreezeValidationErrors from "@/Components/ValidationErrors.vue";
 import FloatingInput from "@/Components/FloatingInput/FloatingInput.vue";
 import FloatingSelect from "@/Components/FloatingInput/FloatingSelect.vue";
 import FormInput from "@/Components/FloatingInput/FormInput.vue";
 import { useToast } from "vue-toastification";
 import MedicalForm from "@/Components/MedicalForm.vue";
+import moment from "moment";
 
 import { Head, Link, useForm } from "@inertiajs/inertia-vue3";
 import { ref } from "vue";
 
-const toast = useToast();
-const medFormShown = ref(false);
+let   isLoading     = ref(false)
+const toast         = useToast();
+const medFormShown  = ref(false);
 
 const form = useForm({
     first_name: "",
@@ -41,12 +40,12 @@ const toggleMedForm = () => {
 };
 
 const setDentalSelected = () => {
-    form.medFormData.dental_questions = Array(19).fill("No")
-}
+    form.medFormData.dental_questions = Array(19).fill("No");
+};
 
 const validateFields = () => {
     if (registrationSteps.value.currentStep == 1) {
-        const regex = /^(63)/
+        const regex = /^(63)/;
         if (form.first_name.trim() == "") {
             return toast.error("First Name is required!");
         }
@@ -56,8 +55,13 @@ const validateFields = () => {
         if (form.contact_number.trim() == "") {
             return toast.error("Contact Number is required!");
         }
-        if (form.contact_number.length < 12 || form.contact_number.length > 12) {
-            return toast.error("Contact Number min-max length is 12 and a prefix of 63");
+        if (
+            form.contact_number.length < 12 ||
+            form.contact_number.length > 12
+        ) {
+            return toast.error(
+                "Contact Number min-max length is 12 and a prefix of 63"
+            );
         }
         if (!regex.test(form.contact_number)) {
             return toast.error("Contact Number must have a prefix of 63");
@@ -70,6 +74,15 @@ const validateFields = () => {
         }
         if (form.birthday == "") {
             return toast.error("Date of birth is required!");
+        }
+
+        let dateDiff = moment(moment().format("YYYY-MM-DD")).diff(
+            moment(form.birthday).format("YYYY-MM-DD"),
+            "days"
+        );
+
+        if (dateDiff < 30) {
+            return toast.error("Date of birth is invalid!");
         }
     }
 
@@ -86,7 +99,7 @@ const validateFields = () => {
         if (form.password !== form.password_confirmation) {
             return toast.error("Password doesn't match");
         }
-        if (form.valid_id == '') {
+        if (form.valid_id == "") {
             return toast.error("Valid ID is required");
         }
     }
@@ -143,6 +156,7 @@ const imageSelected = (event) => {
 };
 
 const submit = () => {
+    isLoading.value = true;
     form.post(route("register"), {
         onFinish: () => {
             form.reset("password", "password_confirmation");
@@ -152,8 +166,12 @@ const submit = () => {
                 "Account created! \nPlease check your email as your account \nstatus is still on pending"
             );
         },
-        onError: () => toast.error("Some fields are incorrect or missing!"),
+        onError: () => {
+            registrationSteps.value.currentStep = 1
+            toast.error("Some fields are incorrect or missing!")
+        }
     });
+    isLoading.value = false;
 };
 
 const props = defineProps({
@@ -405,7 +423,8 @@ let registrationSteps = ref({ currentStep: 1, totalSteps: 3 });
                                 <button
                                     type="submit"
                                     :disabled="
-                                        registrationSteps.currentStep == 1
+                                        registrationSteps.currentStep == 1 ||
+                                        isLoading
                                     "
                                     @click.prevent="
                                         registrationSteps.currentStep =
@@ -430,6 +449,7 @@ let registrationSteps = ref({ currentStep: 1, totalSteps: 3 });
                                     v-if="registrationSteps.currentStep == 3"
                                     @click.prevent="medFormShown = true"
                                     class="text-blue-500 hover:text-blue-700 hover:bg-blue-100 px-4 py-2 duration-200 ease-in-out rounded-lg text-sm"
+                                    :disabled="isLoading"
                                 >
                                     Register
                                 </button>

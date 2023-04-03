@@ -13,6 +13,7 @@ use App\Http\Controllers\User\SettingsController;
 use App\Http\Controllers\PrescriptionController;
 use App\Http\Controllers\User\SalesController;
 use Illuminate\Foundation\Application;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -26,7 +27,6 @@ use Inertia\Inertia;
 | contains the "web" middleware group. Now create something great!
 |
 */
-
 Route::get('/', [HomeController::class, 'index']);
 
 // Route::get('/dashboard', function () {

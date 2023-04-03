@@ -83,6 +83,8 @@ class AppointmentController extends Controller
             return back()->withErrors(['error' => 'Current signed-in account is admin']);
         }
 
+        if($this->hasRateLimitForSchedule()) return back()->withErrors(['error' => 'Booking limit of account per day is only 2']);
+
         if ($this->isAppointmentAvailable($request)) {
             $appointment = Appointment::create(
                 $request->safe()->except(['selected_services', 'healthFormData', 'schedule']) +
@@ -152,6 +154,13 @@ class AppointmentController extends Controller
         return $doesExist->isEmpty();
     }
 
+    protected function hasRateLimitForSchedule()
+    {
+        $appCount = Appointment::where('user_id', auth()->id())->whereDate('created_at', now())->count();
+
+        return $appCount == 2 ? true : false;
+    }
+
     protected function isUserAdmin()
     {
         return auth()->user()->is_admin == 1;
@@ -180,7 +189,7 @@ class AppointmentController extends Controller
         $msg = 'Hi! This is from Manabat-Flores Dental Clinic and we would like to inform you that your appointment has been approved!';
 
         $regexNum = "/^(639)\d{9}$/";
-        if(preg_match($regexNum, $appointment->patient->contact_number)) {
+        if (preg_match($regexNum, $appointment->patient->contact_number)) {
             $this->send_sms('M. Dental', $appointment->patient->contact_number, $msg);
         } else {
             return back()->with('error', 'Error sending to patient\'s mobile number!');
@@ -198,7 +207,7 @@ class AppointmentController extends Controller
         $msg = 'Hi! This is from Manabat-Flores Dental Clinic and we\'re sorry to inform you that your appointment has been declined!';
 
         $regexNum = "/^(639)\d{9}$/";
-        if(preg_match($regexNum, $appointment->patient->contact_number)) {
+        if (preg_match($regexNum, $appointment->patient->contact_number)) {
             $this->send_sms('M. Dental', $appointment->patient->contact_number, $msg);
         } else {
             return back()->with('error', 'Error sending to patient\'s mobile number!');
