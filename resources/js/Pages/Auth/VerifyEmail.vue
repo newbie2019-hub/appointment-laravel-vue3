@@ -31,7 +31,7 @@ const verificationLinkSent = computed(() => props.status === 'verification-link-
 
         <form @submit.prevent="submit">
             <div class="mt-4 flex items-center justify-between">
-                <BreezeButton :class="{ 'opacity-25': form.processing }" :disabled="form.processing" class="mr-5">
+                <BreezeButton type="submit" :class="{ 'opacity-25': form.processing }" :disabled="form.processing" class="mr-5">
                     Resend Verification Email
                 </BreezeButton>
 
